@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+/* base styles */
+body {
+  font-family: Poppins, sans-serif;
+  margin: 0;
+  font-size: 1.1em;
+}
+ul, li, p, h1, h2, h3, h4 {
+  margin: 0;
+  padding: 0;
+}
+ul {
+  list-style-type: none;
+}
+.btn {
+  background: #007bff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1em;
+}
+.btn:active {
+  background: #007bff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: #444;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.err{
+  margin-top: 2em;
+  color: red;
+  text-align: center;
+}
+
+.startDate .css-z3c6am-MuiFormControl-root-MuiTextField-root{
+  width:100%
+}
+
+.css-z3c6am-MuiFormControl-root-MuiTextField-root{
+  width:49%
+}
+
+
+.MuiTextField-root {
+  width: 100%;
+}
+
+.required-label:after {
+  content: " *"; /* Adding asterisk after the label */
+  color: red; /* Changing asterisk color to red */
+}
