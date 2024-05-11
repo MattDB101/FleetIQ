@@ -15,7 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useFirestore } from "../hooks/useFirestore";
-import AddJobDialog from "./Dialogs/AddJob";
+import AddJobDialog from "./Dialogs/AddJobDialog";
 import { Add } from "@mui/icons-material";
 
 

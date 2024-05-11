@@ -8,7 +8,7 @@ import { useReducer, useEffect, useState } from 'react'
 import OKDialog from "../../components/Dialogs/OKDialog";
 
 
-export default function Vehicles() {
+export default function FireExtinguishers() {
   const collection = "fireExtinguishers" // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const {documents, error} = useCollection(collection)
@@ -16,7 +16,7 @@ export default function Vehicles() {
   let props = {
     collection:collection, 
     documents: documents,
-    docToAdd: {Name:"Matthew Byrne", DOB:"13/09/00", addedBy: user.displayName},
+    docToAdd: {Name:"Matthew Byrne", DOB:"13/09/00"},
     error: error,
     title:"Fire Extinguishers",
 

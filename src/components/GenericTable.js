@@ -16,6 +16,7 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import { useFirestore } from "../hooks/useFirestore";
 import FireExtinguishersDialog from "./Dialogs/FireExtinguishersDialog";
 import FirstAidDialog from "./Dialogs/FirstAidDialog";
+import TachoCalibrationDialog from "./Dialogs/TachoCalibrationDialog";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -133,11 +134,15 @@ export default function GenericTable(props) {
 
     const filterTerm = (event) => setSearchTerm(event.target.value);
 
-    const [FEDialogState, setFEDialogState] = useState({
+    const [fireExDialogState, setFireExDialogState] = useState({
         shown: false, title: "", message: "", flavour: "success"
     })
 
-    const [FirstAidDialogState, setFirstAidDialogState] = useState({
+    const [firstAidDialogState, setFirstAidDialogState] = useState({
+        shown: false, title: "", message: "", flavour: "success"
+    })
+
+    const [tachoCalibrationDialogState, setTachoCalibrationDialogState] = useState({
         shown: false, title: "", message: "", flavour: "success"
     })
         
@@ -163,12 +168,16 @@ export default function GenericTable(props) {
     const handleAdd = () => {
         switch(props.title) {
             case "Fire Extinguishers":
-                setFEDialogState({shown: true, title:"Record Fire Extinguisher Service", message: "fireextinguishers", flavour: "success"})
+                setFireExDialogState({shown: true, title:"Record Fire Extinguisher Service", message: "fireextinguishers", flavour: "success"})
                 break;
             
 
             case "First Aid":
-                setFirstAidDialogState({shown: true, title:"Record First Aid Expiration", message: "fireextinguishers", flavour: "success"})
+                setFirstAidDialogState({shown: true, title:"Record First Aid Expiration", message: "firstaid", flavour: "success"})
+                break;
+
+            case "Tachometer Calibration":
+                setTachoCalibrationDialogState({shown: true, title:"Record Tachometer Calibration", message: "tachocalibration", flavour: "success"})
                 break;
         }
     }
@@ -361,32 +370,47 @@ export default function GenericTable(props) {
             />
 
             <FireExtinguishersDialog
-                show={FEDialogState.shown}
-                title={FEDialogState.title}
-                message={FEDialogState.message}
-                flavour={FEDialogState.flavour}
+                show={fireExDialogState.shown}
+                title={fireExDialogState.title}
+                message={fireExDialogState.message}
+                flavour={fireExDialogState.flavour}
                 callback={
                     (res) => {
-                        let callback = FEDialogState.callback;
-                        setFEDialogState({ shown: false });
+                        let callback = fireExDialogState.callback;
+                        setFireExDialogState({ shown: false });
                         if (callback) callback(res);
                     }
                 }
             />
 
             <FirstAidDialog
-                show={FirstAidDialogState.shown}
-                title={FirstAidDialogState.title}
-                message={FirstAidDialogState.message}
-                flavour={FirstAidDialogState.flavour}
+                show={firstAidDialogState.shown}
+                title={firstAidDialogState.title}
+                message={firstAidDialogState.message}
+                flavour={firstAidDialogState.flavour}
                 callback={
                     (res) => {
-                        let callback = FirstAidDialogState.callback;
+                        let callback = firstAidDialogState.callback;
                         setFirstAidDialogState({ shown: false });
                         if (callback) callback(res);
                     }
                 }
             />
+            
+            <TachoCalibrationDialog
+                show={tachoCalibrationDialogState.shown}
+                title={tachoCalibrationDialogState.title}
+                message={tachoCalibrationDialogState.message}
+                flavour={tachoCalibrationDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = tachoCalibrationDialogState.callback;
+                        setTachoCalibrationDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
+            />
+
 
             <Typography
                 className={classes.title}

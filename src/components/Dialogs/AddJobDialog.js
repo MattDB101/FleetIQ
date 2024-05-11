@@ -79,7 +79,7 @@ const defaultState = () => {
 }
 
 
-const AddJob= (props) => {
+const AddJobDialog= (props) => {
     const months =  ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     const classes = useStyles();
     const [state, setState] = useState(defaultState());
@@ -185,7 +185,6 @@ const AddJob= (props) => {
               startDate: startDate,
               endDate: endDate,
               comment: comment,
-              addedBy: user.displayName
             };
 
             addDocument(docToAdd);
@@ -429,7 +428,7 @@ const AddJob= (props) => {
     );
 }
 
-export default AddJob;
+export default AddJobDialog;
 
 //onClose = {(event, reason) => {
 //    if (reason && reason == "backdropClick") return;

@@ -16,7 +16,7 @@ export default function Drivers() {
   let props = {
     collection:collection, 
     documents: documents,
-    docToAdd: {Name:"Matthew Byrne", DOB:"13/09/00", addedBy: user.displayName},
+    docToAdd: {Name:"Matthew Byrne", DOB:"13/09/00"},
     error: error,
     title:"Drivers",
 

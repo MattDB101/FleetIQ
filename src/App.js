@@ -11,6 +11,7 @@ import Drivers from './pages/drivers/Drivers';
 import Vehicles from './pages/vehicles/Vehicles';
 import FireExtinguishers from './pages/fireextinguishers/FireExtinguishers';
 import FirstAid from './pages/firstaid/FirstAid';
+import TachoCalibration from './pages/tachocalibration/TachoCalibration';
 
 function App() {
   const { authIsReady, user } = useAuthContext()
@@ -56,6 +57,11 @@ function App() {
 
               <Route path="/firstaid">
                 {user && <FirstAid />}
+                {!user && <Redirect to="/" />}
+              </Route>
+
+              <Route path="/tachocalibration">
+                {user && <TachoCalibration />}
                 {!user && <Redirect to="/" />}
               </Route>
 
