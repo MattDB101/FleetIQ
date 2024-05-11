@@ -108,7 +108,6 @@ const AddFEService= (props) => {
                 registration: selectedVehicle.registration,
                 serviceDate: serviceDate,
             };
-            console.log(docToAdd)
             addDocument(docToAdd);
             setServiceDate(new Date());
             props.callback("OK");

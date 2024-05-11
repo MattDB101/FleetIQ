@@ -188,7 +188,6 @@ const AddJobDialog= (props) => {
             };
 
             addDocument(docToAdd);
-            console.log(docToAdd);
 
             setStartDate(new Date());
             setEndDate(new Date());

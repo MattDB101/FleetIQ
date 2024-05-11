@@ -14,7 +14,6 @@ export default function TachoCalibration() {
   let props = {
     collection:collection, 
     documents: documents,
-    docToAdd: {Name:"Matthew Byrne", DOB:"13/09/00"},
     error: error,
     title:"Tachometer Calibration",
 
