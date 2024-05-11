@@ -125,7 +125,7 @@ export default function GenericTable(props) {
 
     const classes = useStyles();
     const [controlsDisabled, setControlsDisabled] = useState(false)
-    const [selected, setSelected] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [toggleCleared, setToggleCleared] = React.useState(false);
     const [columnFilters, setColumnFilters] = useState({});
@@ -147,20 +147,29 @@ export default function GenericTable(props) {
     })
         
     const handleDelete = () => {
-        if (selected.length == 1) {
+        if (selectedRows.length == 1) {
             if (window.confirm("Are you sure you want to delete this row?")) {
+                try {
+                    deleteDocument(selectedRows[0].id);
+                } catch (error) {
+                    console.error('Error deleting document:', error);
+                }
+                selectedRows.length = 0;
                 setToggleCleared(!toggleCleared);
-                deleteDocument(selected[0].id)
-                selected.length = 0;
             }
+
         } else {
             var confirm = prompt("Please enter \"CONFIRM\" to delete these rows. \nWARNING: This cannot be undone!",);
-            if (confirm && confirm.toLowerCase === "confirm") {
-                setToggleCleared(!toggleCleared);
-                for (let i = 0; i < selected.length; i++) {
-                    deleteDocument(selected[i].id)
+            if (confirm == "CONFIRM") {
+                for (let i = 0; i < selectedRows.length; i++) {
+                    try {
+                        deleteDocument(selectedRows[i].id)
+                    } catch (error) {
+                        console.error('Error deleting document:', error);
+                    }
                 }
-            selected.length = 0;
+                setToggleCleared(!toggleCleared);
+                selectedRows.length = 0;
             }   
         }
     }
@@ -184,7 +193,7 @@ export default function GenericTable(props) {
 
 
     const handleEdit = () => {
-        console.log(selected)
+        console.log(selectedRows)
     };
 
     const handleFilter = () => {
@@ -192,11 +201,11 @@ export default function GenericTable(props) {
     };
 
     const selectedItemText = () => {
-        if (selected.length === 0) return "";
-        if (selected.length === 1) return "1 row selected";
-        if (selected.length > 1 && selected.length < props.documents.length)
-            return `${selected.length} ${("rows selected")}`;
-        if (selected.length === props.documents.length) return ("All rows selected");
+        if (selectedRows.length === 0) return "";
+        if (selectedRows.length === 1) return "1 row selected";
+        if (selectedRows.length > 1 && selectedRows.length < props.documents.length)
+            return `${selectedRows.length} ${("rows selected")}`;
+        if (selectedRows.length === props.documents.length) return ("All rows selected");
 
         return "";
     };
@@ -208,7 +217,6 @@ export default function GenericTable(props) {
     };
 
     const filterRows = () => {
-
     props.documents.sort(sortByRecent)
 
     // for (let i = 0; i < props.documents.length; i++) {
@@ -312,10 +320,10 @@ export default function GenericTable(props) {
                 </Tooltip>
 
                 <Tooltip title="Delete Record(s)">
-                <span disabled={selected.length === 0 || controlsDisabled}>
+                <span disabled={selectedRows.length === 0 || controlsDisabled}>
                     <Button
                         style={{marginLeft:"10px"}}
-                        disabled={selected.length === 0 || controlsDisabled}
+                        disabled={selectedRows.length === 0 || controlsDisabled}
                         size="small"
                         onClick={() => { handleDelete()}}
                         aria-label="delete"
@@ -341,9 +349,9 @@ export default function GenericTable(props) {
             </Tooltip>
 
             <Tooltip title="Edit Record">
-            <span disabled={selected.length === 0 || controlsDisabled}>
+            <span disabled={selectedRows.length === 0 || controlsDisabled}>
                     <Button
-                        disabled={selected.length === 0 || controlsDisabled}
+                        disabled={selectedRows.length === 0 || controlsDisabled}
                         style={{marginLeft:"10px"}}
                         size="small"
                         className={classes.editButton}
@@ -361,10 +369,11 @@ export default function GenericTable(props) {
             </Box>
             <DataTable
                 columns={props.columns}
-                onSelectedRowsChange={(e) => setSelected(e.selectedRows)}
+                onSelectedRowsChange={(e) => setSelectedRows(e.selectedRows)}
                 data={filterRows()}
                 sortIcon={<SortIcon />}
                 pagination
+                clearSelectedRows={toggleCleared}
                 selectableRows
                 striped
             />

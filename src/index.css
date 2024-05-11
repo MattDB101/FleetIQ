@@ -55,3 +55,7 @@ ul {
   content: " *"; /* Adding asterisk after the label */
   color: red; /* Changing asterisk color to red */
 }
+
+.overdue {
+  color: red;
+}

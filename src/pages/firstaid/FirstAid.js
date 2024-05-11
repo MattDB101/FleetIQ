@@ -12,6 +12,7 @@ export default function FirstAid() {
   const collection = "firstaid" // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const {documents, error} = useCollection(collection)
+  const currentDate = new Date();
 
   let props = {
     collection:collection, 
@@ -23,7 +24,6 @@ export default function FirstAid() {
         key: "Registration",
         name: "Reg"
     }],
-      
     columns: [
       {
         name: "Registration",
@@ -31,18 +31,17 @@ export default function FirstAid() {
         sortable: true
       },
       {
-        name: "Service Date",
+        name: "Expiry Date",
         selector: (row) => {
-          if (row.serviceDate){
-            const serviceDate = new Date(row.serviceDate.seconds * 1000); // Convert seconds to milliseconds
-            return new Intl.DateTimeFormat('en-GB').format(serviceDate);
+          if (row.expiryDate){
+            const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
+            return  <div className={expiryDate <= currentDate ? "overdue" : ""}>{new Intl.DateTimeFormat('en-GB').format(expiryDate)}</div>;
           }
         },
-        sortable: true
+        sortable: true,
       },
-
-      
     ],
+
   }
     return (
       

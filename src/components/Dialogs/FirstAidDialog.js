@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
 const defaultState = () => {
     return {
         name: "",
-        serviceDate: "",
+        expiryDate: "",
     }
 }
 
@@ -91,7 +91,7 @@ const AddFEService= (props) => {
     const classes = useStyles();
 
     const [selectedVehicle, setSelectedVehicle] = useState({id:0});
-    const [serviceDate, setServiceDate] = useState(new Date());
+    const [expiryDate, setExpiryDate] = useState(new Date());
 
     const {addDocument, response} = useFirestore("firstaid/");
     
@@ -100,16 +100,16 @@ const AddFEService= (props) => {
     };
 
     const handleChangeServiceDate = (newValue) => {
-        setServiceDate(newValue);
+        setExpiryDate(newValue);
     };
 
     const handleAdd = () => {
             let docToAdd = {
                 registration: selectedVehicle.registration,
-                serviceDate: serviceDate,
+                expiryDate: expiryDate,
             };
             addDocument(docToAdd);
-            setServiceDate(new Date());
+            setExpiryDate(new Date());
             props.callback("OK");
     }
 
@@ -141,15 +141,15 @@ const AddFEService= (props) => {
                     </Select>
                     </FormControl>
                         <br></br><br></br>
-                        <div class="serviceDate">
+                        <div class="expiryDate">
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
 
                             <DesktopDatePicker
                                 label={"Start Date"}
                                 inputFormat="dd/MM/yyyy"
                                 margin="normal" 
-                                value={serviceDate}
-                                defaultValue={props.edit ? props.selected.serviceDate : ""}
+                                value={expiryDate}
+                                defaultValue={props.edit ? props.selected.expiryDate : ""}
                                 onChange={handleChangeServiceDate}
                                 renderInput={(params) => <TextField {...params} />}
                             />
