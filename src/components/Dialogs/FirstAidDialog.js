@@ -93,7 +93,7 @@ const AddFEService= (props) => {
     const [selectedVehicle, setSelectedVehicle] = useState({id:0});
     const [serviceDate, setServiceDate] = useState(new Date());
 
-    const {addDocument, response} = useFirestore("fireExtinguishers/");
+    const {addDocument, response} = useFirestore("firstaid/");
     
     const handleVehicleChange = (event) => {
         setSelectedVehicle(event.target.value);

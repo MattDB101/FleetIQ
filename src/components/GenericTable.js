@@ -15,6 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { useFirestore } from "../hooks/useFirestore";
 import FireExtinguishersDialog from "./Dialogs/FireExtinguishersDialog";
+import FirstAidDialog from "./Dialogs/FirstAidDialog";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -136,6 +137,9 @@ export default function GenericTable(props) {
         shown: false, title: "", message: "", flavour: "success"
     })
 
+    const [FirstAidDialogState, setFirstAidDialogState] = useState({
+        shown: false, title: "", message: "", flavour: "success"
+    })
         
     const handleDelete = () => {
         if (selected.length == 1) {
@@ -157,8 +161,15 @@ export default function GenericTable(props) {
     }
     
     const handleAdd = () => {
-        if(props.title == "Fire Extinguishers") {
-            setFEDialogState({shown: true, title:"Hello", message: "fireextinguishers", flavour: "success"})
+        switch(props.title) {
+            case "Fire Extinguishers":
+                setFEDialogState({shown: true, title:"Record Fire Extinguisher Service", message: "fireextinguishers", flavour: "success"})
+                break;
+            
+
+            case "First Aid":
+                setFirstAidDialogState({shown: true, title:"Record First Aid Expiration", message: "fireextinguishers", flavour: "success"})
+                break;
         }
     }
 
@@ -358,6 +369,20 @@ export default function GenericTable(props) {
                     (res) => {
                         let callback = FEDialogState.callback;
                         setFEDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
+            />
+
+            <FirstAidDialog
+                show={FirstAidDialogState.shown}
+                title={FirstAidDialogState.title}
+                message={FirstAidDialogState.message}
+                flavour={FirstAidDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = FirstAidDialogState.callback;
+                        setFirstAidDialogState({ shown: false });
                         if (callback) callback(res);
                     }
                 }

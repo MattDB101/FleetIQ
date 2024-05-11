@@ -1,5 +1,6 @@
-import { Assessment, Create, DesktopWindows, ImportContacts, Settings, Person, DirectionsBus} from "@material-ui/icons";
+import { Assessment, Create, DesktopWindows, ImportContacts, Settings, Person, DirectionsBus, LocalHospital} from "@material-ui/icons";
 import FireExtinguisherIcon from '@mui/icons-material/FireExtinguisher';
+import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutlined';
 import { useTranslation } from "react-i18next";
 
 function NavLinks() {
@@ -25,6 +26,11 @@ function NavLinks() {
             text: t("Fire Extinguishers"),
             path: "/fireextinguishers",
             icon: <FireExtinguisherIcon />
+        },
+        firstAid: {
+            text: t("First Aid"),
+            path: "/firstaid",
+            icon: <MedicalServicesOutlinedIcon />
         },
         settings: {
             text: t("Settings"),

@@ -9,7 +9,7 @@ import OKDialog from "../../components/Dialogs/OKDialog";
 
 
 export default function Vehicles() {
-  const collection = "vehicles" // THIS IS WHERE THE TABLE NAME GOES
+  const collection = "fireExtinguishers" // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const {documents, error} = useCollection(collection)
 
@@ -28,12 +28,17 @@ export default function Vehicles() {
     columns: [
       {
         name: "Registration",
-        selector: (row) => row.Registration,
+        selector: (row) => row.registration,
         sortable: true
       },
       {
-        name: "Service Date",
-        selector: (row) => row.fireExtinguisher,
+        name: "Service Date (Valid for 1 year)",
+        selector: (row) => {
+          if (row.serviceDate){
+            const serviceDate = new Date(row.serviceDate.seconds * 1000); // Convert seconds to milliseconds
+            return new Intl.DateTimeFormat('en-GB').format(serviceDate);
+          }
+        },
         sortable: true
       },
 

@@ -9,7 +9,7 @@ import OKDialog from "../../components/Dialogs/OKDialog";
 
 
 export default function Vehicles() {
-  const collection = "vehicles" // THIS IS WHERE THE TABLE NAME GOES
+  const collection = "firstaid" // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const {documents, error} = useCollection(collection)
 
@@ -18,7 +18,7 @@ export default function Vehicles() {
     documents: documents,
     docToAdd: {Name:"Matthew Byrne", DOB:"13/09/00", addedBy: user.displayName},
     error: error,
-    title:"Vehicles",
+    title:"First Aid",
 
     keyColumn:[{
         key: "Registration",
@@ -27,45 +27,21 @@ export default function Vehicles() {
       
     columns: [
       {
-        name: "Make",
-        selector: (row) => row.make,
-        sortable: true
-      },
-      {
-        name: "Model",
-        selector: (row) => row.model,
-        sortable: true
-      },
-      {
         name: "Registration",
         selector: (row) => row.registration,
         sortable: true
       },
       {
-        name: "Capacity",
-        selector: (row) => row.capacity,
+        name: "Service Date",
+        selector: (row) => {
+          if (row.serviceDate){
+            const serviceDate = new Date(row.serviceDate.seconds * 1000); // Convert seconds to milliseconds
+            return new Intl.DateTimeFormat('en-GB').format(serviceDate);
+          }
+        },
         sortable: true
       },
-      // {
-      //   name: "More Info",
-      //   cell: (row) => (
-      //       <Button
-      //           variant="contained"
-      //           size="small"
-      //           color="primary"
-      //           onClick={() => console.log("")}
-      //           aria-label="add"
-      //           startIcon={ <AssignmentIcon style={{marginLeft: "25%"}}/> }
-      //           >
-      //       </Button>
-      //   ),
-      //   sortable: false,
-      // },
-      // {
-      //   name: "Time/Date Recorded",
-      //   selector: (row) => row.recordedAt,
-      //   sortable: true
-      // },
+
       
     ],
   }

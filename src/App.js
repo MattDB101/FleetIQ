@@ -10,6 +10,7 @@ import ClippedDrawer from './app_bar';
 import Drivers from './pages/drivers/Drivers';
 import Vehicles from './pages/vehicles/Vehicles';
 import FireExtinguishers from './pages/fireextinguishers/FireExtinguishers';
+import FirstAid from './pages/firstaid/FirstAid';
 
 function App() {
   const { authIsReady, user } = useAuthContext()
@@ -50,6 +51,11 @@ function App() {
 
               <Route path="/fireextinguishers">
                 {user && <FireExtinguishers />}
+                {!user && <Redirect to="/" />}
+              </Route>
+
+              <Route path="/firstaid">
+                {user && <FirstAid />}
                 {!user && <Redirect to="/" />}
               </Route>
 
