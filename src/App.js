@@ -10,6 +10,7 @@ import ClippedDrawer from './app_bar';
 import Drivers from './pages/drivers/Drivers';
 import Vehicles from './pages/vehicles/Vehicles';
 import FireExtinguishers from './pages/fireextinguishers/FireExtinguishers';
+import Tax from './pages/tax/Tax';
 import FirstAid from './pages/firstaid/FirstAid';
 import TachoCalibration from './pages/tachocalibration/TachoCalibration';
 
@@ -49,6 +50,13 @@ function App() {
                 {user && <Diary />}
                 {!user && <Redirect to="/" />}
               </Route>
+
+              
+              <Route path="/tax">
+                {user && <Tax />}
+                {!user && <Redirect to="/" />}
+              </Route>
+
 
               <Route path="/fireextinguishers">
                 {user && <FireExtinguishers />}

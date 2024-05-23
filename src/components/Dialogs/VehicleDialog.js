@@ -83,93 +83,111 @@ const defaultState = () => {
 }
 
 
-const AddFirstAidService= (props) => {
+const AddVehicleService= (props) => {
     const collection = "vehicles" // THIS IS WHERE THE TABLE NAME GOES
     const { user } = useAuthContext();
     const {documents, error} = useCollection(collection)
+    const {addDocument, response} = useFirestore(collection);
 
     const classes = useStyles();
 
-    const [selectedVehicleInvalid, setSelectedVehicleInvalid] = useState(false);
+    const [capacityInvalid, setCapacityInvalid] = useState(false);
+    const [registrationInvalid, setRegistrationInvalid] = useState(false);
 
-    const [selectedVehicle, setSelectedVehicle] = useState({id:0});
-    const [expiryDate, setExpiryDate] = useState(new Date());
-
-    const {addDocument, response} = useFirestore("firstaid/");
-    
-    const handleVehicleChange = (event) => {
-        setSelectedVehicle(event.target.value);
-    };
-
-    const handleChangeServiceDate = (newValue) => {
-        setExpiryDate(newValue);
-    };
+    const [registration, setRegistration] = useState("");
+    const [make, setMake] = useState("");
+    const [model, setModel] = useState("");
+    const [capacity, setCapacity] = useState("");
 
     const validateForm = () => {
-        const isVehicleSelected = selectedVehicle && selectedVehicle.id !== 0;
-        setSelectedVehicleInvalid(!isVehicleSelected);
-        return isVehicleSelected;
+        const isCapacityValid = capacity.length > 0;
+        const isRegistrationValid = registration.length > 0;
+
+        setCapacityInvalid(!isCapacityValid);
+        setRegistrationInvalid(!isRegistrationValid);
+
+        return isCapacityValid && isRegistrationValid;
     };
 
     const handleAdd = () => {
         if (validateForm()) {
             const docToAdd = {
-                registration: selectedVehicle.registration,
-                expiryDate: expiryDate,
+                registration,
+                make,
+                model,
+                capacity,
             };
 
             addDocument(docToAdd);
-            setExpiryDate(new Date());
-            setSelectedVehicle({id:0})
+            setRegistration("");
+            setMake("");
+            setModel("");
+            setCapacity("");
             props.callback("OK");
         }
     };
+
 
     return (
         <div>
             <Dialog
                 open={props.show}
+                onClose={() => {}}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description">
                 <DialogTitle style={{margin:"30px", marginTop:"10px"}} id="alert-dialog-title">
                     {props.title}
                 </DialogTitle>
 
+             
+
                 <div style={{margin:"0px 50px"}}>
-                    <FormControl fullWidth>
-                    <InputLabel id="vehicleSelectLabel">Vehicle Registration</InputLabel>
-                    <Select
-                        labelId="vehicleSelectLabel"
-                        id="vehicleSelect"
-                        error={selectedVehicleInvalid}   
-                        value={selectedVehicle}
-                        label="Vehicle"
-                        onChange={handleVehicleChange}
-                    >
-                        {documents && documents.map((vehicle, index) => (
-                                <MenuItem value={vehicle}>{vehicle.registration} </MenuItem>
-                            ))
-                        }
-                    </Select>
-                    </FormControl>
-                        <br></br><br></br>
-                        <div class="expiryDate">
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
 
-                            <DesktopDatePicker
-                                label={"Start Date"}
-                                inputFormat="dd/MM/yyyy"
-                                margin="normal" 
-                                value={expiryDate}
-                                defaultValue={props.edit ? props.selected.expiryDate : ""}
-                                onChange={handleChangeServiceDate}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
 
+                        <TextField 
+                            error={registrationInvalid}    
+                            onChange={(e) => setRegistration(e.target.value)} 
+                            margin="normal" 
+                            id="registration" 
+                            label="Registration"
+                            InputLabelProps={{
+                                className: "required-label" 
+                            }}
+                            fullWidth 
+                            variant="outlined"
+                        />
+
+                        <TextField 
+                            onChange={(e) => setMake(e.target.value)} 
+                            margin="normal" 
+                            id="make" 
+                            label="Make" 
+
+                            fullWidth 
+                            variant="outlined" 
+                        />
                             
-                            </LocalizationProvider>
-                            <div id="calenderDiv" ></div>
-                        </div>
+                        <TextField 
+                            onChange={(e) => setModel(e.target.value)} 
+                            margin="normal" 
+                            id="model" 
+                            label="Model" 
+                            fullWidth 
+                            variant="outlined" 
+                        />
+
+                        <TextField 
+                            type='number'
+                            error={capacityInvalid}
+                            onChange={(e) => setCapacity(e.target.value)} 
+                            margin="normal" 
+                            id="capacity" 
+                            label="Max Capacity" 
+                            InputLabelProps={{
+                                className: "required-label" 
+                            }}
+                            variant="outlined" 
+                        />
 
                 </div>
 
@@ -202,4 +220,9 @@ const AddFirstAidService= (props) => {
     );
 }
 
-export default AddFirstAidService;
+export default AddVehicleService;
+
+//onClose = {(event, reason) => {
+//    if (reason && reason == "backdropClick") return;
+//    props.callback("Cancel")
+//}}

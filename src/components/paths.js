@@ -1,7 +1,8 @@
-import { Assessment, Create, DesktopWindows, ImportContacts, Settings, Person, DirectionsBus} from "@material-ui/icons";
+import { Assessment, Create, DesktopWindows, ImportContacts, Settings, Person, DirectionsBus } from "@material-ui/icons";
 import SpeedIcon from '@mui/icons-material/Speed';
 import FireExtinguisherIcon from '@mui/icons-material/FireExtinguisher';
 import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutlined';
+import EuroIcon from '@mui/icons-material/Euro';
 import { useTranslation } from "react-i18next";
 
 function NavLinks() {
@@ -22,6 +23,11 @@ function NavLinks() {
             text: t("Vehicles"),
             path: "/vehicles",
             icon: <DirectionsBus />
+        },
+        tax: {
+            text: t("Tax"),
+            path: "/tax",
+            icon: <EuroIcon />
         },
         fireExtinguishers: {
             text: t("Fire Extinguishers"),

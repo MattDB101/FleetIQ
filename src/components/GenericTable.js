@@ -16,7 +16,9 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import { useFirestore } from "../hooks/useFirestore";
 import FireExtinguishersDialog from "./Dialogs/FireExtinguishersDialog";
 import FirstAidDialog from "./Dialogs/FirstAidDialog";
+import VehicleDialog from "./Dialogs/VehicleDialog";
 import TachoCalibrationDialog from "./Dialogs/TachoCalibrationDialog";
+import TaxDialog from "./Dialogs/TaxDialog";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -39,12 +41,15 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
         marginBottom: theme.spacing(2),
     },
+    
     paper: {
         marginBottom: theme.spacing(2),
     },
+
     table: {
         minWidth: 750,
     },
+
     visuallyHidden: {
         border: 0,
         clip: "rect(0 0 0 0)",
@@ -56,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
         top: 20,
         width: 1,
     },
+
     tableHeader: {
         display: "flex",
         alignItems: "center",
@@ -64,13 +70,16 @@ const useStyles = makeStyles((theme) => ({
         overflow: "visible",
         marginBottom: "0.3rem",
     },
+
     selectedCount: {
         flex: "2 2 90%",
     },
+
     title: {
         flex: "1 1",
         whiteSpace: "nowrap",
     },
+
     editButton: {
         backgroundColor: yellow[800],
         borderColor: yellow[800],
@@ -79,6 +88,7 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: yellow[900],
         },
     },
+
     filterButton: {
 
         backgroundColor: pink[600],
@@ -88,9 +98,11 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: pink[700],
         },
     },
+
     searchBar: {
         flex: "1 1 30%",
     },
+
   }));
 
 function sortByRecent( a, b ) {
@@ -134,11 +146,19 @@ export default function GenericTable(props) {
 
     const filterTerm = (event) => setSearchTerm(event.target.value);
 
+    const [taxDialogState, setTaxDialogState] = useState({
+        shown: false, title: "", message: "", flavour: "success"
+    })
+
     const [fireExDialogState, setFireExDialogState] = useState({
         shown: false, title: "", message: "", flavour: "success"
     })
 
     const [firstAidDialogState, setFirstAidDialogState] = useState({
+        shown: false, title: "", message: "", flavour: "success"
+    })
+
+    const [vehicleDialogState, setVehicleDialogState] = useState({
         shown: false, title: "", message: "", flavour: "success"
     })
 
@@ -175,18 +195,27 @@ export default function GenericTable(props) {
     }
     
     const handleAdd = () => {
+        console.log(props.title)
         switch(props.title) {
             case "Fire Extinguishers":
                 setFireExDialogState({shown: true, title:"Record Fire Extinguisher Service", message: "fireextinguishers", flavour: "success"})
                 break;
             
-
             case "First Aid":
                 setFirstAidDialogState({shown: true, title:"Record First Aid Expiration", message: "firstaid", flavour: "success"})
                 break;
 
             case "Tachometer Calibration":
                 setTachoCalibrationDialogState({shown: true, title:"Record Tachometer Calibration", message: "tachocalibration", flavour: "success"})
+                break;
+
+            case "Tax":
+                setTaxDialogState({shown: true, title:"Record Vehicle Tax Expiration", message: "tax", flavour: "success"})
+                break;
+
+            
+            case "Add Vehicle":
+                setVehicleDialogState({shown: true, title:"Add a Vehicle To Fleet", message: "vehicle", flavour: "success"})
                 break;
         }
     }
@@ -290,7 +319,7 @@ export default function GenericTable(props) {
                         </Typography>
                         <div className={classes.searchBar}>
                             <TextField
-                                label={`${"Search"} ${props.keyColumn[0].name}`}
+                                label={`${"Search by"} ${props.keyColumn[0].name}`}
                                 id="outlined-size-small"
                                 style={{minWidth:"120px"}}
                                 value={searchTerm}
@@ -405,7 +434,36 @@ export default function GenericTable(props) {
                     }
                 }
             />
+
+            <VehicleDialog
+                show={vehicleDialogState.shown}
+                title={vehicleDialogState.title}
+                message={vehicleDialogState.message}
+                flavour={vehicleDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = vehicleDialogState.callback;
+                        setVehicleDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
+            />
             
+            
+            <TaxDialog
+                show={taxDialogState.shown}
+                title={taxDialogState.title}
+                message={taxDialogState.message}
+                flavour={taxDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = taxDialogState.callback;
+                        setTaxDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
+            />
+
             <TachoCalibrationDialog
                 show={tachoCalibrationDialogState.shown}
                 title={tachoCalibrationDialogState.title}

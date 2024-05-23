@@ -17,14 +17,19 @@ export default function Vehicles() {
     collection:collection, 
     documents: documents,
     error: error,
-    title:"Vehicles",
+    title:"Add Vehicle",
 
     keyColumn:[{
-        key: "Registration",
-        name: "Reg"
+        key: "registration",
+        name: "Registration"
     }],
       
     columns: [
+      {
+        name: "Registration",
+        selector: (row) => row.registration,
+        sortable: true
+      },
       {
         name: "Make",
         selector: (row) => row.make,
@@ -32,12 +37,7 @@ export default function Vehicles() {
       },
       {
         name: "Model",
-        selector: (row) => row.model,
-        sortable: true
-      },
-      {
-        name: "Registration",
-        selector: (row) => row.registration,
+        selector: (row) => row.model || "-",
         sortable: true
       },
       {

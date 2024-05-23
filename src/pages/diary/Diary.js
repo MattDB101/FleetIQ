@@ -30,8 +30,8 @@ export default function Diary() {
     title:"Diary | " + months[value.getMonth()] + " " + value.getFullYear(),
 
     keyColumn:[{
-        key: "startDate",
-        name: "Start Date"
+        key: "client",
+        name: "Client"
     }],
       
     columns: [

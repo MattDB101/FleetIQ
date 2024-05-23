@@ -83,7 +83,7 @@ const defaultState = () => {
 }
 
 
-const AddFirstAidService= (props) => {
+const AddTaxService= (props) => {
     const collection = "vehicles" // THIS IS WHERE THE TABLE NAME GOES
     const { user } = useAuthContext();
     const {documents, error} = useCollection(collection)
@@ -95,7 +95,7 @@ const AddFirstAidService= (props) => {
     const [selectedVehicle, setSelectedVehicle] = useState({id:0});
     const [expiryDate, setExpiryDate] = useState(new Date());
 
-    const {addDocument, response} = useFirestore("firstaid/");
+    const {addDocument, response} = useFirestore("tax/");
     
     const handleVehicleChange = (event) => {
         setSelectedVehicle(event.target.value);
@@ -129,6 +129,7 @@ const AddFirstAidService= (props) => {
         <div>
             <Dialog
                 open={props.show}
+                onClose={() => {}}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description">
                 <DialogTitle style={{margin:"30px", marginTop:"10px"}} id="alert-dialog-title">
@@ -141,7 +142,7 @@ const AddFirstAidService= (props) => {
                     <Select
                         labelId="vehicleSelectLabel"
                         id="vehicleSelect"
-                        error={selectedVehicleInvalid}   
+                        error={selectedVehicleInvalid} 
                         value={selectedVehicle}
                         label="Vehicle"
                         onChange={handleVehicleChange}
@@ -157,7 +158,7 @@ const AddFirstAidService= (props) => {
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
 
                             <DesktopDatePicker
-                                label={"Start Date"}
+                                label={"Expiration Date"}
                                 inputFormat="dd/MM/yyyy"
                                 margin="normal" 
                                 value={expiryDate}
@@ -202,4 +203,9 @@ const AddFirstAidService= (props) => {
     );
 }
 
-export default AddFirstAidService;
+export default AddTaxService;
+
+//onClose = {(event, reason) => {
+//    if (reason && reason == "backdropClick") return;
+//    props.callback("Cancel")
+//}}

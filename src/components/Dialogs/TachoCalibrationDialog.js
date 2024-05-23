@@ -90,6 +90,8 @@ const AddFEService= (props) => {
 
     const classes = useStyles();
 
+    const [selectedVehicleInvalid, setSelectedVehicleInvalid] = useState(false);
+
     const [selectedVehicle, setSelectedVehicle] = useState({id:0});
     const [expiryDate, setExpiryDate] = useState(new Date());
 
@@ -103,15 +105,25 @@ const AddFEService= (props) => {
         setExpiryDate(newValue);
     };
 
+    const validateForm = () => {
+        const isVehicleSelected = selectedVehicle && selectedVehicle.id !== 0;
+        setSelectedVehicleInvalid(!isVehicleSelected);
+        return isVehicleSelected;
+    };
+
     const handleAdd = () => {
-            let docToAdd = {
+        if (validateForm()) {
+            const docToAdd = {
                 registration: selectedVehicle.registration,
                 expiryDate: expiryDate,
             };
+
             addDocument(docToAdd);
             setExpiryDate(new Date());
+            setSelectedVehicle({id:0})
             props.callback("OK");
-    }
+        }
+    };
 
     return (
         <div>
@@ -126,10 +138,11 @@ const AddFEService= (props) => {
 
                 <div style={{margin:"0px 50px"}}>
                     <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Vehicle Registration</InputLabel>
+                    <InputLabel id="vehicleSelectLabel">Vehicle Registration</InputLabel>
                     <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
+                        labelId="vehicleSlectLabel"
+                        id="vehicleSelect"
+                        error={selectedVehicleInvalid}  
                         value={selectedVehicle}
                         label="Vehicle"
                         onChange={handleVehicleChange}

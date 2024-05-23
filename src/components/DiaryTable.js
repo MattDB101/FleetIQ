@@ -263,7 +263,7 @@ export default function DiaryTable(props) {
                         </Typography>
                         <div className={classes.searchBar}>
                             <TextField
-                                label={`${"Search"} ${props.keyColumn[0].name}`}
+                                label={`${"Search by"} ${props.keyColumn[0].name}`}
                                 id="outlined-size-small"
                                 style={{minWidth:"160px"}}
                                 value={searchTerm}

@@ -135,56 +135,42 @@ const AddJobDialog= (props) => {
     const handleChangeReturnTime = (newValue) => {
         setReturnTime(newValue);
     };
+    const validateForm = () => {
+        const isValidClient = client.length > 0;
+        const isValidContactDetails = contactDetails.length > 0;
+        const isValidPax = pax.length > 0;
+        const isValidDays = days > 0;
+        const isValidDeparting = departing.length > 0;
+        const isValidDestination = destination.length > 0;
+
+        setClientInvalid(!isValidClient);
+        setContactDetailsInvalid(!isValidContactDetails);
+        setPAXInvalid(!isValidPax);
+        setDaysInvalid(!isValidDays);
+        setDepartingInvalid(!isValidDeparting);
+        setDestinationInvalid(!isValidDestination);
+
+        return isValidClient && isValidContactDetails && isValidPax && isValidDays && isValidDeparting && isValidDestination;
+    };
 
     const handleAdd = () => {
-        setClientInvalid(true)
-        setContactDetailsInvalid(true)
-        setPAXInvalid(true)
-        setDaysInvalid(true)
-        setDepartingInvalid(true)
-        setDestinationInvalid(true)
-
-        if (client.length > 0) {
-            setClientInvalid(false)
-        }
-        if (contactDetails.length > 0) {
-            setContactDetailsInvalid(false)
-        }
-
-        if (departing.length > 0) {
-            setDepartingInvalid(false)
-        }
-
-        if (pax.length > 0) {
-            setPAXInvalid(false)
-        }
-
-        if (days > 0) {
-            setDaysInvalid(false)
-        }
-
-        if (destination.length > 0) {
-            setDestinationInvalid(false)
-        }
-
-        if (client.length > 0 && contactDetails.length > 0 && pax.length > 0 && departing.length > 0 && destination.length > 0 && days > 0 )  {
-           
+        if (validateForm()) {
             const formattedDepartTime = departTime ? `${departTime.$H}:${String(departTime.$m).padStart(2, '0')}` : "";
             const formattedReturnTime = returnTime ? `${returnTime.$H}:${String(returnTime.$m).padStart(2, '0')}` : "";
-          
+
             let docToAdd = {
-              client: client,
-              contactDetails: contactDetails,
-              days:days,
-              pax: pax,
-              departing: departing,
-              destination: destination,
-              quote:quote,
-              departTime: formattedDepartTime,
-              returnTime: formattedReturnTime,
-              startDate: startDate,
-              endDate: endDate,
-              comment: comment,
+                client: client,
+                contactDetails: contactDetails,
+                days: days,
+                pax: pax,
+                departing: departing,
+                destination: destination,
+                quote: quote,
+                departTime: formattedDepartTime,
+                returnTime: formattedReturnTime,
+                startDate: startDate,
+                endDate: endDate,
+                comment: comment,
             };
 
             addDocument(docToAdd);
@@ -192,15 +178,14 @@ const AddJobDialog= (props) => {
             setStartDate(new Date());
             setEndDate(new Date());
             setClient("");
-            setDays(1)
-            setComment("")
+            setDays(1);
+            setComment("");
             setContactDetails("");
-            setQuote("")
+            setQuote("");
             setPAX("");
             props.callback("OK");
-          }
-         
-    }
+        }
+    };
 
     return (
         <div>
