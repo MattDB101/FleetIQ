@@ -1,55 +1,42 @@
-import React from 'react';
-import {useState} from 'react';
+import React, { useState } from 'react';
 import { useAuthContext } from './hooks/useAuthContext';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import { Link , NavLink} from 'react-router-dom';
+import MenuIcon from '@material-ui/icons/Menu';
+import { NavLink } from 'react-router-dom';
 import navLinks from './components/paths';
 import AccountButton from './components/AccountButton';
-import { ListItemIcon } from '@material-ui/core';
-import { Box, Grid , Button} from '@material-ui/core';
-
-const defaultProps = {
-  bgcolor: 'background.paper',
-  m: 1,
-  style: { width: '25rem', height: '20rem' },
-  borderColor: 'text.primary',
-  marginLeft: '50px',
-};
+import { Accordion, AccordionSummary, AccordionDetails, Grid } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     width: "100vw",
-    height: "100vh"
+    height: "100vh",
+    "&$expanded": {
+      margin: "auto"
+    },
   },
   appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-   //   backgroundColor: '#ADCBE5',
-    //  color: "black",
-      
-     // border: "1px solid"
+    zIndex: theme.zIndex.drawer + 1,
   },
   drawer: {
     flexShrink: 0,
   },
-  activeDrawerPaper:{
+  activeDrawerPaper: {
     width: 250,
   },
-  inactiveDrawerPaper:{
+  inactiveDrawerPaper: {
     width: 0,
   },
   drawerContainer: {
-    marginTop:"20px",
+    marginTop: "5px",
     overflow: 'auto',
   },
   content: {
@@ -63,30 +50,100 @@ const useStyles = makeStyles((theme) => ({
   toolBar: {
     display: "flex",
     justifyContent: "space-between"
-  }
+  },
+  accordionSummary: {
+    backgroundColor: theme.palette.action.hover,
+  },
+  accordionDetails: {
+    padding: 0,
+    '& > div': {
+      width: '100%',
+    },
+  },
+  MuiExpanded: {
+    margin: '2px 0',
+  },
 }));
 
 export default function ClippedDrawer(props) {
   const classes = useStyles();
-  const links = navLinks();
+  const categories = navLinks();
   const { user } = useAuthContext();
   const [isActive, setIsActive] = useState(false);
+
+  function renderNavLink(link) {
+    return (
+      <div className='MuiNavlink'>
+      <NavLink
+        to={link.path}
+        exact={true}
+        style={{ display: 'inline-block', minWidth: "100%", marginBottom: "10px", color: "black", textDecoration: "none" }}
+        activeStyle={{ backgroundColor: '#ADCBE5', color: 'black', fontWeight: "bold" }}
+      >
+        <div>
+          <Grid container direction="row" alignItems="center">
+            <Grid item >
+              <span style={{ marginLeft: "20px" }}>{link.icon}</span>
+            </Grid>
+            <Grid item>
+              <span style={{ marginLeft: "10px" }}>{link.text}</span>
+            </Grid>
+          </Grid>
+        </div>
+      </NavLink>
+      </div>
+    );
+  }
+
+  function renderAccordion(categoryKey, category) {
+    return (
+      <Accordion style={{ margin: '1px' }} key={categoryKey}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+          className={classes.accordionSummary}
+        >
+          <Grid container direction="row" alignItems="center">
+            <Grid item style={{ marginRight: "10px" }}>{category.icon}</Grid>
+            <Grid style={{ fontSize: "16px" }} item>{category.heading}</Grid>
+          </Grid>
+        </AccordionSummary>
+        <AccordionDetails className={classes.accordionDetails}>
+          <div>
+            {Object.values(category.links).map((link, linkIndex) => (
+              <React.Fragment key={linkIndex}>
+                {renderNavLink(link)}
+              </React.Fragment>
+            ))}
+          </div>
+        </AccordionDetails>
+      </Accordion>
+    );
+  }
+
+  function renderCategory(categoryKey, category) {
+    if (Object.keys(category.links).length === 1) {
+      return renderNavLink(Object.values(category.links)[0]);
+    } else {
+      return renderAccordion(categoryKey, category);
+    }
+  }
 
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar className={classes.toolBar}>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          onClick={() => setIsActive(current => !current)}
-        >
-          <MenuIcon />
-        </IconButton>
-
-          <Typography style = {{marginRight: "auto"}} variant="h6" noWrap className={classes.pointer} onClick={event =>  window.location.href='/'}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            onClick={() => setIsActive(current => !current)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography style={{ marginRight: "auto" }} variant="h6" noWrap className={classes.pointer} onClick={event => window.location.href = '/'}>
             Caha Coaches Record System
           </Typography>
           {user && (
@@ -105,26 +162,17 @@ export default function ClippedDrawer(props) {
             transition: 'width 0.1s',
           }}
           variant="permanent"
-          classes={{paper: `${isActive ? classes.activeDrawerPaper : classes.inactiveDrawerPaper}`,         
+          classes={{
+            paper: `${isActive ? classes.activeDrawerPaper : classes.inactiveDrawerPaper}`,
           }}
         >
-
           <Toolbar />
           <div className={classes.drawerContainer}>
-            
-              {Object.keys(links).map((key, index) => (
-                  <NavLink key={index} to={links[key].path} exact={true}
-                      style={{ display: 'inline-block', minWidth: "100%",  marginBottom: "10px", color: "black", textDecoration: "none" }}
-                      activeStyle={{ backgroundColor: '#ADCBE5', color: 'black', fontWeight: "bold" }}>
-                        <div style={{  fontSize: "16px" }}>
-                          <Grid container direction="row" alignItems="center"  >
-                              <Grid item style={{marginTop:"6px"}}><span style={{ marginLeft: "20px" }}>{links[key].icon}</span></Grid>
-                              <Grid item><span style={{ marginLeft: "10px" }}> {links[key].text} </span></Grid>
-                          </Grid>
-                        </div>
-                  </NavLink>
-              ))}
-            
+            {Object.keys(categories).map((categoryKey, index) => (
+              <React.Fragment key={index}>
+                {renderCategory(categoryKey, categories[categoryKey])}
+              </React.Fragment>
+            ))}
           </div>
         </Drawer>
       )}
@@ -132,6 +180,5 @@ export default function ClippedDrawer(props) {
         {props.children}
       </main>
     </div>
-
   );
 }

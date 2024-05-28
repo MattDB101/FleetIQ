@@ -16,7 +16,7 @@ export default function TachoCalibration() {
     collection:collection, 
     documents: documents,
     error: error,
-    title:"Tachometer Calibration",
+    title:"Tachograph Calibration",
 
     keyColumn:[{
         key: "Registration",

@@ -205,8 +205,8 @@ export default function GenericTable(props) {
                 setFirstAidDialogState({shown: true, title:"Record First Aid Expiration", message: "firstaid", flavour: "success"})
                 break;
 
-            case "Tachometer Calibration":
-                setTachoCalibrationDialogState({shown: true, title:"Record Tachometer Calibration", message: "tachocalibration", flavour: "success"})
+            case "Tachograph Calibration":
+                setTachoCalibrationDialogState({shown: true, title:"Record Tachograph Calibration", message: "tachocalibration", flavour: "success"})
                 break;
 
             case "Tax":
