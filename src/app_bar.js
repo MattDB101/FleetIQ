@@ -70,34 +70,44 @@ export default function ClippedDrawer(props) {
   const categories = navLinks();
   const { user } = useAuthContext();
   const [isActive, setIsActive] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
 
   function renderNavLink(link) {
     return (
-      <div className='MuiNavlink'>
-      <NavLink
-        to={link.path}
-        exact={true}
-        style={{ display: 'inline-block', minWidth: "100%", marginBottom: "10px", color: "black", textDecoration: "none" }}
-        activeStyle={{ backgroundColor: '#ADCBE5', color: 'black', fontWeight: "bold" }}
-      >
-        <div>
-          <Grid container direction="row" alignItems="center">
-            <Grid item >
-              <span style={{ marginLeft: "20px" }}>{link.icon}</span>
+      <div className='MuiNavlink-root'>
+        <NavLink
+          to={link.path}
+          exact={true}
+          style={{ display: 'inline-block', minWidth: "100%", marginBottom: "10px", color: "black", textDecoration: "none" }}
+          activeStyle={{ backgroundColor: '#ADCBE5', color: 'black', fontWeight: "bold" }}
+        >
+          <div>
+            <Grid container direction="row" alignItems="center">
+              <Grid item >
+                <span style={{ marginLeft: "20px" }}>{link.icon}</span>
+              </Grid>
+              <Grid item>
+                <span style={{ marginLeft: "10px" }}>{link.text}</span>
+              </Grid>
             </Grid>
-            <Grid item>
-              <span style={{ marginLeft: "10px" }}>{link.text}</span>
-            </Grid>
-          </Grid>
-        </div>
-      </NavLink>
+          </div>
+        </NavLink>
       </div>
     );
   }
 
   function renderAccordion(categoryKey, category) {
     return (
-      <Accordion style={{ margin: '1px' }} key={categoryKey}>
+      <Accordion 
+        style={{ margin: '1px' }} 
+        key={categoryKey} 
+        expanded={expanded === categoryKey}
+        onChange={handleChange(categoryKey)}
+      >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -124,9 +134,9 @@ export default function ClippedDrawer(props) {
 
   function renderCategory(categoryKey, category) {
     if (Object.keys(category.links).length === 1) {
-      return renderNavLink(Object.values(category.links)[0]);
+      return renderNavLink(Object.values(category.links)[0]); // 1 child, don't use accordion menu
     } else {
-      return renderAccordion(categoryKey, category);
+      return renderAccordion(categoryKey, category); // > 1 child, use accordion menu
     }
   }
 
@@ -144,7 +154,7 @@ export default function ClippedDrawer(props) {
             <MenuIcon />
           </IconButton>
           <Typography style={{ marginRight: "auto" }} variant="h6" noWrap className={classes.pointer} onClick={event => window.location.href = '/'}>
-            Caha Coaches Record System
+            Caha Coaches Transport Management System
           </Typography>
           {user && (
             <h3>{user.displayName}</h3>

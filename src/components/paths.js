@@ -47,7 +47,7 @@ function NavLinks() {
                     icon: <FireExtinguisherIcon />
                 },
                 firstAid: {
-                    text: t("First Aid"),
+                    text: t("First Aid Kits"),
                     path: "/firstaid",
                     icon: <MedicalServicesOutlinedIcon />
                 },
