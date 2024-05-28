@@ -8,11 +8,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import navLinks from './components/paths';
 import AccountButton from './components/AccountButton';
 import { Accordion, AccordionSummary, AccordionDetails, Grid } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+const DRAWER_WIDTH = 280;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
   },
   activeDrawerPaper: {
-    width: 250,
+    width: DRAWER_WIDTH,
   },
   inactiveDrawerPaper: {
     width: 0,
@@ -60,9 +61,22 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
     },
   },
-  MuiExpanded: {
-    margin: '2px 0',
+  navLink: {
+    display: 'inline-block',
+    minWidth: "100%",
+    marginBottom: "10px",
+    color: "black",
+    textDecoration: "none",
+    '&.active': {
+      backgroundColor: '#ADCBE5',
+      color: 'black',
+      fontWeight: "bold",
+    }
   },
+  activeAccordionSummary: {
+    textDecoration: 'underline',
+    fontWeight: 'bold',
+  }
 }));
 
 export default function ClippedDrawer(props) {
@@ -71,6 +85,7 @@ export default function ClippedDrawer(props) {
   const { user } = useAuthContext();
   const [isActive, setIsActive] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const location = useLocation();
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -82,12 +97,11 @@ export default function ClippedDrawer(props) {
         <NavLink
           to={link.path}
           exact={true}
-          style={{ display: 'inline-block', minWidth: "100%", marginBottom: "10px", color: "black", textDecoration: "none" }}
-          activeStyle={{ backgroundColor: '#ADCBE5', color: 'black', fontWeight: "bold" }}
+          className={classes.navLink}
         >
           <div>
             <Grid container direction="row" alignItems="center">
-              <Grid item >
+              <Grid item>
                 <span style={{ marginLeft: "20px" }}>{link.icon}</span>
               </Grid>
               <Grid item>
@@ -101,10 +115,11 @@ export default function ClippedDrawer(props) {
   }
 
   function renderAccordion(categoryKey, category) {
+    const isActiveCategory = Object.values(category.links).some(link => location.pathname.includes(link.path));
     return (
-      <Accordion 
-        style={{ margin: '1px' }} 
-        key={categoryKey} 
+      <Accordion
+        style={{ margin: '1px' }}
+        key={categoryKey}
         expanded={expanded === categoryKey}
         onChange={handleChange(categoryKey)}
       >
@@ -112,7 +127,7 @@ export default function ClippedDrawer(props) {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
-          className={classes.accordionSummary}
+          className={`${classes.accordionSummary} ${isActiveCategory ? classes.activeAccordionSummary : ''}`}
         >
           <Grid container direction="row" alignItems="center">
             <Grid item style={{ marginRight: "10px" }}>{category.icon}</Grid>
@@ -154,7 +169,7 @@ export default function ClippedDrawer(props) {
             <MenuIcon />
           </IconButton>
           <Typography style={{ marginRight: "auto" }} variant="h6" noWrap className={classes.pointer} onClick={event => window.location.href = '/'}>
-            Caha Coaches Transport Management System
+            Caha Coaches Record System
           </Typography>
           {user && (
             <h3>{user.displayName}</h3>
@@ -168,7 +183,7 @@ export default function ClippedDrawer(props) {
         <Drawer
           className={classes.drawer}
           style={{
-            width: isActive ? 250 : 0,
+            width: isActive ? DRAWER_WIDTH : 0,
             transition: 'width 0.1s',
           }}
           variant="permanent"

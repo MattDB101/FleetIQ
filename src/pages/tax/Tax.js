@@ -30,7 +30,7 @@ export default function Tax() {
         sortable: true
       },
       {
-        name: "Calibration Date",
+        name: "Expiration Date",
         selector: (row) => {
           if (row.expiryDate){
             const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
