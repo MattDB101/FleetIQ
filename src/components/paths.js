@@ -64,7 +64,7 @@ function NavLinks() {
             }
         },
         configuration: {
-            heading: t("Configuration"),
+            heading: t("Settings"),
             icon: <Assessment />,
             links: {
                 settings: {

@@ -8,12 +8,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, Link as RouterLink } from 'react-router-dom';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import navLinks from './components/paths';
 import AccountButton from './components/AccountButton';
 import { Accordion, AccordionSummary, AccordionDetails, Grid } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-const DRAWER_WIDTH = 280;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
   },
   activeDrawerPaper: {
-    width: DRAWER_WIDTH,
+    width: 250,
   },
   inactiveDrawerPaper: {
     width: 0,
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
   toolBar: {
     display: "flex",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   accordionSummary: {
     backgroundColor: theme.palette.action.hover,
@@ -71,13 +71,43 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#ADCBE5',
       color: 'black',
       fontWeight: "bold",
-    }
+      textDecoration: "underline",
+    },
   },
   activeAccordionSummary: {
     textDecoration: 'underline',
-    fontWeight: 'bold',
-  }
+  },
+  breadcrumbs: {
+    color: theme.palette.common.white,
+    textDecoration: 'none',
+    '& a': {
+      color: theme.palette.common.white,
+      textDecoration: 'none',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
+  },
 }));
+
+
+
+const generatePathNameMap = (navLinks) => {
+  const pathNameMap = {};
+
+  Object.values(navLinks).forEach(category => {
+    pathNameMap[category.heading] = {
+      text: category.heading,
+      links: {},
+    };
+
+    Object.values(category.links).forEach(link => {
+      pathNameMap[category.heading].links[link.path] = link.text;
+    });
+  });
+
+  return pathNameMap;
+};
 
 export default function ClippedDrawer(props) {
   const classes = useStyles();
@@ -86,6 +116,7 @@ export default function ClippedDrawer(props) {
   const [isActive, setIsActive] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const location = useLocation();
+  const pathNameMap = generatePathNameMap(categories);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -155,6 +186,35 @@ export default function ClippedDrawer(props) {
     }
   }
 
+  function renderBreadcrumbs() {
+    const pathnames = location.pathname.split('/').filter(x => x);
+    let breadcrumbs = [];
+
+    Object.keys(categories).forEach((categoryKey) => {
+      const category = categories[categoryKey];
+      Object.values(category.links).forEach((link) => {
+        if (location.pathname.includes(link.path)) {
+          breadcrumbs.push(
+            <Typography key={category.heading} >
+              {category.heading}
+            </Typography>);
+            if (category.heading !== link.text) {
+              breadcrumbs.push(
+                <Typography key={link.path} >
+                {link.text}
+              </Typography>);
+            }
+        }
+      });
+    });
+
+    return (
+      <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
+        {breadcrumbs}
+      </Breadcrumbs>
+    );
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -168,8 +228,22 @@ export default function ClippedDrawer(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography style={{ marginRight: "auto" }} variant="h6" noWrap className={classes.pointer} onClick={event => window.location.href = '/'}>
+          <Typography
+            style={{ marginRight: "auto" }}
+            variant="h6"
+            noWrap
+            className={classes.pointer}
+            onClick={event => window.location.href = '/'}
+          >
             Caha Coaches Record System
+          </Typography>
+          <Typography
+            style={{ marginRight: "auto" }}
+            variant="h6"
+            noWrap
+            className={classes.pointer}
+            onClick={event => window.location.href = '/'}
+          >{renderBreadcrumbs()}
           </Typography>
           {user && (
             <h3>{user.displayName}</h3>
@@ -183,7 +257,7 @@ export default function ClippedDrawer(props) {
         <Drawer
           className={classes.drawer}
           style={{
-            width: isActive ? DRAWER_WIDTH : 0,
+            width: isActive ? 250 : 0,
             transition: 'width 0.1s',
           }}
           variant="permanent"
