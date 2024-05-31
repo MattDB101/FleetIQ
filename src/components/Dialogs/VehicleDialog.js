@@ -98,6 +98,7 @@ const AddVehicleService= (props) => {
     const [make, setMake] = useState("");
     const [model, setModel] = useState("");
     const [capacity, setCapacity] = useState("");
+    const [vin, setVIN] = useState("");
 
     const validateForm = () => {
         const isCapacityValid = capacity.length > 0;
@@ -116,6 +117,7 @@ const AddVehicleService= (props) => {
                 make,
                 model,
                 capacity,
+                vin,
             };
 
             addDocument(docToAdd);
@@ -123,6 +125,7 @@ const AddVehicleService= (props) => {
             setMake("");
             setModel("");
             setCapacity("");
+            setVIN("");
             props.callback("OK");
         }
     };
@@ -186,6 +189,15 @@ const AddVehicleService= (props) => {
                             InputLabelProps={{
                                 className: "required-label" 
                             }}
+                            variant="outlined" 
+                        />
+
+                        <TextField 
+                            type='normal'
+                            onChange={(e) => setVIN(e.target.value)} 
+                            margin="normal" 
+                            id="vin" 
+                            label="VIN" 
                             variant="outlined" 
                         />
 
