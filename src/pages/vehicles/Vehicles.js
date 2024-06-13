@@ -31,6 +31,11 @@ export default function Vehicles() {
         sortable: true
       },
       {
+        name: "VIN",
+        selector: (row) => row.vin,
+        sortable: false
+      },
+      {
         name: "Make",
         selector: (row) => row.make || "-",
         sortable: true
@@ -45,11 +50,7 @@ export default function Vehicles() {
         selector: (row) => row.capacity || "-",
         sortable: true
       },
-      {
-        name: "VIN",
-        selector: (row) => row.vin,
-        sortable: false
-      },
+
       // {
       //   name: "More Info",
       //   cell: (row) => (

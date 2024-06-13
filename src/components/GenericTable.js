@@ -14,11 +14,8 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { useFirestore } from "../hooks/useFirestore";
-import FireExtinguishersDialog from "./Dialogs/FireExtinguishersDialog";
-import FirstAidDialog from "./Dialogs/FirstAidDialog";
 import VehicleDialog from "./Dialogs/VehicleDialog";
-import TachoCalibrationDialog from "./Dialogs/TachoCalibrationDialog";
-import TaxDialog from "./Dialogs/TaxDialog";
+import GenericDialog from "./Dialogs/GenericDialog";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -158,6 +155,18 @@ export default function GenericTable(props) {
         shown: false, title: "", message: "", flavour: "success"
     })
 
+    const [CVRTDialogState, setCVRTDialogState] = useState({
+        shown: false, title: "", message: "", flavour: "success"
+    })
+
+    const [PSVDialogState, setPSVDialogState] = useState({
+        shown: false, title: "", message: "", flavour: "success"
+    })
+
+    const [RTOLDialogState, setRTOLDialogState] = useState({
+        shown: false, title: "", message: "", flavour: "success"
+    })
+
     const [vehicleDialogState, setVehicleDialogState] = useState({
         shown: false, title: "", message: "", flavour: "success"
     })
@@ -213,7 +222,18 @@ export default function GenericTable(props) {
                 setTaxDialogState({shown: true, title:"Record Vehicle Tax Expiration", message: "tax", flavour: "success"})
                 break;
 
-            
+            case "PSV":
+                setPSVDialogState({shown: true, title:"Record Vehicle PSV Inspection Expiration", message: "psv", flavour: "success"})
+                break;
+                
+            case "RTOL":
+                setRTOLDialogState({shown: true, title:"Record Vehicle RTOL Expiration", message: "rtol", flavour: "success"})
+                break;
+                        
+            case "CVRT":
+                setCVRTDialogState({shown: true, title:"Record CVRT Expiration", message: "cvrt", flavour: "success"})
+                break;      
+
             case "Add Vehicle":
                 setVehicleDialogState({shown: true, title:"Add a Vehicle To Fleet", message: "vehicle", flavour: "success"})
                 break;
@@ -407,8 +427,9 @@ export default function GenericTable(props) {
                 striped
             />
 
-            <FireExtinguishersDialog
+            <GenericDialog
                 show={fireExDialogState.shown}
+                collection={"fireextinguishers"}
                 title={fireExDialogState.title}
                 message={fireExDialogState.message}
                 flavour={fireExDialogState.flavour}
@@ -421,8 +442,9 @@ export default function GenericTable(props) {
                 }
             />
 
-            <FirstAidDialog
+            <GenericDialog
                 show={firstAidDialogState.shown}
+                collection={"firstaidkits"}
                 title={firstAidDialogState.title}
                 message={firstAidDialogState.message}
                 flavour={firstAidDialogState.flavour}
@@ -438,6 +460,7 @@ export default function GenericTable(props) {
             <VehicleDialog
                 show={vehicleDialogState.shown}
                 title={vehicleDialogState.title}
+                collection={"vehicles"}
                 message={vehicleDialogState.message}
                 flavour={vehicleDialogState.flavour}
                 callback={
@@ -447,11 +470,56 @@ export default function GenericTable(props) {
                         if (callback) callback(res);
                     }
                 }
+            /> 
+
+            <GenericDialog
+                show={PSVDialogState.shown}
+                collection={"psvs"}
+                title={PSVDialogState.title}
+                message={PSVDialogState.message}
+                flavour={PSVDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = PSVDialogState.callback;
+                        setPSVDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
+            />
+
+            <GenericDialog
+                show={CVRTDialogState.shown}
+                collection={"cvrts"}
+                title={CVRTDialogState.title}
+                message={CVRTDialogState.message}
+                flavour={CVRTDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = CVRTDialogState.callback;
+                        setCVRTDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
+            />
+        
+            <GenericDialog
+                show={RTOLDialogState.shown}
+                collection={"rtols"}
+                title={RTOLDialogState.title}
+                message={RTOLDialogState.message}
+                flavour={RTOLDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = RTOLDialogState.callback;
+                        setRTOLDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
             />
             
-            
-            <TaxDialog
+            <GenericDialog
                 show={taxDialogState.shown}
+                collection={"taxes"}
                 title={taxDialogState.title}
                 message={taxDialogState.message}
                 flavour={taxDialogState.flavour}
@@ -464,8 +532,9 @@ export default function GenericTable(props) {
                 }
             />
 
-            <TachoCalibrationDialog
+            <GenericDialog
                 show={tachoCalibrationDialogState.shown}
+                collection={"tachocalibrations"}
                 title={tachoCalibrationDialogState.title}
                 message={tachoCalibrationDialogState.message}
                 flavour={tachoCalibrationDialogState.flavour}

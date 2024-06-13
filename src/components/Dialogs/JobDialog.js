@@ -79,7 +79,7 @@ const defaultState = () => {
 }
 
 
-const AddJobDialog= (props) => {
+const JobDialog= (props) => {
     const months =  ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
     const classes = useStyles();
     const [state, setState] = useState(defaultState());
@@ -412,7 +412,7 @@ const AddJobDialog= (props) => {
     );
 }
 
-export default AddJobDialog;
+export default JobDialog;
 
 //onClose = {(event, reason) => {
 //    if (reason && reason == "backdropClick") return;

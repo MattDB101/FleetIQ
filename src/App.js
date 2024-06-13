@@ -13,6 +13,9 @@ import FireExtinguishers from './pages/fireextinguishers/FireExtinguishers';
 import Tax from './pages/tax/Tax';
 import FirstAid from './pages/firstaid/FirstAid';
 import TachoCalibration from './pages/tachocalibration/TachoCalibration';
+import CVRT from './pages/cvrt/CVRT';
+import PSV from './pages/psv/PSV';
+import RTOL from './pages/rtol/RTOL';
 
 function App() {
   const { authIsReady, user } = useAuthContext()
@@ -51,12 +54,25 @@ function App() {
                 {!user && <Redirect to="/" />}
               </Route>
 
-              
               <Route path="/tax">
                 {user && <Tax />}
                 {!user && <Redirect to="/" />}
               </Route>
+            
+              <Route path="/cvrt">
+                {user && <CVRT />}
+                {!user && <Redirect to="/" />}
+              </Route>
 
+              <Route path="/psv">
+                {user && <PSV />}
+                {!user && <Redirect to="/" />}
+              </Route>
+
+              <Route path="/rtol">
+                {user && <RTOL />}
+                {!user && <Redirect to="/" />}
+              </Route>
 
               <Route path="/fireextinguishers">
                 {user && <FireExtinguishers />}

@@ -15,7 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useFirestore } from "../hooks/useFirestore";
-import AddJobDialog from "./Dialogs/AddJobDialog";
+import JobDialog from "./Dialogs/JobDialog";
 import { Add } from "@mui/icons-material";
 
 
@@ -353,7 +353,7 @@ export default function DiaryTable(props) {
             />
 
            
-            <AddJobDialog
+            <JobDialog
                 show={AddDialogState.shown}
                 title={AddDialogState.title}
                 edit={AddDialogState.edit}

@@ -84,7 +84,7 @@ const defaultState = () => {
 
 
 const AddVehicleService= (props) => {
-    const collection = "vehicles" // THIS IS WHERE THE TABLE NAME GOES
+    const collection = props.collection
     const { user } = useAuthContext();
     const {documents, error} = useCollection(collection)
     const {addDocument, response} = useFirestore(collection);
