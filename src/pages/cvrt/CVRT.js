@@ -17,6 +17,8 @@ export default function CVRT() {
     documents: documents,
     error: error,
     title:"CVRT",
+    sortField: 2,
+    sortAsc: true,
 
     keyColumn:[{
         key: "Registration",

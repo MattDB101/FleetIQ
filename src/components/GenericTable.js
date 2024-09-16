@@ -257,57 +257,57 @@ export default function GenericTable(props) {
     };
 
     const filterRows = () => {
-    props.documents.sort(sortByRecent)
+        // props.documents.sort(sortByRecent)
 
-    // for (let i = 0; i < props.documents.length; i++) {
-    //     props.documents[i].recordedAt=toDateTime(props.documents[i].createdAt.seconds)
-    // }
-    //console.log(props.documents[0])
+        // for (let i = 0; i < props.documents.length; i++) {
+        //     props.documents[i].recordedAt=toDateTime(props.documents[i].createdAt.seconds)
+        // }
+        // console.log(props.documents[0])
 
-    let res = props.documents.filter((row) => {
-        if (!`${row[props.keyColumn[0].key]}`.toLowerCase().includes(searchTerm.toLowerCase()))
-            return false;
+        let res = props.documents.filter((row) => {
+            if (!`${row[props.keyColumn[0].key]}`.toLowerCase().includes(searchTerm.toLowerCase()))
+                return false;
 
-        let isValid = true;
+            let isValid = true;
 
-        Object.keys(columnFilters).forEach((filterKey) => {
-            let filter = columnFilters[filterKey];
-            if (!filter.enabled) return;
+            Object.keys(columnFilters).forEach((filterKey) => {
+                let filter = columnFilters[filterKey];
+                if (!filter.enabled) return;
 
-            if (filter.type === "text") {
+                if (filter.type === "text") {
 
-                if (!`${row[filterKey]}`.toLowerCase().includes(filter.filterValue.includes.toLowerCase())) {
-                    isValid = false;
+                    if (!`${row[filterKey]}`.toLowerCase().includes(filter.filterValue.includes.toLowerCase())) {
+                        isValid = false;
+                    }
+                    return;
+
+                } else if (filter.type === "numeric") {
+                    if (
+                        !rangeFilter (
+                            filter.filterValue.greaterThan,
+                            row[filterKey],
+                            filter.filterValue.lessThan
+                        )
+                    )
+                        isValid = false;
+                    return;
+
+                } else if (filter.type === "date") {
+                    if (
+                        !rangeFilter(
+                            filter.filterValue.from,
+                            new Date(row[filterKey]),
+                            filter.filterValue.to
+                        )
+                    )
+                        isValid = false;
+                    return;
                 }
-                return;
+            });
 
-            } else if (filter.type === "numeric") {
-                if (
-                    !rangeFilter(
-                        filter.filterValue.greaterThan,
-                        row[filterKey],
-                        filter.filterValue.lessThan
-                    )
-                )
-                    isValid = false;
-                return;
-
-            } else if (filter.type === "date") {
-                if (
-                    !rangeFilter(
-                        filter.filterValue.from,
-                        new Date(row[filterKey]),
-                        filter.filterValue.to
-                    )
-                )
-                    isValid = false;
-                return;
-            }
+            return isValid;
         });
-
-        return isValid;
-    });
-    return res;
+        return res;
     };
 
     return (
@@ -403,15 +403,16 @@ export default function GenericTable(props) {
                     </Button>
                 </span>
             </Tooltip>
-
-
             </div>
-            </Box>
+            </Box>    
             <DataTable
+                
                 columns={props.columns}
                 onSelectedRowsChange={(e) => setSelectedRows(e.selectedRows)}
                 data={filterRows()}
                 sortIcon={<SortIcon />}
+                defaultSortFieldId = {props.sortField}
+                defaultSortAsc = {props.sortAsc}
                 pagination
                 clearSelectedRows={toggleCleared}
                 selectableRows

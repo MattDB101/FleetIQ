@@ -17,7 +17,9 @@ export default function RTOL() {
     documents: documents,
     error: error,
     title:"RTOL",
-
+    sortField: 2,
+    sortAsc: true,
+    
     keyColumn:[{
         key: "Registration",
         name: "Reg"

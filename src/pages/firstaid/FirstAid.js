@@ -19,6 +19,8 @@ export default function FirstAid() {
     documents: documents,
     error: error,
     title:"First Aid",
+    sortField: 2,
+    sortAsc: true,
 
     keyColumn:[{
         key: "Registration",

@@ -19,8 +19,8 @@ export default function FireExtinguishers() {
     documents: documents,
     error: error,
     title: "Fire Extinguishers",
-    defaultSort: 2,
-    defaultSortAsc: true,
+    sortField: 2,
+    sortAsc: true,
   
     keyColumn: [{
       key: "Registration",
@@ -29,13 +29,11 @@ export default function FireExtinguishers() {
   
     columns: [
       {
-        id: "registration",
         name: "Registration",
         selector: (row) => row.registration,
         sortable: false
       },
       {
-        id: "serviceDate",
         name: "Service Date (Valid for 1 year)",
         selector: (row) => {
           if (row.expiryDate) {

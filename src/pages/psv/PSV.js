@@ -17,7 +17,9 @@ export default function PSV() {
     documents: documents,
     error: error,
     title:"PSV",
-
+    sortField: 2,
+    sortAsc: true,
+    
     keyColumn:[{
         key: "Registration",
         name: "Reg"

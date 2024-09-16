@@ -17,7 +17,9 @@ export default function TachoCalibration() {
     documents: documents,
     error: error,
     title:"Tachograph Calibration",
-
+    sortField: 2,
+    sortAsc: true,
+    
     keyColumn:[{
         key: "Registration",
         name: "Reg"
