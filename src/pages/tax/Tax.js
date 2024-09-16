@@ -7,7 +7,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import { useReducer, useEffect, useState } from 'react'
 
 export default function Tax() {
-  const collection = "tax" // THIS IS WHERE THE TABLE NAME GOES
+  const collection = "taxes" // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const {documents, error} = useCollection(collection)
   const currentDate = new Date();
@@ -32,15 +32,20 @@ export default function Tax() {
       {
         name: "Expiration Date",
         selector: (row) => {
-          if (row.expiryDate){
-            const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
-            return  <div className={expiryDate <= currentDate ? "overdue" : ""}>{new Intl.DateTimeFormat('en-GB').format(expiryDate)}</div>;
+          if (row.expiryDate) {
+            return new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
           }
+          return null;
         },
-        sortable: true
+        sortable: true,
+        cell: (row) => {
+          if (row.expiryDate) {
+            const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
+            return <div className={expiryDate <= currentDate ? "overdue" : ""}>{new Intl.DateTimeFormat('en-GB').format(expiryDate)}</div>;
+          }
+          return null;
+        }
       },
-
-      
     ],
   }
     return (

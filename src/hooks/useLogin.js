@@ -13,7 +13,6 @@ export const useLogin = () => {
         setError(null)
         setIsPending(true)
 
-        // sign the user in.
 
         try {
             const res = await projectAuth.signInWithEmailAndPassword(email, password)

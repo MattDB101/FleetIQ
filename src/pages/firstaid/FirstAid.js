@@ -9,7 +9,7 @@ import OKDialog from "../../components/Dialogs/OKDialog";
 
 
 export default function FirstAid() {
-  const collection = "firstaid" // THIS IS WHERE THE TABLE NAME GOES
+  const collection = "firstaidkits" // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const {documents, error} = useCollection(collection)
   const currentDate = new Date();
@@ -31,14 +31,21 @@ export default function FirstAid() {
         sortable: true
       },
       {
-        name: "Expiry Date",
+        name: "Expiration Date",
         selector: (row) => {
-          if (row.expiryDate){
-            const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
-            return  <div className={expiryDate <= currentDate ? "overdue" : ""}>{new Intl.DateTimeFormat('en-GB').format(expiryDate)}</div>;
+          if (row.expiryDate) {
+            return new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
           }
+          return null;
         },
         sortable: true,
+        cell: (row) => {
+          if (row.expiryDate) {
+            const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
+            return <div className={expiryDate <= currentDate ? "overdue" : ""}>{new Intl.DateTimeFormat('en-GB').format(expiryDate)}</div>;
+          }
+          return null;
+        }
       },
     ],
 

@@ -178,31 +178,22 @@ export default function GenericTable(props) {
     const handleDelete = () => {
         if (selectedRows.length == 1) {
             if (window.confirm("Are you sure you want to delete this row?")) {
-                try {
-                    deleteDocument(selectedRows[0].id);
-                } catch (error) {
-                    console.error('Error deleting document:', error);
-                }
-                selectedRows.length = 0;
                 setToggleCleared(!toggleCleared);
+                deleteDocument(selectedRows[0].id)
+                selectedRows.length = 0;
             }
-
         } else {
             var confirm = prompt("Please enter \"CONFIRM\" to delete these rows. \nWARNING: This cannot be undone!",);
-            if (confirm == "CONFIRM") {
-                for (let i = 0; i < selectedRows.length; i++) {
-                    try {
-                        deleteDocument(selectedRows[i].id)
-                    } catch (error) {
-                        console.error('Error deleting document:', error);
-                    }
-                }
+            if (confirm && confirm.toLowerCase() === "confirm") {
+                console.log("multidelete")
                 setToggleCleared(!toggleCleared);
+                for (let i = 0; i < selectedRows.length; i++) {
+                    deleteDocument(selectedRows[i].id)
+                }
                 selectedRows.length = 0;
             }   
         }
     }
-    
     const handleAdd = () => {
         console.log(props.title)
         switch(props.title) {
@@ -242,7 +233,7 @@ export default function GenericTable(props) {
 
 
     const handleEdit = () => {
-        console.log(selectedRows)
+        console.log(selectedRows[0])
     };
 
     const handleFilter = () => {

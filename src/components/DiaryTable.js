@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
         overflow: "visible",
         marginBottom: "0.3rem",
     },
-    selectedCount: {
+    selectedRowsCount: {
         flex: "2 2 90%",
     },
     title: {
@@ -127,7 +127,7 @@ export default function DiaryTable(props) {
 
     const classes = useStyles();
     const [controlsDisabled, setControlsDisabled] = useState(false)
-    const [selected, setSelected] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [toggleCleared, setToggleCleared] = React.useState(false);
     const [columnFilters, setColumnFilters] = useState({});
@@ -137,29 +137,29 @@ export default function DiaryTable(props) {
 
     const filterTerm = (event) => setSearchTerm(event.target.value);
 
-    const [AddDialogState, setDialogState] = useState({shown: false, edit: false, selected:"", title: "", message: "", flavour: "success"})
+    const [AddDialogState, setDialogState] = useState({shown: false, edit: false, selectedRows:"", title: "", message: "", flavour: "success"})
 
         
     const handleDelete = () => {
-        if (selected.length == 1) {
+        if (selectedRows.length == 1) {
             if (window.confirm("Are you sure you want to delete this row?")) {
                 setToggleCleared(!toggleCleared);
-                deleteDocument(selected[0].id)
-                selected.length = 0;
+                deleteDocument(selectedRows[0].id)
+                selectedRows.length = 0;
             }
         } else {
             var confirm = prompt("Please enter \"CONFIRM\" to delete these rows. \nWARNING: This cannot be undone!",);
-            if (confirm && confirm.toLowerCase === "confirm") {
+            if (confirm && confirm.toLowerCase() === "confirm") {
                 setToggleCleared(!toggleCleared);
-                for (let i = 0; i < selected.length; i++) {
-                    deleteDocument(selected[i].id)
+                for (let i = 0; i < selectedRows.length; i++) {
+                    deleteDocument(selectedRows[i].id)
                 }
-            selected.length = 0;
+            selectedRows.length = 0;
             }   
         }
     }
     const handleAdd = () => {
-        setDialogState({shown: true, edit: false, selected:"", title:"Add Job To Diary", message: "jobs", flavour: "success"})
+        setDialogState({shown: true, edit: false, selectedRows:"", title:"Add Job To Diary", message: "jobs", flavour: "success"})
     }
 
 
@@ -172,12 +172,12 @@ export default function DiaryTable(props) {
         
     };
 
-    const selectedItemText = () => {
-        if (selected.length === 0) return "";
-        if (selected.length === 1) return "1 row selected";
-        if (selected.length > 1 && selected.length < props.documents.length)
-            return `${selected.length} ${("rows selected")}`;
-        if (selected.length === props.documents.length) return ("All rows selected");
+    const selectedRowsItemText = () => {
+        if (selectedRows.length === 0) return "";
+        if (selectedRows.length === 1) return "1 row selectedRows";
+        if (selectedRows.length > 1 && selectedRows.length < props.documents.length)
+            return `${selectedRows.length} ${("rows selectedRows")}`;
+        if (selectedRows.length === props.documents.length) return ("All rows selectedRows");
 
         return "";
     };
@@ -256,10 +256,10 @@ export default function DiaryTable(props) {
                         </Typography>
 
                         <Typography
-                            className={classes.selectedCount}
+                            className={classes.selectedRowsCount}
                             style={{ color: "grey", fontSize: ".9rem" }}
                         >
-                            {selectedItemText()}
+                            {selectedRowsItemText()}
                         </Typography>
                         <div className={classes.searchBar}>
                             <TextField
@@ -293,10 +293,10 @@ export default function DiaryTable(props) {
                 </Tooltip>
 
                 <Tooltip title="Delete Record(s)">
-                <span disabled={selected.length === 0 || controlsDisabled}>
+                <span disabled={selectedRows.length === 0 || controlsDisabled}>
                     <Button
                         style={{marginLeft:"10px"}}
-                        disabled={selected.length === 0 || controlsDisabled}
+                        disabled={selectedRows.length === 0 || controlsDisabled}
                         size="small"
                         onClick={() => { handleDelete()}}
                         aria-label="delete"
@@ -326,7 +326,7 @@ export default function DiaryTable(props) {
             <Tooltip title="Edit Record">
             <span>
                     <Button
-                        disabled={selected.length === 0 || selected.length > 1 || controlsDisabled}
+                        disabled={selectedRows.length === 0 || selectedRows.length > 1 || controlsDisabled}
                         style={{marginLeft:"10px"}}
                         size="small"
                         className={classes.editButton}
@@ -344,10 +344,10 @@ export default function DiaryTable(props) {
             </Box>
             <DataTable
                 columns={props.columns}
-                onSelectedRowsChange={(e) => setSelected(e.selectedRows)}
+                onSelectedRowsRowsChange={(e) => setSelectedRows(e.selectedRowsRows)}
                 data={filterRows()}
                 sortIcon={<SortIcon />}
-                clearSelectedRows={toggleCleared}
+                clearSelectedRowsRows={toggleCleared}
                 selectableRows
                 striped
             />
@@ -358,7 +358,7 @@ export default function DiaryTable(props) {
                 title={AddDialogState.title}
                 edit={AddDialogState.edit}
                 collection={props.collection}
-                selected={AddDialogState.selected}
+                selectedRows={AddDialogState.selectedRows}
                 message={AddDialogState.message}
                 flavour={AddDialogState.flavour}
                 callback={
