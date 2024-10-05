@@ -144,49 +144,46 @@ const AddService= (props) => {
                 </DialogTitle>
 
                 <div style={{margin:"0px 50px"}}>
-                <FormControl fullWidth>
-                    <InputLabel id="vehicleSelectLabel">Vehicle</InputLabel>
-                    <Select
-                        labelId="vehicleSelectLabel"
-                        id="vehicleSelect"
-                        error={selectedVehicleInvalid}
-                        value={selectedVehicle}
-                        label="Vehicle"
-                        onChange={handleVehicleChange}
-                    >
-                        {documents && documents.filter(vehicle => !tableRegistrations.includes(vehicle.registration)).length > 0 ? (
-                        documents
-                            .filter(vehicle => !tableRegistrations.includes(vehicle.registration)) // Filter out vehicles already in the registrations array
-                            .map((vehicle, index) => (
-                            <MenuItem key={index} value={vehicle}>
-                                {vehicle.registration}
-                            </MenuItem>
-                            ))
-                        ) : (
-                        <MenuItem disabled>All registrations in use</MenuItem> // Disabled message when all registrations are in use
-                        )}
-                    </Select>
-                </FormControl>
+                    <FormControl fullWidth>
+                        <InputLabel id="vehicleSelectLabel">Vehicle</InputLabel>
+                        <Select
+                            labelId="vehicleSelectLabel"
+                            id="vehicleSelect"
+                            error={selectedVehicleInvalid}
+                            value={selectedVehicle}
+                            label="Vehicle"
+                            onChange={handleVehicleChange}
+                        >
+                            {documents && documents.filter(vehicle => !tableRegistrations.includes(vehicle.registration)).length > 0 ? (
+                            documents
+                                .filter(vehicle => !tableRegistrations.includes(vehicle.registration)) // Filter out vehicles already in the registrations array
+                                .map((vehicle, index) => (
+                                <MenuItem key={index} value={vehicle}>
+                                    {vehicle.registration}
+                                </MenuItem>
+                                ))
+                            ) : (
+                            <MenuItem disabled>All registrations in use</MenuItem> // Disabled message when all registrations are in use
+                            )}
+                        </Select>
+                    </FormControl>
 
-                        <br></br><br></br>
+                    <br></br><br></br>
+
                     <div class="expiryDate">
                         <LocalizationProvider dateAdapter={AdapterDateFns} locale={enGB}>
-
                         <DesktopDatePicker
                             label={"Expiration Date"}
-                            inputFormat="dd/MM/yyyy"
+                            format="dd/MM/yyyy"
                             margin="normal" 
                             value={expiryDate}
                             defaultValue={props.edit ? props.selected.expiryDate : ""}
                             onChange={handleChangeServiceDate}
                             renderInput={(params) => <TextField {...params} />}
                         />
-
-                        
                         </LocalizationProvider>
                         <div id="calenderDiv" ></div>
                     </div>
-
                 </div>
 
                 <DialogActions style={{marginTop: "20px", marginLeft: "70%", marginRight:"20px", marginBottom:"20px"}}>

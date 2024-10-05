@@ -18,6 +18,8 @@ export default function Vehicles() {
     documents: documents,
     error: error,
     title:"Add Vehicle",
+    sortField: 1,
+    sortAsc: true,
 
     keyColumn:[{
         key: "registration",

@@ -31,7 +31,7 @@ export default function FireExtinguishers() {
       {
         name: "Registration",
         selector: (row) => row.registration,
-        sortable: false
+        sortable: true
       },
       {
         name: "Service Date (Valid for 1 year)",
