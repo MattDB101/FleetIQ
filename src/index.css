@@ -60,6 +60,10 @@ ul {
   color: red;
 }
 
+.overdue-warning {
+  color: orange;
+}
+
 .MuiDrawer-root .MuiNavlink-root::before {
   background-color: rgba(0, 0, 0, 0.12);
 

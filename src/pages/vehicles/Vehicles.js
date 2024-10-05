@@ -1,5 +1,5 @@
 import React from "react";
-import GenericTable from "../../components/GenericTable"
+import GenericComplianceTable from "../../components/GenericComplianceTable"
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useCollection } from "../../hooks/useCollection";
 import { Button } from '@material-ui/core';
@@ -19,7 +19,7 @@ export default function Vehicles() {
     error: error,
     title:"Add Vehicle",
     sortField: 1,
-    sortAsc: true,
+    sortAsc: false,
 
     keyColumn:[{
         key: "registration",
@@ -31,11 +31,6 @@ export default function Vehicles() {
         name: "Registration",
         selector: (row) => row.registration,
         sortable: true
-      },
-      {
-        name: "VIN",
-        selector: (row) => row.vin,
-        sortable: false
       },
       {
         name: "Make",
@@ -51,6 +46,11 @@ export default function Vehicles() {
         name: "Capacity",
         selector: (row) => row.capacity || "-",
         sortable: true
+      },
+      {
+        name: "VIN",
+        selector: (row) => row.vin,
+        sortable: false
       },
 
       // {
@@ -80,7 +80,7 @@ export default function Vehicles() {
       
     <div>
       {documents && (
-        <GenericTable {...props} />
+        <GenericComplianceTable {...props} />
       )}
     </div>
     )

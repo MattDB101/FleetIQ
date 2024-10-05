@@ -1,5 +1,5 @@
 import React from "react";
-import GenericTable from "../../components/GenericTable"
+import GenericComplianceTable from "../../components/GenericComplianceTable"
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useCollection } from "../../hooks/useCollection";
 import { Button } from '@material-ui/core';
@@ -23,9 +23,10 @@ export default function FirstAid() {
     sortAsc: true,
 
     keyColumn:[{
-        key: "Registration",
-        name: "Reg"
+      key: "registration",
+      name: "Registration"
     }],
+    
     columns: [
       {
         name: "Registration",
@@ -34,29 +35,16 @@ export default function FirstAid() {
       },
       {
         name: "Expiration Date",
-        selector: (row) => {
-          if (row.expiryDate) {
-            return new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
-          }
-          return null;
-        },
+        selector: (row) => row.expiryDate,  // Only pass expiryDate here
         sortable: true,
-        cell: (row) => {
-          if (row.expiryDate) {
-            const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
-            return <div className={expiryDate <= currentDate ? "overdue" : ""}>{new Intl.DateTimeFormat('en-GB').format(expiryDate)}</div>;
-          }
-          return null;
-        }
       },
     ],
-
   }
     return (
       
     <div>
       {documents && (
-        <GenericTable {...props} />
+        <GenericComplianceTable {...props} />
       )}
     </div>
     )

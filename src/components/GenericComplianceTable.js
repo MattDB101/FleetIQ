@@ -130,7 +130,7 @@ function toDateTime(secs) {
 }
 
 
-export default function GenericTable(props) {
+export default function GenericComplianceTable(props) {
 
     const classes = useStyles();
     const [controlsDisabled, setControlsDisabled] = useState(false)
@@ -141,6 +141,10 @@ export default function GenericTable(props) {
     const {addDocument, deleteDocument, response} = useFirestore(props.collection)
     const docToAdd = props.docToAdd
 
+    const currentDate = new Date();
+    const warningThreshold = new Date(); // Create a new date object for 30-day warning
+    warningThreshold.setDate(currentDate.getDate() + 30); // Add 30 days to the current date
+  
     const filterTerm = (event) => setSearchTerm(event.target.value);
 
     const [taxDialogState, setTaxDialogState] = useState({
@@ -255,6 +259,39 @@ export default function GenericTable(props) {
 
         return false;
     };
+    const renderExpiryDateCell = (row) => {
+        if (row.expiryDate) {
+            const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
+            const isOverdue = expiryDate <= currentDate;
+            const isWarning = expiryDate > currentDate && expiryDate <= warningThreshold;
+
+            // Apply class based on the condition
+            let className = '';
+            if (isOverdue) {
+            className = 'overdue';
+            } else if (isWarning) {
+            className = 'overdue-warning';
+            }
+
+            return (
+            <div className={className}>
+                {new Intl.DateTimeFormat('en-GB').format(expiryDate)}
+            </div>
+            );
+        }
+        return null;
+    };
+    
+    const updatedColumns = props.columns.map((col) => {
+        if (col.name === "Expiration Date") { // Relying on the column name not to change!! (does also allow for custome classes such as with Fire Extinguishers by not using set name.)
+            return {
+            ...col,
+            cell: renderExpiryDateCell,  // Use the custom cell renderer defined above
+            };
+        }
+        return col;
+    });
+    
 
     const filterRows = () => {
         // props.documents.sort(sortByRecent)
@@ -406,13 +443,12 @@ export default function GenericTable(props) {
             </div>
             </Box>    
             <DataTable
-                
-                columns={props.columns}
+                columns={updatedColumns}
                 onSelectedRowsChange={(e) => setSelectedRows(e.selectedRows)}
                 data={filterRows()}
                 sortIcon={<SortIcon />}
-                defaultSortFieldId = {props.sortField}
-                defaultSortAsc = {props.sortAsc}
+                defaultSortFieldId={props.sortField}
+                defaultSortAsc={props.sortAsc}
                 pagination
                 clearSelectedRows={toggleCleared}
                 selectableRows

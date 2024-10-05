@@ -1,5 +1,5 @@
 import React from "react";
-import GenericTable from "../../components/GenericTable"
+import GenericComplianceTable from "../../components/GenericComplianceTable"
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useCollection } from "../../hooks/useCollection";
 import { Button } from '@material-ui/core';
@@ -22,9 +22,9 @@ export default function FireExtinguishers() {
     sortField: 2,
     sortAsc: true,
   
-    keyColumn: [{
-      key: "Registration",
-      name: "Reg"
+    keyColumn:[{
+      key: "registration",
+      name: "Registration"
     }],
   
     columns: [
@@ -62,7 +62,7 @@ export default function FireExtinguishers() {
   return (
     <div>
       {documents && (
-        <GenericTable {...props} />
+        <GenericComplianceTable {...props} />
       )}
     </div>
   );
