@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "park-lodge-care-system"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

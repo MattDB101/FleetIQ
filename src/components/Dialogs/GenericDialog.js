@@ -17,6 +17,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from "../../hooks/useCollection";
+import { enGB } from "date-fns/locale"; 
 
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -83,17 +84,23 @@ const defaultState = () => {
 }
 
 
-const AddTaxService= (props) => {
+const AddService= (props) => {
     const collection = "vehicles" // THIS IS WHERE THE TABLE NAME GOES
     const { user } = useAuthContext();
     const {documents, error} = useCollection(collection)
 
     const classes = useStyles();
-
     const [selectedVehicleInvalid, setSelectedVehicleInvalid] = useState(false);
-
     const [selectedVehicle, setSelectedVehicle] = useState({id:0});
     const [expiryDate, setExpiryDate] = useState(new Date());
+    const [tableRegistrations, setTableRegistrations] = useState([]);
+
+    useEffect(() => {
+    if (props.tableRows && props.tableRows.length > 0) { // store the reg's that are already on the table to hide them from the reg dropdown.
+        const registrations = props.tableRows.map(row => row.registration);
+        setTableRegistrations(registrations);
+    }
+    }, [props.tableRows]);
 
     const {addDocument, response} = useFirestore(props.collection + "/");
     
@@ -137,40 +144,48 @@ const AddTaxService= (props) => {
                 </DialogTitle>
 
                 <div style={{margin:"0px 50px"}}>
-                    <FormControl fullWidth>
-                    <InputLabel id="vehicleSelectLabel">Vehicle Registration</InputLabel>
+                <FormControl fullWidth>
+                    <InputLabel id="vehicleSelectLabel">Vehicle</InputLabel>
                     <Select
                         labelId="vehicleSelectLabel"
                         id="vehicleSelect"
-                        error={selectedVehicleInvalid} 
+                        error={selectedVehicleInvalid}
                         value={selectedVehicle}
                         label="Vehicle"
                         onChange={handleVehicleChange}
                     >
-                        {documents && documents.map((vehicle, index) => (
-                                <MenuItem value={vehicle}>{vehicle.registration} </MenuItem>
+                        {documents && documents.filter(vehicle => !tableRegistrations.includes(vehicle.registration)).length > 0 ? (
+                        documents
+                            .filter(vehicle => !tableRegistrations.includes(vehicle.registration)) // Filter out vehicles already in the registrations array
+                            .map((vehicle, index) => (
+                            <MenuItem key={index} value={vehicle}>
+                                {vehicle.registration}
+                            </MenuItem>
                             ))
-                        }
+                        ) : (
+                        <MenuItem disabled>All registrations in use</MenuItem> // Disabled message when all registrations are in use
+                        )}
                     </Select>
-                    </FormControl>
+                </FormControl>
+
                         <br></br><br></br>
-                        <div class="expiryDate">
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <div class="expiryDate">
+                        <LocalizationProvider dateAdapter={AdapterDateFns} locale={enGB}>
 
-                            <DesktopDatePicker
-                                label={"Expiration Date"}
-                                inputFormat="dd/MM/yyyy"
-                                margin="normal" 
-                                value={expiryDate}
-                                defaultValue={props.edit ? props.selected.expiryDate : ""}
-                                onChange={handleChangeServiceDate}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
+                        <DesktopDatePicker
+                            label={"Expiration Date"}
+                            inputFormat="dd/MM/yyyy"
+                            margin="normal" 
+                            value={expiryDate}
+                            defaultValue={props.edit ? props.selected.expiryDate : ""}
+                            onChange={handleChangeServiceDate}
+                            renderInput={(params) => <TextField {...params} />}
+                        />
 
-                            
-                            </LocalizationProvider>
-                            <div id="calenderDiv" ></div>
-                        </div>
+                        
+                        </LocalizationProvider>
+                        <div id="calenderDiv" ></div>
+                    </div>
 
                 </div>
 
@@ -178,7 +193,7 @@ const AddTaxService= (props) => {
                     <div>
                         <Tooltip title="Save">
                             <Button
-                                style={{backgroundColor:"green", fontWeight:"bold", fontSize:"1rem", marginRight:"10px"}}
+                                style={{backgroundColor:"green", color:"white", fontSize:"1rem", marginRight:"10px"}}
                                 autofocus
                                 onClick={() => handleAdd()}
                                 size="large">
@@ -190,7 +205,7 @@ const AddTaxService= (props) => {
                     <div className={classes.dialogBox} style={{ display: 'flex', flex: '20%', marginRight:"20px"}}>
                         <Tooltip title="Cancel">
                             <Button
-                                style={{backgroundColor:"red", fontWeight:"bold", fontSize:"1rem"}}
+                                style={{backgroundColor:"red", color:"white", fontSize:"1rem"}}
                                 onClick={() => props.callback("Cancel")}
                                 size="large">
                                     Cancel 
@@ -203,7 +218,7 @@ const AddTaxService= (props) => {
     );
 }
 
-export default AddTaxService;
+export default AddService;
 
 //onClose = {(event, reason) => {
 //    if (reason && reason == "backdropClick") return;

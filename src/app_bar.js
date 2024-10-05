@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
 import { NavLink, useLocation, Link as RouterLink } from 'react-router-dom';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import navLinks from './components/paths';
+import navLinks from './components/NavLinks';
 import AccountButton from './components/AccountButton';
 import { Accordion, AccordionSummary, AccordionDetails, Grid } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -235,7 +235,7 @@ export default function ClippedDrawer(props) {
             className={classes.pointer}
             onClick={event => window.location.href = '/'}
           >
-            Caha Coaches Record System
+            FleetIQ
           </Typography>
           <Typography
             style={{ marginRight: "auto" }}

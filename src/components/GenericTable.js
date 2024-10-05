@@ -419,36 +419,6 @@ export default function GenericTable(props) {
                 striped
             />
 
-            <GenericDialog
-                show={fireExDialogState.shown}
-                collection={"fireextinguishers"}
-                title={fireExDialogState.title}
-                message={fireExDialogState.message}
-                flavour={fireExDialogState.flavour}
-                callback={
-                    (res) => {
-                        let callback = fireExDialogState.callback;
-                        setFireExDialogState({ shown: false });
-                        if (callback) callback(res);
-                    }
-                }
-            />
-
-            <GenericDialog
-                show={firstAidDialogState.shown}
-                collection={"firstaidkits"}
-                title={firstAidDialogState.title}
-                message={firstAidDialogState.message}
-                flavour={firstAidDialogState.flavour}
-                callback={
-                    (res) => {
-                        let callback = firstAidDialogState.callback;
-                        setFirstAidDialogState({ shown: false });
-                        if (callback) callback(res);
-                    }
-                }
-            />
-
             <VehicleDialog
                 show={vehicleDialogState.shown}
                 title={vehicleDialogState.title}
@@ -465,8 +435,41 @@ export default function GenericTable(props) {
             /> 
 
             <GenericDialog
+                show={fireExDialogState.shown}
+                collection={"fireextinguishers"}
+                tableRows={props.documents}
+                title={fireExDialogState.title}
+                message={fireExDialogState.message}
+                flavour={fireExDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = fireExDialogState.callback;
+                        setFireExDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
+            />
+
+            <GenericDialog
+                show={firstAidDialogState.shown}
+                collection={"firstaidkits"}
+                tableRows={props.documents}
+                title={firstAidDialogState.title}
+                message={firstAidDialogState.message}
+                flavour={firstAidDialogState.flavour}
+                callback={
+                    (res) => {
+                        let callback = firstAidDialogState.callback;
+                        setFirstAidDialogState({ shown: false });
+                        if (callback) callback(res);
+                    }
+                }
+            />
+
+            <GenericDialog
                 show={PSVDialogState.shown}
                 collection={"psvs"}
+                tableRows={props.documents}
                 title={PSVDialogState.title}
                 message={PSVDialogState.message}
                 flavour={PSVDialogState.flavour}
@@ -482,6 +485,7 @@ export default function GenericTable(props) {
             <GenericDialog
                 show={CVRTDialogState.shown}
                 collection={"cvrts"}
+                tableRows={props.documents}
                 title={CVRTDialogState.title}
                 message={CVRTDialogState.message}
                 flavour={CVRTDialogState.flavour}
@@ -498,6 +502,7 @@ export default function GenericTable(props) {
                 show={RTOLDialogState.shown}
                 collection={"rtols"}
                 title={RTOLDialogState.title}
+                tableRows={props.documents}
                 message={RTOLDialogState.message}
                 flavour={RTOLDialogState.flavour}
                 callback={
@@ -512,6 +517,7 @@ export default function GenericTable(props) {
             <GenericDialog
                 show={taxDialogState.shown}
                 collection={"taxes"}
+                tableRows={props.documents}
                 title={taxDialogState.title}
                 message={taxDialogState.message}
                 flavour={taxDialogState.flavour}
@@ -527,6 +533,7 @@ export default function GenericTable(props) {
             <GenericDialog
                 show={tachoCalibrationDialogState.shown}
                 collection={"tachocalibrations"}
+                tableRows={props.documents}
                 title={tachoCalibrationDialogState.title}
                 message={tachoCalibrationDialogState.message}
                 flavour={tachoCalibrationDialogState.flavour}

@@ -1,4 +1,4 @@
-cd "C:\Users\Matt\Documents\Caha Coaches Record System\Caha Coaches Record System"
+cd "C:\Users\Matt\Documents\FleetIQ\FleetIQ - dev"
 call npm run build
 call firebase deploy --only hosting
 pause
