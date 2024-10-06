@@ -145,7 +145,6 @@ export default function GenericComplianceTable(props) {
   const { addDocument, deleteDocument, response } = useFirestore(
     props.collection
   );
-  const docToAdd = props.docToAdd;
 
   const dialogMapping = {
     'Fire Extinguishers': {
@@ -339,50 +338,55 @@ export default function GenericComplianceTable(props) {
     // console.log(props.documents[0])
 
     let res = props.documents.filter((row) => {
-      if (
-        !`${row[props.keyColumn[0].key]}`
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      )
+      const rowAlphanumeric = `${row[props.keyColumn[0].key]}`
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9]/g, '');
+
+      const searchAlphanumeric = searchTerm
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9]/g, '');
+
+      if (!rowAlphanumeric.includes(searchAlphanumeric)) {
         return false;
+      }
 
       let isValid = true;
 
-      Object.keys(columnFilters).forEach((filterKey) => {
-        let filter = columnFilters[filterKey];
-        if (!filter.enabled) return;
+      // Object.keys(columnFilters).forEach((filterKey) => {
+      //   let filter = columnFilters[filterKey];
+      //   if (!filter.enabled) return;
 
-        if (filter.type === 'text') {
-          if (
-            !`${row[filterKey]}`
-              .toLowerCase()
-              .includes(filter.filterValue.includes.toLowerCase())
-          ) {
-            isValid = false;
-          }
-          return;
-        } else if (filter.type === 'numeric') {
-          if (
-            !rangeFilter(
-              filter.filterValue.greaterThan,
-              row[filterKey],
-              filter.filterValue.lessThan
-            )
-          )
-            isValid = false;
-          return;
-        } else if (filter.type === 'date') {
-          if (
-            !rangeFilter(
-              filter.filterValue.from,
-              new Date(row[filterKey]),
-              filter.filterValue.to
-            )
-          )
-            isValid = false;
-          return;
-        }
-      });
+      //   if (filter.type === 'text') {
+      //     if (
+      //       !`${row[filterKey]}`
+      //         .toLowerCase()
+      //         .includes(filter.filterValue.includes.toLowerCase())
+      //     ) {
+      //       isValid = false;
+      //     }
+      //     return;
+      //   } else if (filter.type === 'numeric') {
+      //     if (
+      //       !rangeFilter(
+      //         filter.filterValue.greaterThan,
+      //         row[filterKey],
+      //         filter.filterValue.lessThan
+      //       )
+      //     )
+      //       isValid = false;
+      //     return;
+      //   } else if (filter.type === 'date') {
+      //     if (
+      //       !rangeFilter(
+      //         filter.filterValue.from,
+      //         new Date(row[filterKey]),
+      //         filter.filterValue.to
+      //       )
+      //     )
+      //       isValid = false;
+      //     return;
+      //   }
+      // });
 
       return isValid;
     });
