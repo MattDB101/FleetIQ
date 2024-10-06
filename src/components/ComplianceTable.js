@@ -298,6 +298,12 @@ export default function ComplianceTable(props) {
             defaultSortFieldId={props.sortField}
             defaultSortAsc={props.sortAsc}
             pagination
+            paginationRowsPerPageOptions={[10, 25, 50]}
+            paginationPerPage={25}
+            paginationComponentOptions={{
+              selectAllRowsItem: true,
+              selectAllRowsItemText: 'All',
+            }}
             clearSelectedRows={toggleCleared}
             selectableRows
             striped
