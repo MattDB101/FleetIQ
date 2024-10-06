@@ -1,5 +1,5 @@
 import React from 'react';
-import GenericComplianceTable from '../../components/GenericComplianceTable';
+import ComplianceTable from '../../components/ComplianceTable';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useCollection } from '../../hooks/useCollection';
 import { Button } from '@material-ui/core';
@@ -20,7 +20,7 @@ export default function Drivers() {
 
     keyColumn: [
       {
-        key: 'Name',
+        key: 'name',
         name: 'Name',
       },
     ],
@@ -53,5 +53,5 @@ export default function Drivers() {
       // },
     ],
   };
-  return <div>{documents && <GenericComplianceTable {...props} />}</div>;
+  return <div>{documents && <ComplianceTable {...props} />}</div>;
 }

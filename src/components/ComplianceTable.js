@@ -16,6 +16,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { useFirestore } from '../hooks/useFirestore';
 import VehicleDialog from './Dialogs/VehicleDialog';
 import GenericDialog from './Dialogs/GenericDialog';
+import TableHeader from './TableHeader';
 
 const useStyles = makeStyles((theme) => ({
   style: {
@@ -99,33 +100,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function sortByRecent(a, b) {
-  if (a.createdAt.seconds < b.createdAt.seconds) {
-    return 1;
-  }
-
-  if (a.createdAt.seconds > b.createdAt.seconds) {
-    return -1;
-  }
-
-  return 0;
-}
-
-function toDateTime(secs) {
-  var t = new Date(1970, 0, 1); // Epoch
-  var offset = t.getTimezoneOffset() * -1;
-  secs += offset * 60;
-  t.setSeconds(secs);
-
-  var DD = t.toString().slice(7, 10);
-  var MM = t.toString().slice(4, 7);
-  var YY = t.toString().slice(13, 16);
-  var dateString = DD + '-' + MM + '-' + YY;
-  var timeString = t.toString().slice(16, 21);
-  var timeDateString = timeString + '  ' + dateString;
-  return timeDateString;
-}
-
 const defaultDialogState = {
   shown: false,
   title: '',
@@ -134,7 +108,7 @@ const defaultDialogState = {
   collection: '',
 };
 
-export default function GenericComplianceTable(props) {
+export default function ComplianceTable(props) {
   const classes = useStyles();
   const [controlsDisabled, setControlsDisabled] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -226,8 +200,8 @@ export default function GenericComplianceTable(props) {
         title: dialogConfig.title,
         message: dialogConfig.message,
         flavour: dialogConfig.flavour,
-        dialogType: dialogConfig.dialogType, // Set the dialog type
-        collection: dialogConfig.collection, // Set the collection property
+        dialogType: dialogConfig.dialogType,
+        collection: dialogConfig.collection,
       });
     } else {
       console.warn('No dialog configuration found for this title.');
@@ -272,7 +246,6 @@ export default function GenericComplianceTable(props) {
 
       let className = '';
       if (isOverdue) {
-        // conditionally apply classes to cell
         className = 'overdue';
       } else if (isWarning) {
         className = 'overdue-warning';
@@ -330,13 +303,6 @@ export default function GenericComplianceTable(props) {
   });
 
   const filterRows = () => {
-    // props.documents.sort(sortByRecent)
-
-    // for (let i = 0; i < props.documents.length; i++) {
-    //     props.documents[i].recordedAt=toDateTime(props.documents[i].createdAt.seconds)
-    // }
-    // console.log(props.documents[0])
-
     let res = props.documents.filter((row) => {
       const rowAlphanumeric = `${row[props.keyColumn[0].key]}`
         .toLowerCase()
@@ -350,45 +316,7 @@ export default function GenericComplianceTable(props) {
         return false;
       }
 
-      let isValid = true;
-
-      // Object.keys(columnFilters).forEach((filterKey) => {
-      //   let filter = columnFilters[filterKey];
-      //   if (!filter.enabled) return;
-
-      //   if (filter.type === 'text') {
-      //     if (
-      //       !`${row[filterKey]}`
-      //         .toLowerCase()
-      //         .includes(filter.filterValue.includes.toLowerCase())
-      //     ) {
-      //       isValid = false;
-      //     }
-      //     return;
-      //   } else if (filter.type === 'numeric') {
-      //     if (
-      //       !rangeFilter(
-      //         filter.filterValue.greaterThan,
-      //         row[filterKey],
-      //         filter.filterValue.lessThan
-      //       )
-      //     )
-      //       isValid = false;
-      //     return;
-      //   } else if (filter.type === 'date') {
-      //     if (
-      //       !rangeFilter(
-      //         filter.filterValue.from,
-      //         new Date(row[filterKey]),
-      //         filter.filterValue.to
-      //       )
-      //     )
-      //       isValid = false;
-      //     return;
-      //   }
-      // });
-
-      return isValid;
+      return true;
     });
     return res;
   };
@@ -397,107 +325,20 @@ export default function GenericComplianceTable(props) {
     <div className={classes.style}>
       <Card>
         <Paper>
-          <Box mx={2} className={classes.tableHeader}>
-            <Typography
-              className={classes.title}
-              style={{ fontWeight: 400, fontSize: '1.25rem' }}
-            >
-              {props.title}
-            </Typography>
-
-            <Typography
-              className={classes.selectedCount}
-              style={{ color: 'grey', fontSize: '.9rem' }}
-            >
-              {selectedItemText()}
-            </Typography>
-            <div className={classes.searchBar}>
-              <TextField
-                label={`${'Search by'} ${props.keyColumn[0].name}`}
-                id="outlined-size-small"
-                style={{ minWidth: '120px' }}
-                value={searchTerm}
-                onChange={filterTerm}
-                variant="outlined"
-                fullWidth
-                size="small"
-                //dense
-              />
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'right',
-                alignItems: 'right',
-                flex: '30%',
-              }}
-            >
-              <Tooltip title={'Add Record'}>
-                <Button
-                  style={{ marginLeft: '10px' }}
-                  disabled={controlsDisabled}
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  onClick={() => {
-                    handleAdd();
-                  }}
-                  aria-label="add"
-                  startIcon={<AddIcon style={{ marginLeft: '30%' }} />}
-                ></Button>
-              </Tooltip>
-
-              <Tooltip title="Delete Record(s)">
-                <span disabled={selectedRows.length === 0 || controlsDisabled}>
-                  <Button
-                    style={{ marginLeft: '10px' }}
-                    disabled={selectedRows.length === 0 || controlsDisabled}
-                    size="small"
-                    onClick={() => {
-                      handleDelete();
-                    }}
-                    aria-label="delete"
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<DeleteIcon style={{ marginLeft: '30%' }} />}
-                  ></Button>
-                </span>
-              </Tooltip>
-
-              <Tooltip title="Edit Record">
-                <span disabled={selectedRows.length !== 1 || controlsDisabled}>
-                  <Button
-                    disabled={selectedRows.length !== 1 || controlsDisabled}
-                    style={{ marginLeft: '10px' }}
-                    size="small"
-                    className={classes.editButton}
-                    onClick={() => {
-                      handleEdit();
-                    }}
-                    startIcon={<EditIcon style={{ marginLeft: '30%' }} />}
-                    aria-label="edit"
-                    variant="contained"
-                  ></Button>
-                </span>
-              </Tooltip>
-
-              <Tooltip title="Filter Records">
-                <Button
-                  disabled={true}
-                  style={{ marginLeft: '10px' }}
-                  variant="contained"
-                  size="small"
-                  onClick={() => {
-                    handleFilter();
-                  }}
-                  className={classes.filterButton}
-                  aria-label="add"
-                  startIcon={<FilterListIcon style={{ marginLeft: '30%' }} />}
-                ></Button>
-              </Tooltip>
-            </div>
-          </Box>
+          <TableHeader
+            title={props.title}
+            selectedItemText={selectedItemText}
+            searchColumn={props.keyColumn[0].key}
+            searchTerm={searchTerm}
+            filterTerm={filterTerm}
+            handleAdd={handleAdd}
+            handleDelete={handleDelete}
+            handleEdit={handleEdit}
+            handleFilter={handleFilter}
+            controlsDisabled={controlsDisabled}
+            selectedRows={selectedRows}
+            classes={classes}
+          />
           <DataTable
             columns={updatedColumns}
             onSelectedRowsChange={(e) => setSelectedRows(e.selectedRows)}

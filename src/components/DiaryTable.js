@@ -17,6 +17,7 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { useFirestore } from '../hooks/useFirestore';
 import JobDialog from './Dialogs/JobDialog';
 import { Add } from '@mui/icons-material';
+import TableHeader from './TableHeader';
 
 const useStyles = makeStyles((theme) => ({
   style: {
@@ -262,107 +263,21 @@ export default function DiaryTable(props) {
     <div className={classes.style}>
       <Card>
         <Paper>
-          <Box mx={2} className={classes.tableHeader}>
-            <Typography
-              className={classes.title}
-              style={{ fontWeight: 400, fontSize: '1.25rem' }}
-            >
-              {props.title}
-            </Typography>
+          <TableHeader
+            title={props.title}
+            selectedItemText={selectedItemText}
+            searchColumn={props.keyColumn[0].key}
+            searchTerm={searchTerm}
+            filterTerm={filterTerm}
+            handleAdd={handleAdd}
+            handleDelete={handleDelete}
+            handleEdit={handleEdit}
+            handleFilter={handleFilter}
+            controlsDisabled={controlsDisabled}
+            selectedRows={selectedRows}
+            classes={classes}
+          />
 
-            <Typography
-              className={classes.selectedCount}
-              style={{ color: 'grey', fontSize: '.9rem' }}
-            >
-              {selectedItemText()}
-            </Typography>
-            <div className={classes.searchBar}>
-              <TextField
-                label={`${'Search by'} ${props.keyColumn[0].name}`}
-                id="outlined-size-small"
-                style={{ minWidth: '120px' }}
-                value={searchTerm}
-                onChange={filterTerm}
-                variant="outlined"
-                fullWidth
-                size="small"
-                //dense
-              />
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'right',
-                alignItems: 'right',
-                flex: '30%',
-              }}
-            >
-              <Tooltip title={'Add Record'}>
-                <Button
-                  style={{ marginLeft: '10px' }}
-                  disabled={controlsDisabled}
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  onClick={() => {
-                    handleAdd();
-                  }}
-                  aria-label="add"
-                  startIcon={<AddIcon style={{ marginLeft: '30%' }} />}
-                ></Button>
-              </Tooltip>
-
-              <Tooltip title="Delete Record(s)">
-                <span disabled={selectedRows.length === 0 || controlsDisabled}>
-                  <Button
-                    style={{ marginLeft: '10px' }}
-                    disabled={selectedRows.length === 0 || controlsDisabled}
-                    size="small"
-                    onClick={() => {
-                      handleDelete();
-                    }}
-                    aria-label="delete"
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<DeleteIcon style={{ marginLeft: '30%' }} />}
-                  ></Button>
-                </span>
-              </Tooltip>
-
-              <Tooltip title="Edit Record">
-                <span disabled={selectedRows.length !== 1 || controlsDisabled}>
-                  <Button
-                    disabled={selectedRows.length !== 1 || controlsDisabled}
-                    style={{ marginLeft: '10px' }}
-                    size="small"
-                    className={classes.editButton}
-                    onClick={() => {
-                      handleEdit();
-                    }}
-                    startIcon={<EditIcon style={{ marginLeft: '30%' }} />}
-                    aria-label="edit"
-                    variant="contained"
-                  ></Button>
-                </span>
-              </Tooltip>
-
-              <Tooltip title="Filter Records">
-                <Button
-                  disabled={true}
-                  style={{ marginLeft: '10px' }}
-                  variant="contained"
-                  size="small"
-                  onClick={() => {
-                    handleFilter();
-                  }}
-                  className={classes.filterButton}
-                  aria-label="add"
-                  startIcon={<FilterListIcon style={{ marginLeft: '30%' }} />}
-                ></Button>
-              </Tooltip>
-            </div>
-          </Box>
           <DataTable
             columns={props.columns}
             onSelectedRowsRowsChange={(e) =>
