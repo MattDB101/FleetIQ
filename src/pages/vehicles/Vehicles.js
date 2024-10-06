@@ -49,7 +49,7 @@ export default function Vehicles() {
       },
       {
         name: "VIN",
-        selector: (row) => row.vin,
+        selector: (row) => row.vin || "-",
         sortable: false
       },
 
