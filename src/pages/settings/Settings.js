@@ -1,18 +1,10 @@
-import styles from './Settings.module.css'
-import React, { useEffect, useState } from "react";
-import {useAuthContext} from "../../hooks/useAuthContext"
+import styles from './Settings.module.css';
+import React, { useEffect, useState } from 'react';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 export default function Settings() {
-  const [name, setName] = useState("");
-  const { user } = useAuthContext()
+  const [name, setName] = useState('');
+  const { user } = useAuthContext();
 
-  return (
-    <form>
-
-    </form>
-  )
+  return <form></form>;
 }
-
-  
-
-

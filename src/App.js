@@ -26,19 +26,60 @@ function App() {
         <BrowserRouter>
           <ClippedDrawer>
             <Routes>
-              <Route path="/" element={user ? <Navigate to="/diary" /> : <Navigate to="/login" />} />
-              <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-              <Route path="/drivers" element={user ? <Drivers /> : <Navigate to="/" />} />
-              <Route path="/vehicles" element={user ? <Vehicles /> : <Navigate to="/" />} />
-              <Route path="/diary" element={user ? <Diary /> : <Navigate to="/" />} />
-              <Route path="/tax" element={user ? <Tax /> : <Navigate to="/" />} />
-              <Route path="/cvrt" element={user ? <CVRT /> : <Navigate to="/" />} />
-              <Route path="/psv" element={user ? <PSV /> : <Navigate to="/" />} />
-              <Route path="/rtol" element={user ? <RTOL /> : <Navigate to="/" />} />
-              <Route path="/fireextinguishers" element={user ? <FireExtinguishers /> : <Navigate to="/" />} />
-              <Route path="/firstaid" element={user ? <FirstAid /> : <Navigate to="/" />} />
-              <Route path="/tachocalibration" element={user ? <TachoCalibration /> : <Navigate to="/" />} />
-              <Route path="/settings" element={user ? <Settings /> : <Navigate to="/" />} />
+              <Route
+                path="/"
+                element={
+                  user ? <Navigate to="/diary" /> : <Navigate to="/login" />
+                }
+              />
+              <Route
+                path="/login"
+                element={!user ? <Login /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/drivers"
+                element={user ? <Drivers /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/vehicles"
+                element={user ? <Vehicles /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/diary"
+                element={user ? <Diary /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/tax"
+                element={user ? <Tax /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/cvrt"
+                element={user ? <CVRT /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/psv"
+                element={user ? <PSV /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/rtol"
+                element={user ? <RTOL /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/fireextinguishers"
+                element={user ? <FireExtinguishers /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/firstaid"
+                element={user ? <FirstAid /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/tachocalibration"
+                element={user ? <TachoCalibration /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/settings"
+                element={user ? <Settings /> : <Navigate to="/" />}
+              />
             </Routes>
           </ClippedDrawer>
         </BrowserRouter>

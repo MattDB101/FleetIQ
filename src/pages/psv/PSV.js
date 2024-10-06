@@ -1,50 +1,44 @@
-import React from "react";
-import GenericComplianceTable from "../../components/GenericComplianceTable"
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { useCollection } from "../../hooks/useCollection";
+import React from 'react';
+import GenericComplianceTable from '../../components/GenericComplianceTable';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useCollection } from '../../hooks/useCollection';
 import { Button } from '@material-ui/core';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import { useReducer, useEffect, useState } from 'react'
+import { useReducer, useEffect, useState } from 'react';
 
 export default function PSV() {
-  const collection = "psvs" // THIS IS WHERE THE TABLE NAME GOES
+  const collection = 'psvs'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
-  const {documents, error} = useCollection(collection)
+  const { documents, error } = useCollection(collection);
   const currentDate = new Date();
-  
+
   let props = {
-    collection:collection, 
+    collection: collection,
     documents: documents,
     error: error,
-    title:"PSV",
+    title: 'PSV',
     sortField: 2,
     sortAsc: true,
-    
-    keyColumn:[{
-      key: "registration",
-      name: "Registration"
-    }],
-    
+
+    keyColumn: [
+      {
+        key: 'registration',
+        name: 'Registration',
+      },
+    ],
+
     columns: [
       {
-        name: "Registration",
+        name: 'Registration',
         selector: (row) => row.registration,
-        sortable: true
+        sortable: true,
       },
       {
-        name: "Expiration Date",
-        selector: (row) => row.expiryDate,  // Only pass expiryDate here
+        name: 'Expiration Date',
+        selector: (row) => row.expiryDate, // Only pass expiryDate here
         sortable: true,
       },
     ],
-  }
-    return (
-      
-    <div>
-      {documents && (
-        <GenericComplianceTable {...props} />
-      )}
-    </div>
-    )
+  };
+  return <div>{documents && <GenericComplianceTable {...props} />}</div>;
 }
-

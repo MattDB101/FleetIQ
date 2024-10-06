@@ -1,56 +1,57 @@
-import React from "react";
-import GenericComplianceTable from "../../components/GenericComplianceTable"
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { useCollection } from "../../hooks/useCollection";
+import React from 'react';
+import GenericComplianceTable from '../../components/GenericComplianceTable';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useCollection } from '../../hooks/useCollection';
 import { Button } from '@material-ui/core';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import { useReducer, useEffect, useState } from 'react'
-import OKDialog from "../../components/Dialogs/OKDialog";
-
+import { useReducer, useEffect, useState } from 'react';
+import OKDialog from '../../components/Dialogs/OKDialog';
 
 export default function Vehicles() {
-  const collection = "vehicles" // THIS IS WHERE THE TABLE NAME GOES
+  const collection = 'vehicles'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
-  const {documents, error} = useCollection(collection)
+  const { documents, error } = useCollection(collection);
 
   let props = {
-    collection:collection, 
+    collection: collection,
     documents: documents,
     error: error,
-    title:"Add Vehicle",
+    title: 'Add Vehicle',
     sortField: 1,
     sortAsc: false,
 
-    keyColumn:[{
-        key: "registration",
-        name: "Registration"
-    }],
-      
+    keyColumn: [
+      {
+        key: 'registration',
+        name: 'Registration',
+      },
+    ],
+
     columns: [
       {
-        name: "Registration",
+        name: 'Registration',
         selector: (row) => row.registration,
-        sortable: true
+        sortable: true,
       },
       {
-        name: "Make",
-        selector: (row) => row.make || "-",
-        sortable: true
+        name: 'Make',
+        selector: (row) => row.make || '-',
+        sortable: true,
       },
       {
-        name: "Model",
-        selector: (row) => row.model || "-",
-        sortable: true
+        name: 'Model',
+        selector: (row) => row.model || '-',
+        sortable: true,
       },
       {
-        name: "Capacity",
-        selector: (row) => row.capacity || "-",
-        sortable: true
+        name: 'Capacity',
+        selector: (row) => row.capacity || '-',
+        sortable: true,
       },
       {
-        name: "VIN",
+        name: 'VIN',
         selector: (row) => row.vin,
-        sortable: false
+        sortable: false,
       },
 
       // {
@@ -73,16 +74,7 @@ export default function Vehicles() {
       //   selector: (row) => row.recordedAt,
       //   sortable: true
       // },
-      
     ],
-  }
-    return (
-      
-    <div>
-      {documents && (
-        <GenericComplianceTable {...props} />
-      )}
-    </div>
-    )
+  };
+  return <div>{documents && <GenericComplianceTable {...props} />}</div>;
 }
-

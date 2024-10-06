@@ -12,16 +12,21 @@ import { NavLink, useLocation, Link as RouterLink } from 'react-router-dom';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import navLinks from './components/NavLinks';
 import AccountButton from './components/AccountButton';
-import { Accordion, AccordionSummary, AccordionDetails, Grid } from '@material-ui/core';
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Grid,
+} from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    width: "100vw",
-    height: "100vh",
-    "&$expanded": {
-      margin: "auto"
+    width: '100vw',
+    height: '100vh',
+    '&$expanded': {
+      margin: 'auto',
     },
   },
   appBar: {
@@ -37,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
     width: 0,
   },
   drawerContainer: {
-    marginTop: "5px",
+    marginTop: '5px',
     overflow: 'auto',
   },
   content: {
@@ -46,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '4rem',
   },
   pointer: {
-    cursor: "pointer",
+    cursor: 'pointer',
   },
   toolBar: {
-    display: "flex",
-    justifyContent: "space-between",
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   accordionSummary: {
     backgroundColor: theme.palette.action.hover,
@@ -63,15 +68,15 @@ const useStyles = makeStyles((theme) => ({
   },
   navLink: {
     display: 'inline-block',
-    minWidth: "100%",
-    marginBottom: "10px",
-    color: "black",
-    textDecoration: "none",
+    minWidth: '100%',
+    marginBottom: '10px',
+    color: 'black',
+    textDecoration: 'none',
     '&.active': {
       backgroundColor: '#ADCBE5',
       color: 'black',
-      fontWeight: "bold",
-      textDecoration: "underline",
+      fontWeight: 'bold',
+      textDecoration: 'underline',
     },
   },
   activeAccordionSummary: {
@@ -90,18 +95,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-
 const generatePathNameMap = (navLinks) => {
   const pathNameMap = {};
 
-  Object.values(navLinks).forEach(category => {
+  Object.values(navLinks).forEach((category) => {
     pathNameMap[category.heading] = {
       text: category.heading,
       links: {},
     };
 
-    Object.values(category.links).forEach(link => {
+    Object.values(category.links).forEach((link) => {
       pathNameMap[category.heading].links[link.path] = link.text;
     });
   });
@@ -124,19 +127,15 @@ export default function ClippedDrawer(props) {
 
   function renderNavLink(link) {
     return (
-      <div className='MuiNavlink-root'>
-        <NavLink
-          to={link.path}
-          exact={true}
-          className={classes.navLink}
-        >
+      <div className="MuiNavlink-root">
+        <NavLink to={link.path} exact={true} className={classes.navLink}>
           <div>
             <Grid container direction="row" alignItems="center">
               <Grid item>
-                <span style={{ marginLeft: "20px" }}>{link.icon}</span>
+                <span style={{ marginLeft: '20px' }}>{link.icon}</span>
               </Grid>
               <Grid item>
-                <span style={{ marginLeft: "10px" }}>{link.text}</span>
+                <span style={{ marginLeft: '10px' }}>{link.text}</span>
               </Grid>
             </Grid>
           </div>
@@ -146,7 +145,9 @@ export default function ClippedDrawer(props) {
   }
 
   function renderAccordion(categoryKey, category) {
-    const isActiveCategory = Object.values(category.links).some(link => location.pathname.includes(link.path));
+    const isActiveCategory = Object.values(category.links).some((link) =>
+      location.pathname.includes(link.path)
+    );
     return (
       <Accordion
         style={{ margin: '1px' }}
@@ -161,8 +162,12 @@ export default function ClippedDrawer(props) {
           className={`${classes.accordionSummary} ${isActiveCategory ? classes.activeAccordionSummary : ''}`}
         >
           <Grid container direction="row" alignItems="center">
-            <Grid item style={{ marginRight: "10px" }}>{category.icon}</Grid>
-            <Grid style={{ fontSize: "16px" }} item>{category.heading}</Grid>
+            <Grid item style={{ marginRight: '10px' }}>
+              {category.icon}
+            </Grid>
+            <Grid style={{ fontSize: '16px' }} item>
+              {category.heading}
+            </Grid>
           </Grid>
         </AccordionSummary>
         <AccordionDetails className={classes.accordionDetails}>
@@ -187,7 +192,7 @@ export default function ClippedDrawer(props) {
   }
 
   function renderBreadcrumbs() {
-    const pathnames = location.pathname.split('/').filter(x => x);
+    const pathnames = location.pathname.split('/').filter((x) => x);
     let breadcrumbs = [];
 
     Object.keys(categories).forEach((categoryKey) => {
@@ -195,15 +200,13 @@ export default function ClippedDrawer(props) {
       Object.values(category.links).forEach((link) => {
         if (location.pathname.includes(link.path)) {
           breadcrumbs.push(
-            <Typography key={category.heading} >
-              {category.heading}
-            </Typography>);
-            if (category.heading !== link.text) {
-              breadcrumbs.push(
-                <Typography key={link.path} >
-                {link.text}
-              </Typography>);
-            }
+            <Typography key={category.heading}>{category.heading}</Typography>
+          );
+          if (category.heading !== link.text) {
+            breadcrumbs.push(
+              <Typography key={link.path}>{link.text}</Typography>
+            );
+          }
         }
       });
     });
@@ -224,33 +227,30 @@ export default function ClippedDrawer(props) {
             edge="start"
             color="inherit"
             aria-label="menu"
-            onClick={() => setIsActive(current => !current)}
+            onClick={() => setIsActive((current) => !current)}
           >
             <MenuIcon />
           </IconButton>
           <Typography
-            style={{ marginRight: "auto" }}
+            style={{ marginRight: 'auto' }}
             variant="h6"
             noWrap
             className={classes.pointer}
-            onClick={event => window.location.href = '/'}
+            onClick={(event) => (window.location.href = '/')}
           >
             FleetIQ
           </Typography>
           <Typography
-            style={{ marginRight: "auto" }}
+            style={{ marginRight: 'auto' }}
             variant="h6"
             noWrap
             className={classes.pointer}
-            onClick={event => window.location.href = '/'}
-          >{renderBreadcrumbs()}
+            onClick={(event) => (window.location.href = '/')}
+          >
+            {renderBreadcrumbs()}
           </Typography>
-          {user && (
-            <h3>{user.displayName}</h3>
-          )}
-          {user && (
-            <AccountButton />
-          )}
+          {user && <h3>{user.displayName}</h3>}
+          {user && <AccountButton />}
         </Toolbar>
       </AppBar>
       {user && (
@@ -275,9 +275,7 @@ export default function ClippedDrawer(props) {
           </div>
         </Drawer>
       )}
-      <main className={classes.content}>
-        {props.children}
-      </main>
+      <main className={classes.content}>{props.children}</main>
     </div>
   );
 }

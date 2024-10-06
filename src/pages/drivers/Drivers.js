@@ -1,34 +1,35 @@
-import React from "react";
-import GenericComplianceTable from "../../components/GenericComplianceTable"
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { useCollection } from "../../hooks/useCollection";
+import React from 'react';
+import GenericComplianceTable from '../../components/GenericComplianceTable';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useCollection } from '../../hooks/useCollection';
 import { Button } from '@material-ui/core';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import { useReducer, useEffect, useState } from 'react'
-import OKDialog from "../../components/Dialogs/OKDialog";
-
+import { useReducer, useEffect, useState } from 'react';
+import OKDialog from '../../components/Dialogs/OKDialog';
 
 export default function Drivers() {
-  const collection = "drivers" // THIS IS WHERE THE TABLE NAME GOES
+  const collection = 'drivers'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
-  const {documents, error} = useCollection(collection)
+  const { documents, error } = useCollection(collection);
 
   let props = {
-    collection:collection, 
+    collection: collection,
     documents: documents,
     error: error,
-    title:"Drivers",
+    title: 'Drivers',
 
-    keyColumn:[{
-        key: "Name",
-        name: "Name"
-    }],
-      
+    keyColumn: [
+      {
+        key: 'Name',
+        name: 'Name',
+      },
+    ],
+
     columns: [
       {
-        name: "Name",
+        name: 'Name',
         selector: (row) => row.Name,
-        sortable: true
+        sortable: true,
       },
       // {
       //   name: "More Info",
@@ -50,16 +51,7 @@ export default function Drivers() {
       //   selector: (row) => row.recordedAt,
       //   sortable: true
       // },
-      
     ],
-  }
-    return (
-      
-    <div>
-      {documents && (
-        <GenericComplianceTable {...props} />
-      )}
-    </div>
-    )
+  };
+  return <div>{documents && <GenericComplianceTable {...props} />}</div>;
 }
-
