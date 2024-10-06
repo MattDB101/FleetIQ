@@ -17,6 +17,10 @@ import { useFirestore } from '../hooks/useFirestore';
 import VehicleDialog from './Dialogs/VehicleDialog';
 import GenericDialog from './Dialogs/GenericDialog';
 import TableHeader from './TableHeader';
+import {
+  renderExpiryDateCell,
+  renderServiceDateCell,
+} from './utils/DateCellRendering';
 
 const useStyles = makeStyles((theme) => ({
   style: {
@@ -163,10 +167,6 @@ export default function ComplianceTable(props) {
     },
   };
 
-  const currentDate = new Date();
-  const warningThreshold = new Date(); // Create a new date object for 30-day warning
-  warningThreshold.setDate(currentDate.getDate() + 30); // Add 30 days to the current date
-
   const filterTerm = (event) => setSearchTerm(event.target.value);
 
   const handleDelete = () => {
@@ -237,66 +237,17 @@ export default function ComplianceTable(props) {
     return false;
   };
 
-  const renderExpiryDateCell = (row) => {
-    if (row.expiryDate) {
-      const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
-      const isOverdue = expiryDate <= currentDate;
-      const isWarning =
-        expiryDate > currentDate && expiryDate <= warningThreshold;
-
-      let className = '';
-      if (isOverdue) {
-        className = 'overdue';
-      } else if (isWarning) {
-        className = 'overdue-warning';
-      }
-
-      return (
-        <div className={className}>
-          {new Intl.DateTimeFormat('en-GB').format(expiryDate)}
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const renderServiceDateCell = (row) => {
-    if (row.expiryDate) {
-      const serviceDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
-      const expiryDate = new Date(serviceDate); // Create a new date for the expiry date
-      expiryDate.setFullYear(serviceDate.getFullYear() + 1); // Set the expiry date to one year later
-
-      const warningThreshold = new Date(expiryDate);
-      warningThreshold.setDate(expiryDate.getDate() - 30); // Subtract 30 days to the expiry date for the warning check
-
-      let className = '';
-      if (expiryDate < currentDate) {
-        // conditionally apply classes to cell
-        className = 'overdue';
-      } else if (warningThreshold < currentDate) {
-        className = 'overdue-warning';
-      }
-
-      return (
-        <div className={className}>
-          {new Intl.DateTimeFormat('en-GB').format(serviceDate)}
-        </div>
-      );
-    }
-    return null;
-  };
-
   const updatedColumns = props.columns.map((col) => {
     if (col.name === 'Expiration Date') {
-      // Relying on the column name not to change!! (does also allow for custome classes such as with Fire Extinguishers by not using set name.)
+      // I'm relying on the column name not to change!! (upside: does allow for custom render conditions such as with Fire Extinguishers by not using set name)
       return {
         ...col,
-        cell: renderExpiryDateCell,
+        cell: renderExpiryDateCell, // Use the custom cell renderer in utils folder
       };
     } else if (col.name === 'Service Date (Valid for 1 year)') {
       return {
         ...col,
-        cell: renderServiceDateCell, // Use the new custom cell renderer
+        cell: renderServiceDateCell, // Use the custom cell renderer in utils folder
       };
     }
     return col;
