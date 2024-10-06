@@ -36,26 +36,8 @@ export default function FireExtinguishers() {
       },
       {
         name: 'Service Date (Valid for 1 year)',
-        selector: (row) => {
-          if (row.expiryDate) {
-            return new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
-          }
-          return null;
-        },
+        selector: (row) => row.expiryDate,
         sortable: true,
-        cell: (row) => {
-          if (row.expiryDate) {
-            const serviceDate = new Date(row.expiryDate.seconds * 1000);
-            const expiryDate = new Date(serviceDate);
-            expiryDate.setFullYear(serviceDate.getFullYear() + 1); // Set the full year correctly
-            return (
-              <div className={expiryDate <= currentDate ? 'overdue' : ''}>
-                {new Intl.DateTimeFormat('en-GB').format(serviceDate)}
-              </div>
-            );
-          }
-          return null;
-        },
       },
     ],
   };

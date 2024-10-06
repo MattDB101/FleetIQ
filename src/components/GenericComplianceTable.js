@@ -263,6 +263,7 @@ export default function GenericComplianceTable(props) {
 
     return false;
   };
+
   const renderExpiryDateCell = (row) => {
     if (row.expiryDate) {
       const expiryDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
@@ -270,9 +271,9 @@ export default function GenericComplianceTable(props) {
       const isWarning =
         expiryDate > currentDate && expiryDate <= warningThreshold;
 
-      // Apply class based on the condition
       let className = '';
       if (isOverdue) {
+        // conditionally apply classes to cell
         className = 'overdue';
       } else if (isWarning) {
         className = 'overdue-warning';
@@ -287,12 +288,43 @@ export default function GenericComplianceTable(props) {
     return null;
   };
 
+  const renderServiceDateCell = (row) => {
+    if (row.expiryDate) {
+      const serviceDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
+      const expiryDate = new Date(serviceDate); // Create a new date for the expiry date
+      expiryDate.setFullYear(serviceDate.getFullYear() + 1); // Set the expiry date to one year later
+
+      const warningThreshold = new Date(expiryDate);
+      warningThreshold.setDate(expiryDate.getDate() - 30); // Subtract 30 days to the expiry date for the warning check
+
+      let className = '';
+      if (expiryDate < currentDate) {
+        // conditionally apply classes to cell
+        className = 'overdue';
+      } else if (warningThreshold < currentDate) {
+        className = 'overdue-warning';
+      }
+
+      return (
+        <div className={className}>
+          {new Intl.DateTimeFormat('en-GB').format(serviceDate)}
+        </div>
+      );
+    }
+    return null;
+  };
+
   const updatedColumns = props.columns.map((col) => {
     if (col.name === 'Expiration Date') {
       // Relying on the column name not to change!! (does also allow for custome classes such as with Fire Extinguishers by not using set name.)
       return {
         ...col,
-        cell: renderExpiryDateCell, // Use the custom cell renderer defined above
+        cell: renderExpiryDateCell,
+      };
+    } else if (col.name === 'Service Date (Valid for 1 year)') {
+      return {
+        ...col,
+        cell: renderServiceDateCell, // Use the new custom cell renderer
       };
     }
     return col;
@@ -429,24 +461,10 @@ export default function GenericComplianceTable(props) {
                 </span>
               </Tooltip>
 
-              <Tooltip title="Filter Records">
-                <Button
-                  style={{ marginLeft: '10px' }}
-                  variant="contained"
-                  size="small"
-                  onClick={() => {
-                    handleFilter();
-                  }}
-                  className={classes.filterButton}
-                  aria-label="add"
-                  startIcon={<FilterListIcon style={{ marginLeft: '30%' }} />}
-                ></Button>
-              </Tooltip>
-
               <Tooltip title="Edit Record">
-                <span disabled={selectedRows.length === 0 || controlsDisabled}>
+                <span disabled={selectedRows.length !== 1 || controlsDisabled}>
                   <Button
-                    disabled={selectedRows.length === 0 || controlsDisabled}
+                    disabled={selectedRows.length !== 1 || controlsDisabled}
                     style={{ marginLeft: '10px' }}
                     size="small"
                     className={classes.editButton}
@@ -458,6 +476,21 @@ export default function GenericComplianceTable(props) {
                     variant="contained"
                   ></Button>
                 </span>
+              </Tooltip>
+
+              <Tooltip title="Filter Records">
+                <Button
+                  disabled={true}
+                  style={{ marginLeft: '10px' }}
+                  variant="contained"
+                  size="small"
+                  onClick={() => {
+                    handleFilter();
+                  }}
+                  className={classes.filterButton}
+                  aria-label="add"
+                  startIcon={<FilterListIcon style={{ marginLeft: '30%' }} />}
+                ></Button>
               </Tooltip>
             </div>
           </Box>

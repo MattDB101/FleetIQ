@@ -181,7 +181,7 @@ export default function DiaryTable(props) {
 
   const handleFilter = () => {};
 
-  const selectedRowsItemText = () => {
+  const selectedItemText = () => {
     if (selectedRows.length === 0) return '';
     if (selectedRows.length === 1) return '1 row selectedRows';
     if (selectedRows.length > 1 && selectedRows.length < props.documents.length)
@@ -271,16 +271,16 @@ export default function DiaryTable(props) {
             </Typography>
 
             <Typography
-              className={classes.selectedRowsCount}
+              className={classes.selectedCount}
               style={{ color: 'grey', fontSize: '.9rem' }}
             >
-              {selectedRowsItemText()}
+              {selectedItemText()}
             </Typography>
             <div className={classes.searchBar}>
               <TextField
                 label={`${'Search by'} ${props.keyColumn[0].name}`}
                 id="outlined-size-small"
-                style={{ minWidth: '160px' }}
+                style={{ minWidth: '120px' }}
                 value={searchTerm}
                 onChange={filterTerm}
                 variant="outlined"
@@ -329,38 +329,38 @@ export default function DiaryTable(props) {
                   ></Button>
                 </span>
               </Tooltip>
-              {/* 
-            <Tooltip title="Filter Records">
-                <Button
-                    style={{marginLeft:"10px"}}
-                    variant="contained"
-                    size="small"
-                    onClick={() => { handleFilter()}}
-                    className={classes.filterButton}
-                    aria-label="add"
-                    startIcon={<FilterListIcon style={{ marginLeft: "30%" }} />}
-                >
-                </Button>
-            </Tooltip> 
-            */}
 
-              {/* 
-            <Tooltip title="Edit Record">
-            <span>
-                    <Button
-                        disabled={selectedRows.length === 0 || selectedRows.length > 1 || controlsDisabled}
-                        style={{marginLeft:"10px"}}
-                        size="small"
-                        className={classes.editButton}
-                        onClick={() => { handleEdit()}}
-                        startIcon={<EditIcon style={{ marginLeft: "30%" }} />}
-                        aria-label="edit"
-                        variant="contained"
-                    >
-                    </Button>
+              <Tooltip title="Edit Record">
+                <span disabled={selectedRows.length !== 1 || controlsDisabled}>
+                  <Button
+                    disabled={selectedRows.length !== 1 || controlsDisabled}
+                    style={{ marginLeft: '10px' }}
+                    size="small"
+                    className={classes.editButton}
+                    onClick={() => {
+                      handleEdit();
+                    }}
+                    startIcon={<EditIcon style={{ marginLeft: '30%' }} />}
+                    aria-label="edit"
+                    variant="contained"
+                  ></Button>
                 </span>
-            </Tooltip>
-            */}
+              </Tooltip>
+
+              <Tooltip title="Filter Records">
+                <Button
+                  disabled={true}
+                  style={{ marginLeft: '10px' }}
+                  variant="contained"
+                  size="small"
+                  onClick={() => {
+                    handleFilter();
+                  }}
+                  className={classes.filterButton}
+                  aria-label="add"
+                  startIcon={<FilterListIcon style={{ marginLeft: '30%' }} />}
+                ></Button>
+              </Tooltip>
             </div>
           </Box>
           <DataTable

@@ -35,7 +35,7 @@ export default function CVRT() {
       },
       {
         name: 'Expiration Date',
-        selector: (row) => row.expiryDate, // Only pass expiryDate here
+        selector: (row) => row.expiryDate,
         sortable: true,
       },
     ],
