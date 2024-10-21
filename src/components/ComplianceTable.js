@@ -15,7 +15,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { useFirestore } from '../hooks/useFirestore';
 import VehicleDialog from './Dialogs/VehicleDialog';
-import GenericDialog from './Dialogs/GenericDialog';
+import GenericAdd from './Dialogs/ComplianceDialog';
+
 import TableHeader from './TableHeader';
 import {
   renderExpiryDateCell,
@@ -115,6 +116,7 @@ const defaultDialogState = {
 export default function ComplianceTable(props) {
   const classes = useStyles();
   const [controlsDisabled, setControlsDisabled] = useState(false);
+  const [clearRows, setClearRows] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [toggleCleared, setToggleCleared] = React.useState(false);
@@ -126,78 +128,62 @@ export default function ComplianceTable(props) {
 
   const dialogMapping = {
     'Fire Extinguishers': {
-      title: 'Record Fire Extinguisher Service',
+      title: 'Fire Extinguisher Service',
       dialogType: 'generic',
       collection: 'fireextinguishers',
     },
     'First Aid': {
-      title: 'Record First Aid Expiration',
+      title: 'First Aid Expiration',
       dialogType: 'generic',
       collection: 'firstaidkits',
     },
     'Tachograph Calibration': {
-      title: 'Record Tachograph Calibration',
+      title: 'Tachograph Calibration',
       dialogType: 'generic',
       collection: 'tachocalibrations',
     },
     Tax: {
-      title: 'Record Vehicle Tax Expiration',
+      title: 'Vehicle Tax Expiration',
       dialogType: 'generic',
       collection: 'taxes',
     },
     PSV: {
-      title: 'Record Vehicle PSV Inspection Expiration',
+      title: 'Vehicle PSV Inspection Expiration',
       dialogType: 'generic',
       collection: 'psvs',
     },
     RTOL: {
-      title: 'Record Vehicle RTOL Expiration',
+      title: 'Vehicle RTOL Expiration',
       dialogType: 'generic',
       collection: 'rtols',
     },
     CVRT: {
-      title: 'Record CVRT Expiration',
+      title: 'CVRT Expiration',
       dialogType: 'generic',
       collection: 'cvrts',
     },
     'Add Vehicle': {
-      title: 'Add a Vehicle To Fleet',
+      title: 'a Vehicle',
       dialogType: 'vehicle',
       collection: 'vehicles',
     },
   };
 
-  const filterTerm = (event) => setSearchTerm(event.target.value);
+  const dialogConfig = dialogMapping[props.title];
 
-  const handleDelete = () => {
-    if (selectedRows.length == 1) {
-      if (window.confirm('Are you sure you want to delete this row?')) {
-        setToggleCleared(!toggleCleared);
-        deleteDocument(selectedRows[0].id);
-        selectedRows.length = 0;
-      }
-    } else {
-      var confirm = prompt(
-        'Please enter "CONFIRM" to delete these rows. \nWARNING: This cannot be undone!'
-      );
-      if (confirm && confirm.toLowerCase() === 'confirm') {
-        console.log('multidelete');
-        setToggleCleared(!toggleCleared);
-        for (let i = 0; i < selectedRows.length; i++) {
-          deleteDocument(selectedRows[i].id);
-        }
-        selectedRows.length = 0;
-      }
-    }
+  const closeDialog = () => {
+    setDialogState(defaultDialogState);
   };
 
-  const handleAdd = () => {
-    const dialogConfig = dialogMapping[props.title];
+  const filterTerm = (event) => setSearchTerm(event.target.value);
 
+  const handleAdd = () => {
     if (dialogConfig) {
       setDialogState({
         shown: true,
-        title: dialogConfig.title,
+        edit: false,
+        title: 'Record ' + dialogConfig.title,
+        data: null,
         message: dialogConfig.message,
         flavour: dialogConfig.flavour,
         dialogType: dialogConfig.dialogType,
@@ -208,12 +194,45 @@ export default function ComplianceTable(props) {
     }
   };
 
-  const closeDialog = () => {
-    setDialogState(defaultDialogState);
+  const handleEdit = () => {
+    if (dialogConfig) {
+      setDialogState({
+        shown: true,
+        edit: true,
+        title: 'Update ' + dialogConfig.title,
+        message: dialogConfig.message,
+        flavour: dialogConfig.flavour,
+        dialogType: dialogConfig.dialogType,
+        collection: dialogConfig.collection,
+      });
+    } else {
+      console.warn('No dialog configuration found for this title.');
+    }
   };
 
-  const handleEdit = () => {
-    console.log(selectedRows[0]);
+  const clearSelectedRows = () => {
+    setToggleCleared(!toggleCleared);
+    selectedRows.length = 0;
+  };
+
+  const handleDelete = () => {
+    if (selectedRows.length == 1) {
+      if (window.confirm('Are you sure you want to delete this row?')) {
+        deleteDocument(selectedRows[0].id);
+        clearSelectedRows();
+      }
+    } else {
+      var confirm = prompt(
+        'Please enter "CONFIRM" to delete these rows. \nWARNING: This cannot be undone!'
+      );
+      if (confirm && confirm.toLowerCase() === 'confirm') {
+        console.log('multidelete');
+        for (let i = 0; i < selectedRows.length; i++) {
+          deleteDocument(selectedRows[i].id);
+        }
+        clearSelectedRows();
+      }
+    }
   };
 
   const handleFilter = () => {
@@ -229,6 +248,10 @@ export default function ComplianceTable(props) {
       return 'All rows selected';
 
     return '';
+  };
+
+  const handleClearRows = () => {
+    setClearRows(!clearRows);
   };
 
   const rangeFilter = (greaterThan, value, lessThan) => {
@@ -323,19 +346,39 @@ export default function ComplianceTable(props) {
             />
           )}
 
-          {dialogState.dialogType === 'generic' && (
-            <GenericDialog
-              show={dialogState.shown}
-              collection={dialogState.collection} // Now includes collection
-              tableRows={props.documents}
-              title={dialogState.title}
-              message={dialogState.message}
-              flavour={dialogState.flavour}
-              callback={(res) => {
-                closeDialog();
-              }}
-            />
-          )}
+          {dialogState.dialogType === 'generic' &&
+            dialogState.edit === false && (
+              <GenericAdd
+                show={dialogState.shown}
+                collection={dialogState.collection} // Now includes collection
+                tableRows={props.documents}
+                title={dialogState.title}
+                edit={false}
+                message={dialogState.message}
+                flavour={dialogState.flavour}
+                callback={(res) => {
+                  closeDialog();
+                }}
+              />
+            )}
+
+          {dialogState.dialogType === 'generic' &&
+            dialogState.edit === true && (
+              <GenericAdd
+                show={dialogState.shown}
+                collection={dialogState.collection} // Now includes collection
+                tableRows={props.documents}
+                title={dialogState.title}
+                edit={true}
+                editData={selectedRows[0]}
+                message={dialogState.message}
+                flavour={dialogState.flavour}
+                callback={(res) => {
+                  clearSelectedRows();
+                  closeDialog();
+                }}
+              />
+            )}
 
           <Typography
             className={classes.title}
