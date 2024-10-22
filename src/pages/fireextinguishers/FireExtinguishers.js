@@ -35,7 +35,7 @@ export default function FireExtinguishers() {
         sortable: true,
       },
       {
-        name: 'Service Date (Valid for 1 year)',
+        name: 'Expiration Date',
         selector: (row) => row.expiryDate,
         sortable: true,
       },

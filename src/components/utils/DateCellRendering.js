@@ -24,29 +24,3 @@ export const renderExpiryDateCell = (row) => {
   }
   return null;
 };
-
-export const renderServiceDateCell = (row) => {
-  if (row.expiryDate) {
-    const serviceDate = new Date(row.expiryDate.seconds * 1000); // Convert seconds to milliseconds
-    const expiryDate = new Date(serviceDate); // Create a new date for the expiry date
-    expiryDate.setFullYear(serviceDate.getFullYear() + 1); // Set the expiry date to one year later
-
-    const warningThreshold = new Date(expiryDate);
-    warningThreshold.setDate(expiryDate.getDate() - 30); // Subtract 30 days to the expiry date for the warning check
-
-    let className = '';
-    if (expiryDate < currentDate) {
-      // conditionally apply classes to cell
-      className = 'overdue';
-    } else if (warningThreshold < currentDate) {
-      className = 'overdue-warning';
-    }
-
-    return (
-      <div className={className}>
-        {new Intl.DateTimeFormat('en-GB').format(serviceDate)}
-      </div>
-    );
-  }
-  return null;
-};
