@@ -172,12 +172,16 @@ export default function ComplianceTable(props) {
   const dialogConfig = dialogMapping[props.title];
 
   const closeDialog = () => {
+    document.activeElement.blur();
+    console.log('close dialog');
     setDialogState(defaultDialogState);
   };
 
   const filterTerm = (event) => setSearchTerm(event.target.value);
 
-  const handleAdd = () => {
+  const handleAdd = (event) => {
+    event.currentTarget.blur(); // remove focus from add button to stop immediate reopening when using keyboard navigation
+
     if (dialogConfig) {
       setDialogState({
         shown: true,
@@ -194,7 +198,9 @@ export default function ComplianceTable(props) {
     }
   };
 
-  const handleEdit = () => {
+  const handleEdit = (event) => {
+    event.currentTarget.blur(); // remove focus from add button to stop immediate reopening when using keyboard navigation
+
     if (dialogConfig) {
       setDialogState({
         shown: true,
@@ -374,7 +380,10 @@ export default function ComplianceTable(props) {
                 message={dialogState.message}
                 flavour={dialogState.flavour}
                 callback={(res) => {
-                  clearSelectedRows();
+                  console.log(res);
+                  if (res === 'OK') {
+                    clearSelectedRows();
+                  }
                   closeDialog();
                 }}
               />

@@ -93,6 +93,21 @@ const AddService = (props) => {
     }
   };
 
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.key === 'Escape') {
+        document.getElementById('cancelDialog').click();
+      } else if (event.key === 'Enter') {
+        document.getElementById('submitDialog').click();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
+
   return (
     <Dialog open={props.show} onClose={() => props.callback('Cancel')}>
       <DialogTitle>{props.title}</DialogTitle>
@@ -109,29 +124,29 @@ const AddService = (props) => {
             onChange={handleVehicleChange}
           >
             {documents &&
-            documents.filter((vehicle) => {
-              // If in edit mode, always include the current registration
-              if (props.edit && vehicle.registration === registration) {
-                return true;
-              }
-              // Otherwise, filter out vehicles already in use
-              return !tableRegistrations.includes(vehicle.registration);
-            }).length > 0 ? (
-              documents
-                .filter((vehicle) => {
-                  if (props.edit && vehicle.registration === registration) {
-                    return true; // Include current registration in edit mode
-                  }
-                  return !tableRegistrations.includes(vehicle.registration); // Filter out others
-                })
-                .map((vehicle, index) => (
-                  <MenuItem key={index} value={vehicle.registration}>
-                    {vehicle.registration}
-                  </MenuItem>
-                ))
-            ) : (
-              <MenuItem disabled>All registrations in use</MenuItem>
-            )}
+              (() => {
+                const filteredVehicles = documents
+                  .sort((a, b) => a.registration.localeCompare(b.registration)) // Sort by registration
+                  .filter((vehicle) => {
+                    // If in edit mode include the current registration
+                    if (props.edit && vehicle.registration === registration) {
+                      return true;
+                    }
+                    // filter out vehicles already on this table
+                    return !tableRegistrations.includes(vehicle.registration);
+                  });
+
+                return filteredVehicles.length > 0 ? (
+                  // Map over the filtered and sorted vehicles to render the options
+                  filteredVehicles.map((vehicle, index) => (
+                    <MenuItem key={index} value={vehicle.registration}>
+                      {vehicle.registration}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>All registrations in use</MenuItem>
+                );
+              })()}
           </Select>
         </FormControl>
 
@@ -150,8 +165,9 @@ const AddService = (props) => {
       </div>
 
       <DialogActions style={{ margin: '20px 45px' }}>
-        <Tooltip title="Save">
+        <Tooltip title={props.edit ? 'Update' : 'Save'}>
           <Button
+            id="submitDialog"
             style={{ backgroundColor: 'green', color: 'white' }}
             onClick={handleSave}
           >
@@ -160,6 +176,7 @@ const AddService = (props) => {
         </Tooltip>
         <Tooltip title="Cancel">
           <Button
+            id="cancelDialog"
             style={{ backgroundColor: 'red', color: 'white' }}
             onClick={() => props.callback('Cancel')}
           >
