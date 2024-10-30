@@ -22,7 +22,7 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
 
-const useStyles = makeStyles((theme) => ({''}));
+const useStyles = makeStyles((theme) => ({}));
 
 const defaultState = {
   registration: '',
