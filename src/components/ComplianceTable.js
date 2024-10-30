@@ -18,10 +18,7 @@ import VehicleDialog from './Dialogs/VehicleDialog';
 import GenericAdd from './Dialogs/ComplianceDialog';
 
 import TableHeader from './TableHeader';
-import {
-  renderExpiryDateCell,
-  renderServiceDateCell,
-} from './utils/DateCellRendering';
+import { renderExpiryDateCell } from './utils/DateCellRendering';
 
 const useStyles = makeStyles((theme) => ({
   style: {
@@ -128,7 +125,7 @@ export default function ComplianceTable(props) {
 
   const dialogMapping = {
     'Fire Extinguishers': {
-      title: 'Fire Extinguisher Service',
+      title: 'Fire Extinguisher Inspection',
       dialogType: 'generic',
       collection: 'fireextinguishers',
     },
@@ -268,15 +265,9 @@ export default function ComplianceTable(props) {
 
   const updatedColumns = props.columns.map((col) => {
     if (col.name === 'Expiration Date') {
-      // I'm relying on the column name not to change!! (upside: does allow for custom render conditions such as with Fire Extinguishers by not using set name)
       return {
         ...col,
         cell: renderExpiryDateCell, // Use the custom cell renderer in utils folder
-      };
-    } else if (col.name === 'Service Date (Valid for 1 year)') {
-      return {
-        ...col,
-        cell: renderServiceDateCell, // Use the custom cell renderer in utils folder
       };
     }
     return col;

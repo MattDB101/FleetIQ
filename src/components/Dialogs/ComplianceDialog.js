@@ -22,9 +22,7 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
 
-const useStyles = makeStyles((theme) => ({
-  // your styles here
-}));
+const useStyles = makeStyles((theme) => ({''}));
 
 const defaultState = {
   registration: '',
@@ -60,10 +58,11 @@ const AddService = (props) => {
   }, [props.edit, props.editData]);
 
   const handleVehicleChange = (event) => {
+    console.log(props);
     setRegistration(event.target.value);
   };
 
-  const handleChangeServiceDate = (newValue) => {
+  const handleChangeDate = (newValue) => {
     setExpiryDate(newValue);
   };
 
@@ -75,6 +74,15 @@ const AddService = (props) => {
 
   const handleSave = () => {
     if (validateForm()) {
+      // fire extinguishers & tacho's are recorded by SERVICE date, not EXPIRY date, so we need to add the appropriate number of years to their service date to get their expiry date
+      if (props.collection === 'fireextinguishers') {
+        setExpiryDate(expiryDate.setFullYear(expiryDate.getFullYear() + 1));
+      }
+
+      if (props.collection === 'tachocalibrations') {
+        setExpiryDate(expiryDate.setFullYear(expiryDate.getFullYear() + 2));
+      }
+
       const docToAdd = {
         registration: registration,
         expiryDate: expiryDate,
@@ -155,10 +163,15 @@ const AddService = (props) => {
 
         <LocalizationProvider dateAdapter={AdapterDateFns} locale={enGB}>
           <DesktopDatePicker
-            label={'Expiration Date'}
+            label={
+              props.collection === 'fireextinguishers' ||
+              props.collection === 'tachocalibrations'
+                ? 'Service Date'
+                : 'Expiration Date'
+            }
             format="dd/MM/yyyy"
             value={expiryDate}
-            onChange={handleChangeServiceDate}
+            onChange={handleChangeDate}
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
