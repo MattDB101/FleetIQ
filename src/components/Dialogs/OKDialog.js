@@ -15,7 +15,9 @@ const OKDialog = (props) => {
     <div>
       <Dialog
         open={props.show}
-        onClose={() => {}}
+        onClose={() => {
+          props.callback('OK');
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >

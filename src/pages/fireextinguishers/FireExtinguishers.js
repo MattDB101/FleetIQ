@@ -60,7 +60,7 @@ export default function FireExtinguishers() {
                   setDialogState({
                     shown: true,
                     message: row.comment,
-                    title: row.registration,
+                    title: row.registration + ' | ' + props.title,
                   })
                 }
               >
