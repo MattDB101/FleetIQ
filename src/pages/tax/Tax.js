@@ -60,7 +60,7 @@ export default function Tax() {
                   setDialogState({
                     shown: true,
                     message: row.comment,
-                    title: row.registration + ' | ' + props.title,
+                    title: row.registration,
                   })
                 }
               >

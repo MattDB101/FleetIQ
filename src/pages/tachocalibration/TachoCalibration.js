@@ -62,7 +62,7 @@ export default function TachoCalibration() {
                   setDialogState({
                     shown: true,
                     message: row.comment,
-                    title: row.registration + ' | ' + props.title,
+                    title: row.registration,
                   })
                 }
               >

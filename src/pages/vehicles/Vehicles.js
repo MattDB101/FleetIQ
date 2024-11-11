@@ -20,7 +20,7 @@ export default function Vehicles() {
     collection: collection,
     documents: documents,
     error: error,
-    title: 'Add Vehicle',
+    title: 'Vehicles',
     sortField: 1,
     sortAsc: false,
 
@@ -74,7 +74,7 @@ export default function Vehicles() {
                   setDialogState({
                     shown: true,
                     message: row.comment,
-                    title: row.registration + ' | ' + props.title,
+                    title: row.registration,
                   })
                 }
               >
