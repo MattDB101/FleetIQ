@@ -16,9 +16,9 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { useFirestore } from '../hooks/useFirestore';
 import VehicleDialog from './Dialogs/VehicleDialog';
 import GenericAdd from './Dialogs/ComplianceDialog';
-
+import { defaultDialogState } from '../utils/defaultStates';
 import TableHeader from './TableHeader';
-import { renderExpiryDateCell } from './utils/DateCellRendering';
+import { renderExpiryDateCell } from '../utils/DateCellRendering';
 
 const useStyles = makeStyles((theme) => ({
   style: {
@@ -68,6 +68,9 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: '1rem',
     overflow: 'visible',
     marginBottom: '0.3rem',
+    [theme.breakpoints.down(750)]: {
+      display: 'none',
+    },
   },
 
   selectedCount: {
@@ -98,19 +101,21 @@ const useStyles = makeStyles((theme) => ({
   },
 
   searchBar: {
-    flex: '1 1 30%',
+    flex: '1 1 35%',
+    [theme.breakpoints.down(1100)]: {
+      flex: '1 1 45%',
+    },
+
+    '& label': {
+      paddingRight: '25px',
+      [theme.breakpoints.down(1100)]: {
+        fontSize: '0.75rem',
+      },
+    },
   },
 }));
 
-const defaultDialogState = {
-  shown: false,
-  title: '',
-  flavour: 'success',
-  dialogType: null,
-  collection: '',
-};
-
-export default function ComplianceTable(props) {
+export default function GenericTable(props) {
   const classes = useStyles();
   const [controlsDisabled, setControlsDisabled] = useState(false);
   const [clearRows, setClearRows] = useState(false);
@@ -149,18 +154,13 @@ export default function ComplianceTable(props) {
       dialogType: 'generic',
       collection: 'psvs',
     },
-    RTOL: {
-      title: 'Vehicle RTOL Expiration',
-      dialogType: 'generic',
-      collection: 'rtols',
-    },
     CVRT: {
       title: 'CVRT Expiration',
       dialogType: 'generic',
       collection: 'cvrts',
     },
     'Add Vehicle': {
-      title: 'a Vehicle',
+      title: 'Vehicle',
       dialogType: 'vehicle',
       collection: 'vehicles',
     },
@@ -219,7 +219,7 @@ export default function ComplianceTable(props) {
   };
 
   const handleDelete = () => {
-    if (selectedRows.length == 1) {
+    if (selectedRows.length === 1) {
       if (window.confirm('Are you sure you want to delete this row?')) {
         deleteDocument(selectedRows[0].id);
         clearSelectedRows();
@@ -267,7 +267,7 @@ export default function ComplianceTable(props) {
     if (col.name === 'Expiration Date') {
       return {
         ...col,
-        cell: renderExpiryDateCell, // Use the custom cell renderer in utils folder
+        cell: renderExpiryDateCell, // Use the custom cell renderer ./utils/DateCellRendering.js
       };
     }
     return col;
@@ -279,7 +279,7 @@ export default function ComplianceTable(props) {
         .toLowerCase()
         .replace(/[^a-zA-Z0-9]/g, '');
 
-      const searchAlphanumeric = searchTerm
+      const searchAlphanumeric = searchTerm // match regardless of case or special characters
         .toLowerCase()
         .replace(/[^a-zA-Z0-9]/g, '');
 
@@ -334,51 +334,38 @@ export default function ComplianceTable(props) {
             <VehicleDialog
               show={dialogState.shown}
               title={dialogState.title}
-              collection={dialogState.collection} // Now includes collection
+              collection={dialogState.collection}
+              edit={dialogState.edit}
+              editData={dialogState.edit ? selectedRows[0] : null}
               message={dialogState.message}
               flavour={dialogState.flavour}
               callback={(res) => {
+                if (res === 'OK') {
+                  clearSelectedRows();
+                }
                 closeDialog();
               }}
             />
           )}
 
-          {dialogState.dialogType === 'generic' &&
-            dialogState.edit === false && (
-              <GenericAdd
-                show={dialogState.shown}
-                collection={dialogState.collection} // Now includes collection
-                tableRows={props.documents}
-                title={dialogState.title}
-                edit={false}
-                message={dialogState.message}
-                flavour={dialogState.flavour}
-                callback={(res) => {
-                  closeDialog();
-                }}
-              />
-            )}
-
-          {dialogState.dialogType === 'generic' &&
-            dialogState.edit === true && (
-              <GenericAdd
-                show={dialogState.shown}
-                collection={dialogState.collection} // Now includes collection
-                tableRows={props.documents}
-                title={dialogState.title}
-                edit={true}
-                editData={selectedRows[0]}
-                message={dialogState.message}
-                flavour={dialogState.flavour}
-                callback={(res) => {
-                  console.log(res);
-                  if (res === 'OK') {
-                    clearSelectedRows();
-                  }
-                  closeDialog();
-                }}
-              />
-            )}
+          {dialogState.dialogType === 'generic' && (
+            <GenericAdd
+              show={dialogState.shown}
+              collection={dialogState.collection} // Now includes collection
+              tableRows={props.documents} // passing all documents just to remove registrations that are already on the table from the drop down? not ideal :/
+              title={dialogState.title}
+              edit={dialogState.edit}
+              editData={dialogState.edit ? selectedRows[0] : null}
+              message={dialogState.message}
+              flavour={dialogState.flavour}
+              callback={(res) => {
+                if (res === 'OK') {
+                  clearSelectedRows();
+                }
+                closeDialog();
+              }}
+            />
+          )}
 
           <Typography
             className={classes.title}

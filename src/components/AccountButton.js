@@ -25,8 +25,6 @@ function AccountButton(props) {
     setAnchorEl(event.currentTarget);
   };
 
-  const isLoggedIn = user;
-
   const handleAccountClose = () => {
     setAnchorEl(null);
     logout();

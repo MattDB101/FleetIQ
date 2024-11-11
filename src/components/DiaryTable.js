@@ -39,12 +39,15 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     marginBottom: theme.spacing(2),
   },
+
   paper: {
     marginBottom: theme.spacing(2),
   },
+
   table: {
     minWidth: 750,
   },
+
   visuallyHidden: {
     border: 0,
     clip: 'rect(0 0 0 0)',
@@ -56,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+
   tableHeader: {
     display: 'flex',
     alignItems: 'center',
@@ -63,14 +67,20 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: '1rem',
     overflow: 'visible',
     marginBottom: '0.3rem',
+    [theme.breakpoints.down(750)]: {
+      display: 'none',
+    },
   },
-  selectedRowsCount: {
+
+  selectedCount: {
     flex: '2 2 90%',
   },
+
   title: {
     flex: '1 1',
     whiteSpace: 'nowrap',
   },
+
   editButton: {
     backgroundColor: yellow[800],
     borderColor: yellow[800],
@@ -79,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: yellow[900],
     },
   },
+
   filterButton: {
     backgroundColor: pink[600],
     borderColor: pink[600],
@@ -87,8 +98,19 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: pink[700],
     },
   },
+
   searchBar: {
-    flex: '1 1 30%',
+    flex: '1 1 35%',
+    [theme.breakpoints.down(1100)]: {
+      flex: '1 1 45%',
+    },
+
+    '& label': {
+      paddingRight: '25px',
+      [theme.breakpoints.down(1100)]: {
+        fontSize: '0.75rem',
+      },
+    },
   },
 }));
 

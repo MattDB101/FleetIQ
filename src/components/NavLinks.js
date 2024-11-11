@@ -51,11 +51,7 @@ function NavLinks() {
           path: '/psv',
           icon: <AirportShuttleIcon />,
         },
-        rtol: {
-          text: t('RTOL'),
-          path: '/rtol',
-          icon: <BadgeIcon />,
-        },
+
         fireExtinguishers: {
           text: t('Fire Extinguishers'),
           path: '/fireextinguishers',

@@ -1,130 +1,89 @@
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
   DialogActions,
-  DialogContentText,
   TextField,
   Button,
-  DialogContent,
   Tooltip,
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import Alert from '@mui/material/Alert';
 import { makeStyles } from '@material-ui/core/styles';
-import CancelIcon from '@mui/icons-material/CancelOutlined';
-import SaveIcon from '@mui/icons-material/SaveOutlined';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import DoneIcon from '@mui/icons-material/Done';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
-
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { defaultVehicleState } from '../../utils/defaultStates';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flex: 1,
     backgroundColor: 'paper',
   },
-  dialog: {
-    width: '400px',
-    display: 'flex',
-  },
   dialogBox: {
     display: 'flex',
     alignItems: 'center',
   },
-  dialogText: {
-    flex: '0.4',
-  },
-  dialogInput: {
-    flex: '0.5',
-  },
-  formControl: {
-    margin: theme.spacing(2),
-    flex: '0.5',
-    maxWidth: 300,
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: 2,
-  },
-  noLabel: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-  },
-  weightRow: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-
-  input: {
-    '& input.Mui-disabled': {
-      color: 'green',
-    },
-  },
 }));
 
-const defaultState = () => {
-  return {
-    name: '',
-    expiryDate: '',
-  };
-};
-
 const AddVehicleService = (props) => {
-  const collection = props.collection;
   const { user } = useAuthContext();
-  const { documents, error } = useCollection(collection);
-  const { addDocument, response } = useFirestore(collection);
+  const { addDocument, updateDocument } = useFirestore(props.collection);
 
   const classes = useStyles();
 
-  const [capacityInvalid, setCapacityInvalid] = useState(false);
   const [registrationInvalid, setRegistrationInvalid] = useState(false);
+  const [capacityInvalid, setCapacityInvalid] = useState(false);
 
+  // States for form fields
   const [registration, setRegistration] = useState('');
   const [make, setMake] = useState('');
   const [model, setModel] = useState('');
   const [capacity, setCapacity] = useState('');
   const [vin, setVIN] = useState('');
+  const [comment, setComment] = useState(defaultVehicleState.comment);
 
+  // Check if in edit mode and populate form
+  useEffect(() => {
+    console.log(props.edit);
+    if (props.edit && props.editData) {
+      console.log('this is edit');
+      setRegistration(props.editData.registration || '');
+      setMake(props.editData.make || '');
+      setModel(props.editData.model || '');
+      setCapacity(props.editData.capacity || '');
+      setVIN(props.editData.vin || '');
+      setComment(props.editData.comment || '');
+    }
+  }, [props.edit, props.editData]);
+
+  // Form validation
   const validateForm = () => {
-    const isCapacityValid = capacity.length > 0;
-    const isRegistrationValid = registration.length > 0;
+    const isRegistrationValid = registration.trim().length > 0;
+    const isCapacityValid = capacity.trim().length > 0;
 
-    setCapacityInvalid(!isCapacityValid);
     setRegistrationInvalid(!isRegistrationValid);
+    setCapacityInvalid(!isCapacityValid);
 
-    return isCapacityValid && isRegistrationValid;
+    return isRegistrationValid && isCapacityValid;
   };
 
-  const handleAdd = () => {
+  // Handle save action
+  const handleSave = () => {
     if (validateForm()) {
-      const docToAdd = {
+      const recordData = {
         registration,
         make,
         model,
         capacity,
         vin,
+        comment,
       };
 
-      addDocument(docToAdd);
+      if (props.edit) {
+        updateDocument(props.editData.id, recordData);
+      } else {
+        addDocument(recordData);
+      }
+
       setRegistration('');
       setMake('');
       setModel('');
@@ -135,128 +94,110 @@ const AddVehicleService = (props) => {
   };
 
   return (
-    <div>
-      <Dialog
-        open={props.show}
-        onClose={() => {}}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+    <Dialog
+      open={props.show}
+      onClose={() => props.callback('Cancel')}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle
+        id="alert-dialog-title"
+        style={{ margin: '30px', marginTop: '10px' }}
       >
-        <DialogTitle
-          style={{ margin: '30px', marginTop: '10px' }}
-          id="alert-dialog-title"
-        >
-          {props.title}
-        </DialogTitle>
+        {props.title}
+      </DialogTitle>
 
-        <div style={{ margin: '0px 50px' }}>
-          <TextField
-            error={registrationInvalid}
-            onChange={(e) => setRegistration(e.target.value)}
-            margin="normal"
-            id="registration"
-            label="Registration"
-            InputLabelProps={{
-              className: 'required-label',
-            }}
-            fullWidth
-            variant="outlined"
-          />
+      <div style={{ margin: '0px 50px' }}>
+        <TextField
+          error={registrationInvalid}
+          value={registration}
+          onChange={(e) => setRegistration(e.target.value)}
+          margin="normal"
+          id="registration"
+          label="Registration"
+          fullWidth
+          variant="outlined"
+        />
 
-          <TextField
-            onChange={(e) => setMake(e.target.value)}
-            margin="normal"
-            id="make"
-            label="Make"
-            fullWidth
-            variant="outlined"
-          />
+        <TextField
+          value={make}
+          onChange={(e) => setMake(e.target.value)}
+          margin="normal"
+          id="make"
+          label="Make"
+          fullWidth
+          variant="outlined"
+        />
 
-          <TextField
-            onChange={(e) => setModel(e.target.value)}
-            margin="normal"
-            id="model"
-            label="Model"
-            fullWidth
-            variant="outlined"
-          />
+        <TextField
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+          margin="normal"
+          id="model"
+          label="Model"
+          fullWidth
+          variant="outlined"
+        />
 
-          <TextField
-            type="number"
-            error={capacityInvalid}
-            onChange={(e) => setCapacity(e.target.value)}
-            margin="normal"
-            id="capacity"
-            label="Max Capacity"
-            InputLabelProps={{
-              className: 'required-label',
-            }}
-            variant="outlined"
-          />
+        <TextField
+          type="number"
+          error={capacityInvalid}
+          value={capacity}
+          onChange={(e) => setCapacity(e.target.value)}
+          margin="normal"
+          id="capacity"
+          label="Max Capacity"
+          fullWidth
+          variant="outlined"
+        />
 
-          <TextField
-            type="normal"
-            onChange={(e) => setVIN(e.target.value)}
-            margin="normal"
-            id="vin"
-            label="VIN"
-            variant="outlined"
-          />
-        </div>
+        <TextField
+          value={vin}
+          onChange={(e) => setVIN(e.target.value)}
+          margin="normal"
+          id="vin"
+          label="VIN"
+          fullWidth
+          variant="outlined"
+        />
 
-        <DialogActions
-          style={{
-            marginTop: '20px',
-            marginLeft: '70%',
-            marginRight: '20px',
-            marginBottom: '20px',
-          }}
-        >
-          <div>
-            <Tooltip title="Save">
-              <Button
-                style={{
-                  backgroundColor: 'green',
-                  fontWeight: 'bold',
-                  fontSize: '1rem',
-                  marginRight: '10px',
-                }}
-                autofocus
-                onClick={() => handleAdd()}
-                size="large"
-              >
-                Save
-              </Button>
-            </Tooltip>
-          </div>
+        <br />
+        <br />
 
-          <div
-            className={classes.dialogBox}
-            style={{ display: 'flex', flex: '20%', marginRight: '20px' }}
+        <TextField
+          id="comments"
+          label=""
+          placeholder="Comments"
+          multiline
+          margin="none"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          rows={2}
+          maxRows={6}
+          variant="outlined"
+        />
+      </div>
+
+      <DialogActions style={{ margin: '20px 45px' }}>
+        <Tooltip title={props.edit ? 'Update' : 'Save'}>
+          <Button
+            style={{ backgroundColor: 'green', color: 'white' }}
+            onClick={handleSave}
           >
-            <Tooltip title="Cancel">
-              <Button
-                style={{
-                  backgroundColor: 'red',
-                  fontWeight: 'bold',
-                  fontSize: '1rem',
-                }}
-                onClick={() => props.callback('Cancel')}
-                size="large"
-              >
-                Cancel
-              </Button>
-            </Tooltip>
-          </div>
-        </DialogActions>
-      </Dialog>
-    </div>
+            {props.edit ? 'Update' : 'Save'}
+          </Button>
+        </Tooltip>
+        <Tooltip title="Cancel">
+          <Button
+            style={{ backgroundColor: 'red', color: 'white' }}
+            onClick={() => props.callback('Cancel')}
+          >
+            Cancel
+          </Button>
+        </Tooltip>
+      </DialogActions>
+    </Dialog>
   );
 };
 
 export default AddVehicleService;
-
-//onClose = {(event, reason) => {
-//    if (reason && reason == "backdropClick") return;
-//    props.callback("Cancel")
-//}}

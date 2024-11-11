@@ -45,6 +45,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '5px',
     overflow: 'auto',
   },
+  mobileHidden: {
+    [theme.breakpoints.down(750)]: {
+      display: 'none',
+    },
+  },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -232,16 +237,15 @@ export default function ClippedDrawer(props) {
             <MenuIcon />
           </IconButton>
           <Typography
-            style={{ marginRight: 'auto' }}
             variant="h6"
             noWrap
-            className={classes.pointer}
+            className={[classes.pointer, classes.mobileHidden]}
             onClick={(event) => (window.location.href = '/')}
           >
             FleetIQ
           </Typography>
           <Typography
-            style={{ marginRight: 'auto' }}
+            style={{ marginLeft: 'auto', marginRight: 'auto' }}
             variant="h6"
             noWrap
             className={classes.pointer}
@@ -249,7 +253,7 @@ export default function ClippedDrawer(props) {
           >
             {renderBreadcrumbs()}
           </Typography>
-          {user && <h3>{user.displayName}</h3>}
+          {user && <h3 className={classes.mobileHidden}>{user.displayName}</h3>}
           {user && <AccountButton />}
         </Toolbar>
       </AppBar>

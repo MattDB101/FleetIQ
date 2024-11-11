@@ -8,7 +8,6 @@ import {
   DialogContent,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Alert from '@mui/material/Alert';
 
 const OKDialog = (props) => {
@@ -22,12 +21,18 @@ const OKDialog = (props) => {
       >
         <DialogTitle id="alert-dialog-title">{props.title}</DialogTitle>
         <DialogContent>
-          <Alert severity={props.flavour}>{props.message}</Alert>
-          <DialogContentText id="alert-dialog-description"></DialogContentText>
+          <DialogContentText
+            style={{ color: 'black' }}
+            id="alert-dialog-description"
+          >
+            {props.message}
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
+            color="primary"
+            style={{ marginRight: '10px' }}
             onClick={() => props.callback('OK')}
             autoFocus
           >

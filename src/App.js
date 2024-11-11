@@ -15,7 +15,6 @@ import FirstAid from './pages/firstaid/FirstAid';
 import TachoCalibration from './pages/tachocalibration/TachoCalibration';
 import CVRT from './pages/cvrt/CVRT';
 import PSV from './pages/psv/PSV';
-import RTOL from './pages/rtol/RTOL';
 
 function App() {
   const { authIsReady, user } = useAuthContext();
@@ -59,10 +58,6 @@ function App() {
               <Route
                 path="/psv"
                 element={user ? <PSV /> : <Navigate to="/" />}
-              />
-              <Route
-                path="/rtol"
-                element={user ? <RTOL /> : <Navigate to="/" />}
               />
               <Route
                 path="/fireextinguishers"

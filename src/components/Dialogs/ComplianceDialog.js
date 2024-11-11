@@ -21,28 +21,24 @@ import Select from '@mui/material/Select';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
+import { defaultComplianceState } from '../../utils/defaultStates';
 
-const useStyles = makeStyles((theme) => ({
-  // your styles here
-}));
-
-const defaultState = {
-  registration: '',
-  expiryDate: '',
-};
+const useStyles = makeStyles((theme) => ({}));
 
 const AddService = (props) => {
-  const { user } = useAuthContext();
   const { documents } = useCollection('vehicles');
   const { addDocument, updateDocument } = useFirestore(props.collection + '/');
 
   const classes = useStyles();
-
-  const [registrationInvalid, setRegistrationInvalid] = useState(false);
-  const [registration, setRegistration] = useState(defaultState.registration);
-  const [expiryDate, setExpiryDate] = useState(new Date());
-
   const [tableRegistrations, setTableRegistrations] = useState([]);
+
+  // States for form fields
+  const [registrationInvalid, setRegistrationInvalid] = useState(false);
+  const [registration, setRegistration] = useState(
+    defaultComplianceState.registration
+  );
+  const [expiryDate, setExpiryDate] = useState(new Date());
+  const [comment, setComment] = useState(defaultComplianceState.comment);
 
   useEffect(() => {
     if (props.tableRows && props.tableRows.length > 0) {
@@ -54,8 +50,10 @@ const AddService = (props) => {
   // Detect if this is an edit dialog and populate form
   useEffect(() => {
     if (props.edit && props.editData) {
+      console.log(props.editData.comment);
       setRegistration(props.editData.registration);
       setExpiryDate(new Date(props.editData.expiryDate.seconds * 1000));
+      setComment(props.editData.comment);
     }
   }, [props.edit, props.editData]);
 
@@ -85,18 +83,18 @@ const AddService = (props) => {
         setExpiryDate(expiryDate.setFullYear(expiryDate.getFullYear() + 2));
       }
 
-      const docToAdd = {
+      const recordData = {
         registration: registration,
         expiryDate: expiryDate,
+        comment: comment,
       };
 
       if (props.edit) {
-        updateDocument(props.editData.id, docToAdd);
+        updateDocument(props.editData.id, recordData);
       } else {
-        addDocument(docToAdd);
+        addDocument(recordData);
       }
 
-      // Reset form or close dialog
       setExpiryDate(new Date());
       setRegistration('');
       props.callback('OK');
@@ -177,6 +175,22 @@ const AddService = (props) => {
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
+
+        <br />
+        <br />
+
+        <TextField
+          id="comments"
+          label=""
+          placeholder="Comments"
+          multiline
+          margin="none"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          rows={2}
+          maxRows={6}
+          variant="outlined"
+        />
       </div>
 
       <DialogActions style={{ margin: '20px 45px' }}>
