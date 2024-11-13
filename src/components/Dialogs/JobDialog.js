@@ -124,8 +124,7 @@ const JobDialog = (props) => {
   );
 
   useEffect(() => {
-    const differenceInTime =
-      endDate.getTime() + 1000 * 3600 * 24 - startDate.getTime();
+    const differenceInTime = endDate.getTime() + 1000 * 3600 * 24 - startDate.getTime();
     const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
     setDays(differenceInDays);
   }, [startDate, endDate]); // Run this effect whenever startDate or endDate changes
@@ -167,23 +166,14 @@ const JobDialog = (props) => {
     setDestinationInvalid(!isValidDestination);
 
     return (
-      isValidClient &&
-      isValidContactDetails &&
-      isValidPax &&
-      isValidDays &&
-      isValidDeparting &&
-      isValidDestination
+      isValidClient && isValidContactDetails && isValidPax && isValidDays && isValidDeparting && isValidDestination
     );
   };
 
   const handleAdd = () => {
     if (validateForm()) {
-      const formattedDepartTime = departTime
-        ? `${departTime.$H}:${String(departTime.$m).padStart(2, '0')}`
-        : '';
-      const formattedReturnTime = returnTime
-        ? `${returnTime.$H}:${String(returnTime.$m).padStart(2, '0')}`
-        : '';
+      const formattedDepartTime = departTime ? `${departTime.$H}:${String(departTime.$m).padStart(2, '0')}` : '';
+      const formattedReturnTime = returnTime ? `${returnTime.$H}:${String(returnTime.$m).padStart(2, '0')}` : '';
 
       let docToAdd = {
         client: client,
@@ -222,10 +212,7 @@ const JobDialog = (props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle
-          style={{ margin: '30px', marginTop: '10px' }}
-          id="alert-dialog-title"
-        >
+        <DialogTitle style={{ margin: '30px', marginTop: '10px' }} id="alert-dialog-title">
           {props.title}
         </DialogTitle>
         {/* <DialogContent>
@@ -236,10 +223,7 @@ const JobDialog = (props) => {
 
         <div style={{ margin: '0px 50px' }}>
           <div class="rowOne" style={{ display: 'flex', flexWrap: 'wrap' }}>
-            <div
-              class="startDate"
-              style={{ maxWidth: '180px', float: 'left', marginRight: '20px' }}
-            >
+            <div class="startDate" style={{ maxWidth: '180px', float: 'left', marginRight: '20px' }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
                   label={'Start Date'}
@@ -254,10 +238,7 @@ const JobDialog = (props) => {
               <div id="calenderDiv"></div>
             </div>
 
-            <div
-              class="endDate"
-              style={{ maxWidth: '180px', marginRight: '20px' }}
-            >
+            <div class="endDate" style={{ maxWidth: '180px', marginRight: '20px' }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
                   label="End Date"
@@ -344,10 +325,7 @@ const JobDialog = (props) => {
             />
           </div>
 
-          <div
-            class="rowFour"
-            style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}
-          >
+          <div class="rowFour" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
             <TextField
               style={{ maxWidth: '240px', marginRight: '20px' }}
               error={departingInvalid}
@@ -374,38 +352,24 @@ const JobDialog = (props) => {
             />
           </div>
 
-          <div
-            class="rowFive"
-            style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}
-          >
+          <div class="rowFive" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
             <div style={{ maxWidth: '240px', marginRight: '20px' }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker
-                  label="Depart Time"
-                  onChange={handleChangeDepartTime}
-                />
+                <TimePicker label="Depart Time" onChange={handleChangeDepartTime} />
               </LocalizationProvider>
             </div>
 
             <div style={{ maxWidth: '240px' }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker
-                  style={{ maxWidth: '240px' }}
-                  label="Return Time"
-                  onChange={handleChangeReturnTime}
-                />
+                <TimePicker style={{ maxWidth: '240px' }} label="Return Time" onChange={handleChangeReturnTime} />
               </LocalizationProvider>
             </div>
           </div>
 
-          <div
-            class="rowSix"
-            style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}
-          >
+          <div class="rowSix" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
             <TextField
               id="comments"
               label="Comments"
-              placeholder="Enter information here."
               multiline
               margin="none"
               onChange={(e) => setComment(e.target.value)}
@@ -442,10 +406,7 @@ const JobDialog = (props) => {
             </Tooltip>
           </div>
 
-          <div
-            className={classes.dialogBox}
-            style={{ display: 'flex', flex: '20%', marginRight: '20px' }}
-          >
+          <div className={classes.dialogBox} style={{ display: 'flex', flex: '20%', marginRight: '20px' }}>
             <Tooltip title="Cancel">
               <Button
                 style={{

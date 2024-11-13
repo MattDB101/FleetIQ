@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import InspectionsTable from '../../components/Tables/InspectionsTable';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useCollection } from '../../hooks/useCollection';
 import { useFirestore } from '../../hooks/useFirestore';
-import { useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Box, Button, Tooltip, TextField } from '@material-ui/core';
-import AssignmentIcon from '@material-ui/icons/Assignment';
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
 export default function Inspections() {
   const months = [
@@ -25,28 +25,26 @@ export default function Inspections() {
     'November',
     'December',
   ];
+
   const { user } = useAuthContext();
   const [datePickerValue, setDatePickerValue] = useState(new Date());
   const [year, setYear] = useState(new Date().getFullYear());
-  const collection =
-    'inspections/' +
-    datePickerValue.getFullYear() +
-    '/' +
-    months[datePickerValue.getMonth()]; // THIS IS WHERE THE TABLE NAME GOES
-  const { addDocument, response } = useFirestore(collection);
+  const collection = 'inspections/' + datePickerValue.getFullYear() + '/' + months[datePickerValue.getMonth()];
+  const { addDocument, updateDocument, response } = useFirestore(collection);
 
-  var { documents, error } = useCollection(collection);
+  const { documents, error } = useCollection(collection);
 
-  let props = {
+  const toggleComplete = (row) => {
+    const updatedRow = { ...row, complete: !row.complete };
+    updateDocument(row.id, updatedRow);
+  };
+
+  const props = {
     collection: collection,
     documents: documents,
     year: year,
     error: error,
-    title:
-      'Inspections | ' +
-      months[datePickerValue.getMonth()] +
-      ' ' +
-      datePickerValue.getFullYear(),
+    title: 'Inspections | ' + months[datePickerValue.getMonth()] + ' ' + datePickerValue.getFullYear(),
 
     keyColumn: [
       {
@@ -67,12 +65,21 @@ export default function Inspections() {
         sortable: true,
       },
       {
-        name: 'Done',
-        selector: (row) => (row.complete ? 'Yes' : 'No'),
+        name: 'Complete',
+        cell: (row) => (
+          <Tooltip title={row.complete ? 'Mark as Incomplete' : 'Mark as Complete'}>
+            {row.complete ? (
+              <CheckBoxOutlinedIcon onClick={() => toggleComplete(row)} style={{ cursor: 'pointer' }} />
+            ) : (
+              <CheckBoxOutlineBlankIcon onClick={() => toggleComplete(row)} style={{ cursor: 'pointer' }} />
+            )}
+          </Tooltip>
+        ),
         sortable: true,
       },
     ],
   };
+
   return (
     <div>
       {documents && (
@@ -97,9 +104,7 @@ export default function Inspections() {
                   setYear(newValue.getFullYear());
                   console.log(collection);
                 }}
-                renderInput={(params) => (
-                  <TextField {...params} helperText={null} />
-                )}
+                renderInput={(params) => <TextField {...params} helperText={null} />}
               />
             </LocalizationProvider>
           </div>

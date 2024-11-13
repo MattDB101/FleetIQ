@@ -21,7 +21,7 @@ import Select from '@mui/material/Select';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
-import { defaultComplianceState } from '../../utils/defaultStates';
+import { defaultComplianceState } from '../../utils/defaultConfig';
 import { useInspectionScheduler } from '../../utils/InspectionsScheduler';
 import { setDate } from 'date-fns';
 
@@ -193,8 +193,7 @@ const AddService = (props) => {
 
         <TextField
           id="comments"
-          label=""
-          placeholder="Comments"
+          label="Comments"
           multiline
           margin="none"
           value={comment}

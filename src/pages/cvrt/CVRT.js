@@ -8,7 +8,7 @@ import { useReducer, useEffect, useState } from 'react';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import OKDialog from '../../components/Dialogs/OKDialog';
-import { defaultDialogState } from '../../utils/defaultStates';
+import { defaultDialogState } from '../../utils/defaultConfig';
 
 export default function CVRT() {
   const collection = 'cvrts'; // THIS IS WHERE THE TABLE NAME GOES

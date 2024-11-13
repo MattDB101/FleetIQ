@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
-import { defaultVehicleState } from '../../utils/defaultStates';
+import { defaultVehicleState } from '../../utils/defaultConfig';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,7 +100,15 @@ const AddVehicleService = (props) => {
         <TextField
           error={registrationInvalid}
           value={registration}
-          onChange={(e) => setRegistration(e.target.value)}
+          onChange={(e) => {
+            let input = e.target.value.toUpperCase(); // Capitalize for consistency
+            input = input.replace(/-/g, ''); // Remove any existing dashes
+
+            // Apply dashes based on different possible patterns
+            input = input.replace(/^(\d{1,3})([A-Z]+)(\d{1,4})$/, '$1-$2-$3');
+
+            setRegistration(input);
+          }}
           margin="normal"
           id="registration"
           label="Registration"
@@ -142,7 +150,7 @@ const AddVehicleService = (props) => {
 
         <TextField
           value={vin}
-          onChange={(e) => setVIN(e.target.value)}
+          onChange={(e) => setVIN(e.target.value.toUpperCase())}
           margin="normal"
           id="vin"
           label="VIN"
@@ -155,8 +163,7 @@ const AddVehicleService = (props) => {
 
         <TextField
           id="comments"
-          label=""
-          placeholder="Comments"
+          label="Comments"
           multiline
           margin="none"
           value={comment}

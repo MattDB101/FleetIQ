@@ -8,7 +8,7 @@ import { useReducer, useEffect, useState } from 'react';
 import OKDialog from '../../components/Dialogs/OKDialog';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
-import { defaultDialogState } from '../../utils/defaultStates';
+import { defaultDialogState } from '../../utils/defaultConfig';
 
 export default function Vehicles() {
   const collection = 'vehicles'; // THIS IS WHERE THE TABLE NAME GOES
