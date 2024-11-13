@@ -22,13 +22,15 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
 import { defaultComplianceState } from '../../utils/defaultStates';
+import { useInspectionScheduler } from '../../utils/InspectionsScheduler';
+import { setDate } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({}));
 
 const AddService = (props) => {
   const { documents } = useCollection('vehicles');
   const { addDocument, updateDocument } = useFirestore(props.collection + '/');
-
+  const { scheduleInspections } = useInspectionScheduler();
   const classes = useStyles();
   const [tableRegistrations, setTableRegistrations] = useState([]);
 
@@ -50,9 +52,19 @@ const AddService = (props) => {
   // Detect if this is an edit dialog and populate form
   useEffect(() => {
     if (props.edit && props.editData) {
-      console.log(props.editData.comment);
       setRegistration(props.editData.registration);
-      setExpiryDate(new Date(props.editData.expiryDate.seconds * 1000));
+
+      const expiryDate = new Date(props.editData.expiryDate.seconds * 1000);
+
+      // if this expects a service date rather than an expiry date
+      if (props.collection === 'fireextinguishers') {
+        expiryDate.setFullYear(expiryDate.getFullYear() - 1);
+      } else if (props.collection === 'tachocalibrations') {
+        expiryDate.setFullYear(expiryDate.getFullYear() - 2);
+      }
+
+      setExpiryDate(expiryDate);
+
       setComment(props.editData.comment);
     }
   }, [props.edit, props.editData]);
@@ -93,6 +105,11 @@ const AddService = (props) => {
         updateDocument(props.editData.id, recordData);
       } else {
         addDocument(recordData);
+      }
+
+      // if this is a record on the CVRT table, we need to update the inspections table too.
+      if (props.collection === 'cvrts') {
+        scheduleInspections(recordData);
       }
 
       setExpiryDate(new Date());

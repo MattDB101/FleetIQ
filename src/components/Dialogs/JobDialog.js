@@ -82,7 +82,7 @@ const defaultState = () => {
 };
 
 const JobDialog = (props) => {
-  const months = [
+  const MONTHS = [
     'January',
     'February',
     'March',
@@ -120,7 +120,7 @@ const JobDialog = (props) => {
   const [departTime, setDepartTime] = useState(null);
   const [returnTime, setReturnTime] = useState(null);
   const { addDocument, response } = useFirestore(
-    'diary/' + startDate.getFullYear() + '/' + months[startDate.getMonth()]
+    'diary/' + startDate.getFullYear() + '/' + MONTHS[startDate.getMonth()]
   );
 
   useEffect(() => {

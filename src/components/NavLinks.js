@@ -16,7 +16,6 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
 import Build from '@mui/icons-material/Build';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
-import BadgeIcon from '@mui/icons-material/Badge';
 
 function NavLinks() {
   let { t } = useTranslation();
@@ -41,6 +40,11 @@ function NavLinks() {
           path: '/cvrt',
           icon: <Build />,
         },
+        inspections: {
+          text: t('Inspections'),
+          path: '/inspections',
+          icon: <Build />,
+        },
         tax: {
           text: t('Tax'),
           path: '/tax',
@@ -51,7 +55,6 @@ function NavLinks() {
           path: '/psv',
           icon: <AirportShuttleIcon />,
         },
-
         fireExtinguishers: {
           text: t('Fire Extinguishers'),
           path: '/fireextinguishers',

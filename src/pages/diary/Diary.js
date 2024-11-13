@@ -1,5 +1,5 @@
 import React from 'react';
-import DiaryTable from '../../components/DiaryTable';
+import DiaryTable from '../../components/Tables/DiaryTable';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useCollection } from '../../hooks/useCollection';
 import { useFirestore } from '../../hooks/useFirestore';
@@ -26,10 +26,13 @@ export default function Diary() {
     'December',
   ];
   const { user } = useAuthContext();
-  const [value, setValue] = useState(new Date());
+  const [datePickerValue, setDatePickerValue] = useState(new Date());
   const [year, setYear] = useState(new Date().getFullYear());
   const collection =
-    'diary/' + value.getFullYear() + '/' + months[value.getMonth()]; // THIS IS WHERE THE TABLE NAME GOES
+    'diary/' +
+    datePickerValue.getFullYear() +
+    '/' +
+    months[datePickerValue.getMonth()]; // THIS IS WHERE THE TABLE NAME GOES
   const { addDocument, response } = useFirestore(collection);
 
   var { documents, error } = useCollection(collection);
@@ -39,7 +42,11 @@ export default function Diary() {
     documents: documents,
     year: year,
     error: error,
-    title: 'Diary | ' + months[value.getMonth()] + ' ' + value.getFullYear(),
+    title:
+      'Diary | ' +
+      months[datePickerValue.getMonth()] +
+      ' ' +
+      datePickerValue.getFullYear(),
 
     keyColumn: [
       {
@@ -205,10 +212,10 @@ export default function Diary() {
                 views={['year', 'month']}
                 openTo={'month'}
                 label="Viewing Month"
-                value={value}
+                value={datePickerValue}
                 style={{ maxWidth: '200px' }}
                 onChange={(newValue) => {
-                  setValue(newValue);
+                  setDatePickerValue(newValue);
                   setYear(newValue.getFullYear());
                   console.log(collection);
                 }}

@@ -70,6 +70,23 @@ export const useFirestore = (collection) => {
     }
   };
 
+  // Add document to the collection passed as an argument (useful when the collection you're adding to can change)
+  const addDocumentToCollection = async (collectionName, doc) => {
+    const ref = projectFirestore.collection(collectionName);
+    dispatch({ type: 'IS_PENDING' });
+    try {
+      const lastModified = timestamp.fromDate(new Date());
+      const modifiedBy = user.displayName;
+      const addedDocument = await ref.add({ ...doc, lastModified, modifiedBy });
+      dispatchIfNotCancelled({
+        type: 'ADDED_DOCUMENT',
+        payload: addedDocument,
+      });
+    } catch (err) {
+      dispatchIfNotCancelled({ type: 'ERROR', payload: err.message });
+    }
+  };
+
   const updateDocument = async (id, updatedDoc) => {
     dispatch({ type: 'IS_PENDING' });
     try {
@@ -109,5 +126,11 @@ export const useFirestore = (collection) => {
     return () => setIsCancelled(true);
   }, []);
 
-  return { addDocument, updateDocument, deleteDocument, response };
+  return {
+    addDocument,
+    addDocumentToCollection,
+    updateDocument,
+    deleteDocument,
+    response,
+  };
 };

@@ -13,12 +13,12 @@ import { useState, useEffect, useContext } from 'react';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { useFirestore } from '../hooks/useFirestore';
-import VehicleDialog from './Dialogs/VehicleDialog';
-import GenericAdd from './Dialogs/ComplianceDialog';
-import { defaultDialogState } from '../utils/defaultStates';
-import TableHeader from './TableHeader';
-import { renderExpiryDateCell } from '../utils/DateCellRendering';
+import { useFirestore } from '../../hooks/useFirestore';
+import VehicleDialog from '../Dialogs/VehicleDialog';
+import GenericAdd from '../Dialogs/ComplianceDialog';
+import { defaultDialogState } from '../../utils/defaultStates';
+import TableHeader from '../TableHeader';
+import { renderExpiryDateCell } from '../../utils/DateCellRendering';
 
 const useStyles = makeStyles((theme) => ({
   style: {
@@ -129,44 +129,44 @@ export default function GenericTable(props) {
   );
 
   const dialogMapping = {
-    'Fire Extinguishers': {
+    fireextinguishers: {
       title: 'Fire Extinguisher Inspection',
       dialogType: 'generic',
       collection: 'fireextinguishers',
     },
-    'First Aid': {
+    firstaidkits: {
       title: 'First Aid Expiration',
       dialogType: 'generic',
       collection: 'firstaidkits',
     },
-    'Tachograph Calibration': {
+    tachocalibrations: {
       title: 'Tachograph Calibration',
       dialogType: 'generic',
       collection: 'tachocalibrations',
     },
-    Tax: {
+    taxes: {
       title: 'Vehicle Tax Expiration',
       dialogType: 'generic',
       collection: 'taxes',
     },
-    PSV: {
+    psvs: {
       title: 'Vehicle PSV Inspection Expiration',
       dialogType: 'generic',
       collection: 'psvs',
     },
-    CVRT: {
+    cvrts: {
       title: 'CVRT Expiration',
       dialogType: 'generic',
       collection: 'cvrts',
     },
-    'Add Vehicle': {
+    vehicles: {
       title: 'Vehicle',
       dialogType: 'vehicle',
       collection: 'vehicles',
     },
   };
 
-  const dialogConfig = dialogMapping[props.title];
+  const dialogConfig = dialogMapping[props.collection];
 
   const closeDialog = () => {
     document.activeElement.blur();
@@ -177,9 +177,11 @@ export default function GenericTable(props) {
   const filterTerm = (event) => setSearchTerm(event.target.value);
 
   const handleAdd = (event) => {
+    console.log(props.title);
     event.currentTarget.blur(); // remove focus from add button to stop immediate reopening when using keyboard navigation
 
     if (dialogConfig) {
+      console.log(dialogConfig);
       setDialogState({
         shown: true,
         edit: false,

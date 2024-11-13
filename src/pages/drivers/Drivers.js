@@ -1,12 +1,12 @@
 import React from 'react';
-import GenericTable from '../../components/GenericTable';
+import GenericTable from '../../components/Tables/GenericTable';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useCollection } from '../../hooks/useCollection';
 import { Button, IconButton, Tooltip } from '@material-ui/core';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import { useReducer, useEffect, useState } from 'react';
 import OKDialog from '../../components/Dialogs/OKDialog';
-import NoteAltIcon from '@mui/icons-material/NoteAlt';
+import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { defaultDialogState } from '../../utils/defaultStates';
 
@@ -56,7 +56,7 @@ export default function Drivers() {
                   })
                 }
               >
-                <NoteAltIcon />
+                <NoteAltOutlinedIcon />
               </IconButton>
             </Tooltip>
           ) : (

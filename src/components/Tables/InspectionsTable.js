@@ -13,11 +13,11 @@ import { useState, useEffect, useContext } from 'react';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useFirestore } from '../hooks/useFirestore';
-import JobDialog from './Dialogs/JobDialog';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useFirestore } from '../../hooks/useFirestore';
+import JobDialog from '../Dialogs/JobDialog';
 import { Add } from '@mui/icons-material';
-import TableHeader from './TableHeader';
+import TableHeader from '../TableHeader';
 
 const useStyles = makeStyles((theme) => ({
   style: {
@@ -115,13 +115,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function sortByRecent(a, b) {
-  if (a.createdAt.seconds < b.createdAt.seconds) {
-    return 1;
-  }
+  // if (a.createdAt.seconds < b.createdAt.seconds) {
+  //   return 1;
+  // }
 
-  if (a.createdAt.seconds > b.createdAt.seconds) {
-    return -1;
-  }
+  // if (a.createdAt.seconds > b.createdAt.seconds) {
+  //   return -1;
+  // }
 
   return 0;
 }
@@ -144,7 +144,7 @@ function toDateTime(secs) {
   return timeDateString;
 }
 
-export default function DiaryTable(props) {
+export default function InspectionsTable(props) {
   const classes = useStyles();
   const [controlsDisabled, setControlsDisabled] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -168,7 +168,7 @@ export default function DiaryTable(props) {
   });
 
   const handleDelete = () => {
-    if (selectedRows.length == 1) {
+    if (selectedRows.length === 1) {
       if (window.confirm('Are you sure you want to delete this row?')) {
         setToggleCleared(!toggleCleared);
         deleteDocument(selectedRows[0].id);
@@ -192,7 +192,7 @@ export default function DiaryTable(props) {
       shown: true,
       edit: false,
       selectedRows: '',
-      title: 'Add Job To Diary',
+      title: 'Add Job To Inspections',
       message: 'jobs',
       flavour: 'success',
     });
@@ -223,12 +223,12 @@ export default function DiaryTable(props) {
 
   const filterRows = () => {
     props.documents.sort(sortByRecent);
-
-    for (let i = 0; i < props.documents.length; i++) {
-      props.documents[i].recordedAt = toDateTime(
-        props.documents[i].createdAt.seconds
-      );
-    }
+    console.log(props.documents);
+    // for (let i = 0; i < props.documents.length; i++) {
+    //   props.documents[i].recordedAt = toDateTime(
+    //     props.documents[i].createdAt.seconds
+    //   );
+    // }
 
     let res = props.documents.filter((row) => {
       if (
@@ -285,7 +285,7 @@ export default function DiaryTable(props) {
     <div className={classes.style}>
       <Card>
         <Paper>
-          <TableHeader
+          {/* <TableHeader
             title={props.title}
             selectedItemText={selectedItemText}
             searchColumn={props.keyColumn[0].key}
@@ -298,7 +298,7 @@ export default function DiaryTable(props) {
             controlsDisabled={controlsDisabled}
             selectedRows={selectedRows}
             classes={classes}
-          />
+          /> */}
 
           <DataTable
             columns={props.columns}
