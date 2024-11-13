@@ -66,6 +66,7 @@ export const useFirestore = (collection) => {
         payload: addedDocument,
       });
     } catch (err) {
+      console.log(err);
       dispatchIfNotCancelled({ type: 'ERROR', payload: err.message });
     }
   };
@@ -83,6 +84,7 @@ export const useFirestore = (collection) => {
         payload: addedDocument,
       });
     } catch (err) {
+      console.log(err);
       dispatchIfNotCancelled({ type: 'ERROR', payload: err.message });
     }
   };
@@ -102,6 +104,7 @@ export const useFirestore = (collection) => {
         payload: updatedDocument,
       });
     } catch (err) {
+      console.log(err);
       dispatchIfNotCancelled({ type: 'ERROR', payload: err.message });
     }
   };
@@ -115,6 +118,7 @@ export const useFirestore = (collection) => {
         payload: deletedDocument,
       });
     } catch (err) {
+      console.log(err);
       dispatchIfNotCancelled({
         type: 'ERROR',
         payload: 'Failed to delete row(s).',

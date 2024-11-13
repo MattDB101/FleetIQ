@@ -8,12 +8,15 @@ export const defaultDialogState = {
 
 export const defaultComplianceState = {
   registration: '',
-  expiryDate: '',
+  expiryDate: new Date(),
   comment: '',
 };
 
 export const defaultVehicleState = {
   registration: '',
-  expiryDate: '',
+  make: '',
+  model: '',
+  capacity: '',
+  vin: '',
   comment: '',
 };

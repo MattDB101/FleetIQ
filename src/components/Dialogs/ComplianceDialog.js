@@ -36,10 +36,8 @@ const AddService = (props) => {
 
   // States for form fields
   const [registrationInvalid, setRegistrationInvalid] = useState(false);
-  const [registration, setRegistration] = useState(
-    defaultComplianceState.registration
-  );
-  const [expiryDate, setExpiryDate] = useState(new Date());
+  const [registration, setRegistration] = useState(defaultComplianceState.registration);
+  const [expiryDate, setExpiryDate] = useState(defaultComplianceState.expiryDate);
   const [comment, setComment] = useState(defaultComplianceState.comment);
 
   useEffect(() => {
@@ -52,8 +50,6 @@ const AddService = (props) => {
   // Detect if this is an edit dialog and populate form
   useEffect(() => {
     if (props.edit && props.editData) {
-      setRegistration(props.editData.registration);
-
       const expiryDate = new Date(props.editData.expiryDate.seconds * 1000);
 
       // if this expects a service date rather than an expiry date
@@ -63,9 +59,9 @@ const AddService = (props) => {
         expiryDate.setFullYear(expiryDate.getFullYear() - 2);
       }
 
-      setExpiryDate(expiryDate);
-
-      setComment(props.editData.comment);
+      setRegistration(props.editData.registration || '');
+      setExpiryDate(expiryDate || '');
+      setComment(props.editData.comment || '');
     }
   }, [props.edit, props.editData]);
 
@@ -181,8 +177,7 @@ const AddService = (props) => {
         <LocalizationProvider dateAdapter={AdapterDateFns} locale={enGB}>
           <DesktopDatePicker
             label={
-              props.collection === 'fireextinguishers' ||
-              props.collection === 'tachocalibrations'
+              props.collection === 'fireextinguishers' || props.collection === 'tachocalibrations'
                 ? 'Service Date'
                 : 'Expiration Date'
             }
@@ -212,11 +207,7 @@ const AddService = (props) => {
 
       <DialogActions style={{ margin: '20px 45px' }}>
         <Tooltip title={props.edit ? 'Update' : 'Save'}>
-          <Button
-            id="submitDialog"
-            style={{ backgroundColor: 'green', color: 'white' }}
-            onClick={handleSave}
-          >
+          <Button id="submitDialog" style={{ backgroundColor: 'green', color: 'white' }} onClick={handleSave}>
             {props.edit ? 'Update' : 'Save'}
           </Button>
         </Tooltip>

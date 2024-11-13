@@ -64,12 +64,12 @@ export default function Inspections() {
       {
         name: 'Inspection',
         selector: (row) => row.inspectionType,
-        sortable: false,
+        sortable: true,
       },
       {
         name: 'Done',
         selector: (row) => (row.complete ? 'Yes' : 'No'),
-        sortable: false,
+        sortable: true,
       },
     ],
   };

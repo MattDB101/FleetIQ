@@ -45,7 +45,9 @@ export const useInspectionScheduler = () => {
     // Schedule pre-test inspection (1 month before expiry)
     const preInspectionDate = new Date(expiryDate);
     preInspectionDate.setMonth(expiryDate.getMonth() - 1);
-    addInspection(preInspectionDate, 'Pre-test');
+    if (preInspectionDate > currentDate) {
+      addInspection(preInspectionDate, 'Pre-test');
+    }
 
     // Schedule voluntary inspection (6 months before expiry) if in the future
     const voluntaryTestDate = new Date(expiryDate);
@@ -58,7 +60,12 @@ export const useInspectionScheduler = () => {
     let inspectionInterval = new Date(expiryDate);
     inspectionInterval.setDate(expiryDate.getDate() - 84);
 
-    while (inspectionInterval > currentDate) {
+    // don't schedule any 12 week inspections inside 12 week window after recording a CVRT.
+    const cutoffDate = new Date(currentDate);
+    cutoffDate.setDate(currentDate.getDate() + 84);
+
+    // Schedule inspections as long as inspectionInterval is greater than cutoffDate
+    while (inspectionInterval > cutoffDate) {
       addInspection(inspectionInterval, '12 Week');
       inspectionInterval.setDate(inspectionInterval.getDate() - 84);
     }

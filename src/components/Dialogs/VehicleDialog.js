@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  TextField,
-  Button,
-  Tooltip,
-} from '@material-ui/core';
+import { Dialog, DialogTitle, DialogActions, TextField, Button, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
@@ -34,18 +27,17 @@ const AddVehicleService = (props) => {
   const [capacityInvalid, setCapacityInvalid] = useState(false);
 
   // States for form fields
-  const [registration, setRegistration] = useState('');
-  const [make, setMake] = useState('');
-  const [model, setModel] = useState('');
-  const [capacity, setCapacity] = useState('');
-  const [vin, setVIN] = useState('');
+  const [registration, setRegistration] = useState(defaultVehicleState.registration);
+  const [make, setMake] = useState(defaultVehicleState.make);
+  const [model, setModel] = useState(defaultVehicleState.model);
+  const [capacity, setCapacity] = useState(defaultVehicleState.capacity);
+  const [vin, setVIN] = useState(defaultVehicleState.vin);
   const [comment, setComment] = useState(defaultVehicleState.comment);
 
   // Check if in edit mode and populate form
   useEffect(() => {
     console.log(props.edit);
     if (props.edit && props.editData) {
-      console.log('this is edit');
       setRegistration(props.editData.registration || '');
       setMake(props.editData.make || '');
       setModel(props.editData.model || '');
@@ -100,10 +92,7 @@ const AddVehicleService = (props) => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle
-        id="alert-dialog-title"
-        style={{ margin: '30px', marginTop: '10px' }}
-      >
+      <DialogTitle id="alert-dialog-title" style={{ margin: '30px', marginTop: '10px' }}>
         {props.title}
       </DialogTitle>
 
@@ -180,18 +169,12 @@ const AddVehicleService = (props) => {
 
       <DialogActions style={{ margin: '20px 45px' }}>
         <Tooltip title={props.edit ? 'Update' : 'Save'}>
-          <Button
-            style={{ backgroundColor: 'green', color: 'white' }}
-            onClick={handleSave}
-          >
+          <Button style={{ backgroundColor: 'green', color: 'white' }} onClick={handleSave}>
             {props.edit ? 'Update' : 'Save'}
           </Button>
         </Tooltip>
         <Tooltip title="Cancel">
-          <Button
-            style={{ backgroundColor: 'red', color: 'white' }}
-            onClick={() => props.callback('Cancel')}
-          >
+          <Button style={{ backgroundColor: 'red', color: 'white' }} onClick={() => props.callback('Cancel')}>
             Cancel
           </Button>
         </Tooltip>
