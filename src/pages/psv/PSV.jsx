@@ -5,13 +5,13 @@ import { useCollection } from '../../hooks/useCollection';
 import { Button, IconButton, Tooltip } from '@material-ui/core';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import { useReducer, useEffect, useState } from 'react';
-import OKDialog from '../../components/Dialogs/OKDialog';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
+import OKDialog from '../../components/Dialogs/OKDialog';
 import { defaultDialogState } from '../../utils/defaultConfig';
 
-export default function FirstAid() {
-  const collection = 'firstaidkits'; // THIS IS WHERE THE TABLE NAME GOES
+export default function PSV() {
+  const collection = 'psvs'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const { documents, error } = useCollection(collection);
   const currentDate = new Date();
@@ -21,7 +21,7 @@ export default function FirstAid() {
     collection: collection,
     documents: documents,
     error: error,
-    title: 'First Aid',
+    title: 'PSV',
     sortField: 2,
     sortAsc: true,
 
@@ -60,7 +60,6 @@ export default function FirstAid() {
                   setDialogState({
                     shown: true,
                     message: row.comment,
-                    title: row.registration,
                   })
                 }
               >
@@ -75,11 +74,11 @@ export default function FirstAid() {
       },
       {
         name: '', // attached file button
-        selector: (row) => row.fileURL,
+        selector: (row) => row.fileUrl,
         button: true,
         cell: (row) =>
-          row.fileURL ? (
-            <a target="_blank" href={row.fileURL} rel="noopener noreferrer">
+          row.fileUrl ? (
+            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
               <Tooltip title="Open document">
                 <IconButton
                   style={{
@@ -107,7 +106,6 @@ export default function FirstAid() {
       <OKDialog
         show={dialogState.shown}
         message={dialogState.message}
-        title={dialogState.title}
         callback={(res) => {
           setDialogState({ shown: false });
         }}

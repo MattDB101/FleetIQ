@@ -10,19 +10,20 @@ import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { defaultDialogState } from '../../utils/defaultConfig';
 
-export default function Vehicles() {
-  const collection = 'vehicles'; // THIS IS WHERE THE TABLE NAME GOES
+export default function FireExtinguishers() {
+  const collection = 'fireextinguishers'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const { documents, error } = useCollection(collection);
+  const currentDate = new Date();
   const [dialogState, setDialogState] = useState(defaultDialogState);
 
   let props = {
     collection: collection,
     documents: documents,
     error: error,
-    title: 'Vehicles',
-    sortField: 1,
-    sortAsc: false,
+    title: 'Fire Extinguishers',
+    sortField: 2,
+    sortAsc: true,
 
     keyColumn: [
       {
@@ -38,24 +39,9 @@ export default function Vehicles() {
         sortable: true,
       },
       {
-        name: 'Make',
-        selector: (row) => row.make || '-',
+        name: 'Expiration Date',
+        selector: (row) => row.expiryDate,
         sortable: true,
-      },
-      {
-        name: 'Model',
-        selector: (row) => row.model || '-',
-        sortable: true,
-      },
-      {
-        name: 'Capacity',
-        selector: (row) => row.capacity || '-',
-        sortable: true,
-      },
-      {
-        name: 'VIN',
-        selector: (row) => row.vin || '-',
-        sortable: false,
       },
       {
         name: '', // comment button
@@ -66,7 +52,7 @@ export default function Vehicles() {
               <IconButton
                 style={{
                   color: 'white',
-                  backgroundColor: '#bf5532',
+                  backgroundColor: '#eb4034',
                   borderRadius: '5px',
                   padding: '5px',
                 }}
@@ -89,11 +75,11 @@ export default function Vehicles() {
       },
       {
         name: '', // attached file button
-        selector: (row) => row.fileURL,
+        selector: (row) => row.fileUrl,
         button: true,
         cell: (row) =>
-          row.fileURL ? (
-            <a target="_blank" href={row.fileURL} rel="noopener noreferrer">
+          row.fileUrl ? (
+            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
               <Tooltip title="Open document">
                 <IconButton
                   style={{
@@ -113,29 +99,9 @@ export default function Vehicles() {
         sortable: false,
         width: '10%',
       },
-
-      // {
-      //   name: "More Info",
-      //   cell: (row) => (
-      //       <Button
-      //           variant="contained"
-      //           size="small"
-      //           color="primary"
-      //           onClick={() => console.log("")}
-      //           aria-label="add"
-      //           startIcon={ <AssignmentIcon style={{marginLeft: "25%"}}/> }
-      //           >
-      //       </Button>
-      //   ),
-      //   sortable: false,
-      // },
-      // {
-      //   name: "Time/Date Recorded",
-      //   selector: (row) => row.recordedAt,
-      //   sortable: true
-      // },
     ],
   };
+
   return (
     <div>
       {' '}

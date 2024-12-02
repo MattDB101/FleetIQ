@@ -13,9 +13,10 @@ import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutl
 import EuroIcon from '@mui/icons-material/Euro';
 import { useTranslation } from 'react-i18next';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
 import Build from '@mui/icons-material/Build';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 
 function NavLinks() {
   let { t } = useTranslation();
@@ -33,7 +34,7 @@ function NavLinks() {
     },
     compliance: {
       heading: t('Compliance'),
-      icon: <AssuredWorkloadIcon />,
+      icon: <FactCheckIcon />,
       links: {
         cvrt: {
           text: t('CVRT'),
@@ -43,7 +44,7 @@ function NavLinks() {
         inspections: {
           text: t('Inspections'),
           path: '/inspections',
-          icon: <Build />,
+          icon: <AssignmentTurnedInIcon />,
         },
         tax: {
           text: t('Tax'),

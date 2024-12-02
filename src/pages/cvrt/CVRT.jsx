@@ -10,8 +10,8 @@ import FilePresentIcon from '@mui/icons-material/FilePresent';
 import OKDialog from '../../components/Dialogs/OKDialog';
 import { defaultDialogState } from '../../utils/defaultConfig';
 
-export default function PSV() {
-  const collection = 'psvs'; // THIS IS WHERE THE TABLE NAME GOES
+export default function CVRT() {
+  const collection = 'cvrts'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const { documents, error } = useCollection(collection);
   const currentDate = new Date();
@@ -21,7 +21,7 @@ export default function PSV() {
     collection: collection,
     documents: documents,
     error: error,
-    title: 'PSV',
+    title: 'CVRT',
     sortField: 2,
     sortAsc: true,
 
@@ -40,7 +40,7 @@ export default function PSV() {
       },
       {
         name: 'Expiration Date',
-        selector: (row) => row.expiryDate, // Only pass expiryDate here
+        selector: (row) => row.expiryDate,
         sortable: true,
       },
       {
@@ -60,6 +60,7 @@ export default function PSV() {
                   setDialogState({
                     shown: true,
                     message: row.comment,
+                    title: row.registration,
                   })
                 }
               >
@@ -74,11 +75,11 @@ export default function PSV() {
       },
       {
         name: '', // attached file button
-        selector: (row) => row.fileURL,
+        selector: (row) => row.fileUrl,
         button: true,
         cell: (row) =>
-          row.fileURL ? (
-            <a target="_blank" href={row.fileURL} rel="noopener noreferrer">
+          row.fileUrl ? (
+            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
               <Tooltip title="Open document">
                 <IconButton
                   style={{
@@ -106,6 +107,7 @@ export default function PSV() {
       <OKDialog
         show={dialogState.shown}
         message={dialogState.message}
+        title={dialogState.title}
         callback={(res) => {
           setDialogState({ shown: false });
         }}

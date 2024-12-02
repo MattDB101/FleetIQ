@@ -5,45 +5,35 @@ import { useCollection } from '../../hooks/useCollection';
 import { Button, IconButton, Tooltip } from '@material-ui/core';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import { useReducer, useEffect, useState } from 'react';
+import OKDialog from '../../components/Dialogs/OKDialog';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
-import OKDialog from '../../components/Dialogs/OKDialog';
 import { defaultDialogState } from '../../utils/defaultConfig';
 
-export default function TachoCalibration() {
-  const collection = 'tachocalibrations'; // THIS IS WHERE THE TABLE NAME GOES
+export default function Drivers() {
+  const collection = 'drivers'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const { documents, error } = useCollection(collection);
-  const currentDate = new Date();
   const [dialogState, setDialogState] = useState(defaultDialogState);
 
   let props = {
     collection: collection,
     documents: documents,
     error: error,
-    title: 'Tachograph Calibration',
-    sortField: 2,
-    sortAsc: true,
+    title: 'Drivers',
 
     keyColumn: [
       {
-        key: 'registration',
-        name: 'Registration',
+        key: 'name',
+        name: 'Name',
       },
     ],
 
     columns: [
       {
-        name: 'Registration',
-        selector: (row) => row.registration,
+        name: 'Name',
+        selector: (row) => row.Name,
         sortable: true,
-        width: '34%',
-      },
-      {
-        name: 'Expiration Date',
-        selector: (row) => row.expiryDate, // Only pass expiryDate here
-        sortable: true,
-        width: '34%',
       },
       {
         name: '', // comment button
@@ -77,11 +67,11 @@ export default function TachoCalibration() {
       },
       {
         name: '', // attached file button
-        selector: (row) => row.fileURL,
+        selector: (row) => row.fileUrl,
         button: true,
         cell: (row) =>
-          row.fileURL ? (
-            <a target="_blank" href={row.fileURL} rel="noopener noreferrer">
+          row.fileUrl ? (
+            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
               <Tooltip title="Open document">
                 <IconButton
                   style={{
@@ -101,10 +91,31 @@ export default function TachoCalibration() {
         sortable: false,
         width: '10%',
       },
+      // {
+      //   name: "More Info",
+      //   cell: (row) => (
+      //       <Button
+      //           variant="contained"
+      //           size="small"
+      //           color="primary"
+      //           onClick={() => console.log("")}
+      //           aria-label="add"
+      //           startIcon={ <AssignmentIcon style={{marginLeft: "25%"}}/> }
+      //           >
+      //       </Button>
+      //   ),
+      //   sortable: false,
+      // },
+      // {
+      //   name: "Time/Date Recorded",
+      //   selector: (row) => row.recordedAt,
+      //   sortable: true
+      // },
     ],
   };
   return (
     <div>
+      {' '}
       <OKDialog
         show={dialogState.shown}
         message={dialogState.message}

@@ -5,34 +5,42 @@ import { useCollection } from '../../hooks/useCollection';
 import { Button, IconButton, Tooltip } from '@material-ui/core';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import { useReducer, useEffect, useState } from 'react';
-import OKDialog from '../../components/Dialogs/OKDialog';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import { defaultDialogState } from '../../utils/defaultConfig';
+import OKDialog from '../../components/Dialogs/OKDialog';
 
-export default function Drivers() {
-  const collection = 'drivers'; // THIS IS WHERE THE TABLE NAME GOES
+export default function Tax() {
+  const collection = 'taxes'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const { documents, error } = useCollection(collection);
+  const currentDate = new Date();
   const [dialogState, setDialogState] = useState(defaultDialogState);
 
   let props = {
     collection: collection,
     documents: documents,
     error: error,
-    title: 'Drivers',
+    title: 'Tax',
+    sortField: 2,
+    sortAsc: true,
 
     keyColumn: [
       {
-        key: 'name',
-        name: 'Name',
+        key: 'registration',
+        name: 'Registration',
       },
     ],
 
     columns: [
       {
-        name: 'Name',
-        selector: (row) => row.Name,
+        name: 'Registration',
+        selector: (row) => row.registration,
+        sortable: true,
+      },
+      {
+        name: 'Expiration Date',
+        selector: (row) => row.expiryDate, // Only pass expiryDate here
         sortable: true,
       },
       {
@@ -67,11 +75,11 @@ export default function Drivers() {
       },
       {
         name: '', // attached file button
-        selector: (row) => row.fileURL,
+        selector: (row) => row.fileUrl,
         button: true,
         cell: (row) =>
-          row.fileURL ? (
-            <a target="_blank" href={row.fileURL} rel="noopener noreferrer">
+          row.fileUrl ? (
+            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
               <Tooltip title="Open document">
                 <IconButton
                   style={{
@@ -91,26 +99,6 @@ export default function Drivers() {
         sortable: false,
         width: '10%',
       },
-      // {
-      //   name: "More Info",
-      //   cell: (row) => (
-      //       <Button
-      //           variant="contained"
-      //           size="small"
-      //           color="primary"
-      //           onClick={() => console.log("")}
-      //           aria-label="add"
-      //           startIcon={ <AssignmentIcon style={{marginLeft: "25%"}}/> }
-      //           >
-      //       </Button>
-      //   ),
-      //   sortable: false,
-      // },
-      // {
-      //   name: "Time/Date Recorded",
-      //   selector: (row) => row.recordedAt,
-      //   sortable: true
-      // },
     ],
   };
   return (

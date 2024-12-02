@@ -7,11 +7,11 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import { useReducer, useEffect, useState } from 'react';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
-import { defaultDialogState } from '../../utils/defaultConfig';
 import OKDialog from '../../components/Dialogs/OKDialog';
+import { defaultDialogState } from '../../utils/defaultConfig';
 
-export default function Tax() {
-  const collection = 'taxes'; // THIS IS WHERE THE TABLE NAME GOES
+export default function TachoCalibration() {
+  const collection = 'tachocalibrations'; // THIS IS WHERE THE TABLE NAME GOES
   const { user } = useAuthContext();
   const { documents, error } = useCollection(collection);
   const currentDate = new Date();
@@ -21,7 +21,7 @@ export default function Tax() {
     collection: collection,
     documents: documents,
     error: error,
-    title: 'Tax',
+    title: 'Tachograph Calibration',
     sortField: 2,
     sortAsc: true,
 
@@ -37,11 +37,13 @@ export default function Tax() {
         name: 'Registration',
         selector: (row) => row.registration,
         sortable: true,
+        width: '34%',
       },
       {
         name: 'Expiration Date',
         selector: (row) => row.expiryDate, // Only pass expiryDate here
         sortable: true,
+        width: '34%',
       },
       {
         name: '', // comment button
@@ -75,11 +77,11 @@ export default function Tax() {
       },
       {
         name: '', // attached file button
-        selector: (row) => row.fileURL,
+        selector: (row) => row.fileUrl,
         button: true,
         cell: (row) =>
-          row.fileURL ? (
-            <a target="_blank" href={row.fileURL} rel="noopener noreferrer">
+          row.fileUrl ? (
+            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
               <Tooltip title="Open document">
                 <IconButton
                   style={{
@@ -103,7 +105,6 @@ export default function Tax() {
   };
   return (
     <div>
-      {' '}
       <OKDialog
         show={dialogState.shown}
         message={dialogState.message}

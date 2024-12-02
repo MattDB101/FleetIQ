@@ -9,13 +9,7 @@ import {
   Tooltip,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import Alert from '@mui/material/Alert';
 import { makeStyles } from '@material-ui/core/styles';
-import CancelIcon from '@mui/icons-material/CancelOutlined';
-import SaveIcon from '@mui/icons-material/SaveOutlined';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import DoneIcon from '@mui/icons-material/Done';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -73,14 +67,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const defaultState = () => {
-  return {
-    name: '',
-    startDate: '',
-    endDate: '',
-  };
-};
-
 const JobDialog = (props) => {
   const MONTHS = [
     'January',
@@ -97,7 +83,6 @@ const JobDialog = (props) => {
     'December',
   ];
   const classes = useStyles();
-  const [state, setState] = useState(defaultState());
   const [pax, setPAX] = useState('');
   const [days, setDays] = useState('');
   const [contactDetails, setContactDetails] = useState('');
@@ -393,7 +378,7 @@ const JobDialog = (props) => {
               <Button
                 style={{
                   backgroundColor: 'green',
-                  fontWeight: 'bold',
+                  color: 'white',
                   fontSize: '1rem',
                   marginRight: '10px',
                 }}
@@ -411,7 +396,7 @@ const JobDialog = (props) => {
               <Button
                 style={{
                   backgroundColor: 'red',
-                  fontWeight: 'bold',
+                  color: 'white',
                   fontSize: '1rem',
                 }}
                 onClick={() => props.callback('Cancel')}

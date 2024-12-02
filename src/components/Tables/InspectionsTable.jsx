@@ -152,8 +152,7 @@ export default function InspectionsTable(props) {
   const [toggleCleared, setToggleCleared] = React.useState(false);
   const [columnFilters, setColumnFilters] = useState({});
   const { user } = useAuthContext();
-  const { addDocument, deleteDocument, updateDocument, response } =
-    useFirestore(props.collection);
+  const { addDocument, deleteDocument, updateDocument, response } = useFirestore(props.collection);
   const docToAdd = props.docToAdd;
 
   const filterTerm = (event) => setSearchTerm(event.target.value);
@@ -175,9 +174,7 @@ export default function InspectionsTable(props) {
         selectedRows.length = 0;
       }
     } else {
-      var confirm = prompt(
-        'Please enter "CONFIRM" to delete these rows. \nWARNING: This cannot be undone!'
-      );
+      var confirm = prompt('Please enter "CONFIRM" to delete these rows. \nWARNING: This cannot be undone!');
       if (confirm && confirm.toLowerCase() === 'confirm') {
         setToggleCleared(!toggleCleared);
         for (let i = 0; i < selectedRows.length; i++) {
@@ -209,8 +206,7 @@ export default function InspectionsTable(props) {
     if (selectedRows.length === 1) return '1 row selectedRows';
     if (selectedRows.length > 1 && selectedRows.length < props.documents.length)
       return `${selectedRows.length} ${'rows selectedRows'}`;
-    if (selectedRows.length === props.documents.length)
-      return 'All rows selectedRows';
+    if (selectedRows.length === props.documents.length) return 'All rows selectedRows';
 
     return '';
   };
@@ -222,8 +218,8 @@ export default function InspectionsTable(props) {
   };
 
   const filterRows = () => {
-    props.documents.sort(sortByRecent);
-    console.log(props.documents);
+    // props.documents.sort(sortByRecent);
+    // console.log(props.documents);
     // for (let i = 0; i < props.documents.length; i++) {
     //   props.documents[i].recordedAt = toDateTime(
     //     props.documents[i].createdAt.seconds
@@ -231,12 +227,7 @@ export default function InspectionsTable(props) {
     // }
 
     let res = props.documents.filter((row) => {
-      if (
-        !`${row[props.keyColumn[0].key]}`
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      )
-        return false;
+      if (!`${row[props.keyColumn[0].key]}`.toLowerCase().includes(searchTerm.toLowerCase())) return false;
 
       let isValid = true;
 
@@ -245,33 +236,16 @@ export default function InspectionsTable(props) {
         if (!filter.enabled) return;
 
         if (filter.type === 'text') {
-          if (
-            !`${row[filterKey]}`
-              .toLowerCase()
-              .includes(filter.filterValue.includes.toLowerCase())
-          ) {
+          if (!`${row[filterKey]}`.toLowerCase().includes(filter.filterValue.includes.toLowerCase())) {
             isValid = false;
           }
           return;
         } else if (filter.type === 'numeric') {
-          if (
-            !rangeFilter(
-              filter.filterValue.greaterThan,
-              row[filterKey],
-              filter.filterValue.lessThan
-            )
-          )
+          if (!rangeFilter(filter.filterValue.greaterThan, row[filterKey], filter.filterValue.lessThan))
             isValid = false;
           return;
         } else if (filter.type === 'date') {
-          if (
-            !rangeFilter(
-              filter.filterValue.from,
-              new Date(row[filterKey]),
-              filter.filterValue.to
-            )
-          )
-            isValid = false;
+          if (!rangeFilter(filter.filterValue.from, new Date(row[filterKey]), filter.filterValue.to)) isValid = false;
           return;
         }
       });
@@ -302,9 +276,9 @@ export default function InspectionsTable(props) {
 
           <DataTable
             columns={props.columns}
-            onSelectedRowsRowsChange={(e) =>
-              setSelectedRows(e.selectedRowsRows)
-            }
+            onSelectedRowsRowsChange={(e) => setSelectedRows(e.selectedRowsRows)}
+            defaultSortFieldId={props.sortField}
+            defaultSortAsc={props.sortAsc}
             data={filterRows()}
             sortIcon={<SortIcon />}
             clearSelectedRowsRows={toggleCleared}
@@ -327,10 +301,7 @@ export default function InspectionsTable(props) {
             }}
           />
 
-          <Typography
-            className={classes.title}
-            style={{ color: 'Red', fontSize: '1.25rem', marginLeft: '20px' }}
-          >
+          <Typography className={classes.title} style={{ color: 'Red', fontSize: '1.25rem', marginLeft: '20px' }}>
             {props.error}
           </Typography>
         </Paper>

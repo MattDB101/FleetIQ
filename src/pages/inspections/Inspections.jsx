@@ -43,13 +43,14 @@ export default function Inspections() {
     collection: collection,
     documents: documents,
     year: year,
+    sortField: 2,
     error: error,
     title: 'Inspections | ' + months[datePickerValue.getMonth()] + ' ' + datePickerValue.getFullYear(),
 
     keyColumn: [
       {
-        key: 'client',
-        name: 'Client',
+        key: 'inspection',
+        name: 'Inspection',
       },
     ],
 
@@ -75,7 +76,7 @@ export default function Inspections() {
             )}
           </Tooltip>
         ),
-        sortable: true,
+        sortable: false,
       },
     ],
   };
