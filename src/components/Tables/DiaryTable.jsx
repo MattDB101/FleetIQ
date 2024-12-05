@@ -17,7 +17,7 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import JobDialog from '../Dialogs/JobDialog';
 import { Add } from '@mui/icons-material';
-import TableHeader from '../TableHeader';
+import TableHeader from './TableHeader';
 
 const useStyles = makeStyles((theme) => ({
   style: {

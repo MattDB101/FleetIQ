@@ -17,7 +17,7 @@ import { useFirestore } from '../../hooks/useFirestore';
 import VehicleDialog from '../Dialogs/VehicleDialog';
 import GenericAdd from '../Dialogs/ComplianceDialog';
 import { defaultDialogState } from '../../utils/defaultConfig';
-import TableHeader from '../TableHeader';
+import TableHeader from './TableHeader';
 import { renderExpiryDateCell } from '../../utils/DateCellRendering';
 import { defaultDialogMapping } from '../../utils/defaultConfig';
 
@@ -126,7 +126,9 @@ export default function GenericTable(props) {
   const [columnFilters, setColumnFilters] = useState({});
   const [dialogState, setDialogState] = useState(defaultDialogState);
   const [dialogMapping] = useState(defaultDialogMapping);
-  const { addDocument, deleteDocument, response } = useFirestore(props.collection);
+  const { addDocument, deleteDocument, response } = useFirestore(
+    props.collection
+  );
 
   const dialogConfig = dialogMapping[props.collection];
 
@@ -189,7 +191,9 @@ export default function GenericTable(props) {
         clearSelectedRows();
       }
     } else {
-      var confirm = prompt('Please enter "CONFIRM" to delete these rows. \nWARNING: This cannot be undone!');
+      var confirm = prompt(
+        'Please enter "CONFIRM" to delete these rows. \nWARNING: This cannot be undone!'
+      );
       if (confirm && confirm.toLowerCase() === 'confirm') {
         console.log('multidelete');
         for (let i = 0; i < selectedRows.length; i++) {
@@ -209,7 +213,8 @@ export default function GenericTable(props) {
     if (selectedRows.length === 1) return '1 row selected';
     if (selectedRows.length > 1 && selectedRows.length < props.documents.length)
       return `${selectedRows.length} ${'rows selected'}`;
-    if (selectedRows.length === props.documents.length) return 'All rows selected';
+    if (selectedRows.length === props.documents.length)
+      return 'All rows selected';
 
     return '';
   };
@@ -236,7 +241,9 @@ export default function GenericTable(props) {
 
   const filterRows = () => {
     let res = props.documents.filter((row) => {
-      const rowAlphanumeric = `${row[props.keyColumn[0].key]}`.toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
+      const rowAlphanumeric = `${row[props.keyColumn[0].key]}`
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9]/g, '');
 
       const searchAlphanumeric = searchTerm // match regardless of case or special characters
         .toLowerCase()
@@ -326,7 +333,10 @@ export default function GenericTable(props) {
             />
           )}
 
-          <Typography className={classes.title} style={{ color: 'Red', fontSize: '1.25rem', marginLeft: '20px' }}>
+          <Typography
+            className={classes.title}
+            style={{ color: 'Red', fontSize: '1.25rem', marginLeft: '20px' }}
+          >
             {props.error}
           </Typography>
         </Paper>

@@ -48,7 +48,7 @@ export default function Vehicles() {
         sortable: true,
       },
       {
-        name: 'Capacity',
+        name: 'Seats',
         selector: (row) => row.capacity || '-',
         sortable: true,
       },
@@ -58,15 +58,13 @@ export default function Vehicles() {
         sortable: false,
       },
       {
-        name: '', // comment button
+        name: '',
         button: true,
         cell: (row) =>
           row.comment ? (
-            <Tooltip title="View Comment">
+            <Tooltip title="View Notes">
               <IconButton
                 style={{
-                  color: 'white',
-                  backgroundColor: '#bf5532',
                   borderRadius: '5px',
                   padding: '5px',
                 }}
@@ -88,16 +86,14 @@ export default function Vehicles() {
         width: '10%',
       },
       {
-        name: '', // attached file button
+        name: '',
         button: true,
         cell: (row) =>
           row.fileUrl ? (
             <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
-              <Tooltip title="Open document">
+              <Tooltip title="Open Document">
                 <IconButton
                   style={{
-                    color: 'white',
-                    backgroundColor: '#d4af0b',
                     borderRadius: '5px',
                     padding: '5px',
                   }}

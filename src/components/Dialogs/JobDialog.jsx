@@ -2,23 +2,21 @@ import {
   Dialog,
   DialogTitle,
   DialogActions,
-  DialogContentText,
   TextField,
   Button,
-  DialogContent,
   Tooltip,
 } from '@material-ui/core';
+import { Stack } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
+import SaveIcon from '@mui/icons-material/Save';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -109,7 +107,8 @@ const JobDialog = (props) => {
   );
 
   useEffect(() => {
-    const differenceInTime = endDate.getTime() + 1000 * 3600 * 24 - startDate.getTime();
+    const differenceInTime =
+      endDate.getTime() + 1000 * 3600 * 24 - startDate.getTime();
     const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
     setDays(differenceInDays);
   }, [startDate, endDate]); // Run this effect whenever startDate or endDate changes
@@ -151,14 +150,23 @@ const JobDialog = (props) => {
     setDestinationInvalid(!isValidDestination);
 
     return (
-      isValidClient && isValidContactDetails && isValidPax && isValidDays && isValidDeparting && isValidDestination
+      isValidClient &&
+      isValidContactDetails &&
+      isValidPax &&
+      isValidDays &&
+      isValidDeparting &&
+      isValidDestination
     );
   };
 
   const handleAdd = () => {
     if (validateForm()) {
-      const formattedDepartTime = departTime ? `${departTime.$H}:${String(departTime.$m).padStart(2, '0')}` : '';
-      const formattedReturnTime = returnTime ? `${returnTime.$H}:${String(returnTime.$m).padStart(2, '0')}` : '';
+      const formattedDepartTime = departTime
+        ? `${departTime.$H}:${String(departTime.$m).padStart(2, '0')}`
+        : '';
+      const formattedReturnTime = returnTime
+        ? `${returnTime.$H}:${String(returnTime.$m).padStart(2, '0')}`
+        : '';
 
       let docToAdd = {
         client: client,
@@ -197,7 +205,10 @@ const JobDialog = (props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle style={{ margin: '30px', marginTop: '10px' }} id="alert-dialog-title">
+        <DialogTitle
+          style={{ margin: '30px', marginTop: '10px' }}
+          id="alert-dialog-title"
+        >
           {props.title}
         </DialogTitle>
         {/* <DialogContent>
@@ -207,8 +218,8 @@ const JobDialog = (props) => {
                 </DialogContent> */}
 
         <div style={{ margin: '0px 50px' }}>
-          <div class="rowOne" style={{ display: 'flex', flexWrap: 'wrap' }}>
-            <div class="startDate" style={{ maxWidth: '180px', float: 'left', marginRight: '20px' }}>
+          <Stack direction="row" useFlexGap spacing={3}>
+            <div class="startDate">
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
                   label={'Start Date'}
@@ -223,7 +234,7 @@ const JobDialog = (props) => {
               <div id="calenderDiv"></div>
             </div>
 
-            <div class="endDate" style={{ maxWidth: '180px', marginRight: '20px' }}>
+            <div class="endDate">
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
                   label="End Date"
@@ -238,7 +249,7 @@ const JobDialog = (props) => {
               <div id="calenderDiv"></div>
             </div>
 
-            <div class="dayCounter" style={{ maxWidth: '100px' }}>
+            <div class="dayCounter" style={{ maxWidth: '80px' }}>
               <TextField
                 type="number"
                 disabled
@@ -252,11 +263,9 @@ const JobDialog = (props) => {
                 variant="outlined"
               />
             </div>
-          </div>
-
-          <div class="rowTwo" style={{ display: 'flex', flexWrap: 'wrap' }}>
+          </Stack>
+          <Stack direction="row" useFlexGap spacing={2}>
             <TextField
-              style={{ maxWidth: '240px', marginRight: '20px' }}
               error={clientInvalid}
               onChange={(e) => setClient(e.target.value)}
               margin="normal"
@@ -270,7 +279,6 @@ const JobDialog = (props) => {
             />
 
             <TextField
-              style={{ maxWidth: '240px' }}
               error={contactDetailsInvalid}
               onChange={(e) => setContactDetails(e.target.value)}
               margin="normal"
@@ -282,9 +290,9 @@ const JobDialog = (props) => {
               fullWidth
               variant="outlined"
             />
-          </div>
+          </Stack>
 
-          <div class="rowThree" style={{ display: 'flex', flexWrap: 'wrap' }}>
+          <Stack direction="row" useFlexGap spacing={2}>
             <TextField
               type="number"
               error={paxInvalid}
@@ -296,7 +304,6 @@ const JobDialog = (props) => {
                 className: 'required-label',
               }}
               variant="outlined"
-              style={{ maxWidth: '240px', marginRight: '20px' }}
             />
 
             <TextField
@@ -306,13 +313,16 @@ const JobDialog = (props) => {
               id="Quote"
               label="Price Quoted"
               variant="outlined"
-              style={{ maxWidth: '240px' }}
             />
-          </div>
+          </Stack>
 
-          <div class="rowFour" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
+          <Stack
+            direction="row"
+            style={{ marginTop: '15px' }}
+            useFlexGap
+            spacing={2}
+          >
             <TextField
-              style={{ maxWidth: '240px', marginRight: '20px' }}
               error={departingInvalid}
               onChange={(e) => setDeparting(e.target.value)}
               margin="none"
@@ -333,36 +343,42 @@ const JobDialog = (props) => {
                 className: 'required-label',
               }}
               variant="outlined"
-              style={{ maxWidth: '240px' }}
             />
-          </div>
+          </Stack>
 
-          <div class="rowFive" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
-            <div style={{ maxWidth: '240px', marginRight: '20px' }}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker label="Depart Time" onChange={handleChangeDepartTime} />
-              </LocalizationProvider>
-            </div>
+          <Stack
+            direction="row"
+            style={{ marginTop: '25px' }}
+            useFlexGap
+            spacing={2}
+          >
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <TimePicker
+                label="Depart Time"
+                onChange={handleChangeDepartTime}
+              />
+            </LocalizationProvider>
 
-            <div style={{ maxWidth: '240px' }}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker style={{ maxWidth: '240px' }} label="Return Time" onChange={handleChangeReturnTime} />
-              </LocalizationProvider>
-            </div>
-          </div>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <TimePicker
+                style={{ maxWidth: '240px' }}
+                label="Return Time"
+                onChange={handleChangeReturnTime}
+              />
+            </LocalizationProvider>
+          </Stack>
 
-          <div class="rowSix" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '10px' }}>
-            <TextField
-              id="comments"
-              label="Comments"
-              multiline
-              margin="none"
-              onChange={(e) => setComment(e.target.value)}
-              rows={2}
-              maxRows={6}
-              variant="outlined"
-            />
-          </div>
+          <TextField
+            style={{ marginTop: '25px' }}
+            id="comments"
+            label="Comments"
+            multiline
+            margin="none"
+            onChange={(e) => setComment(e.target.value)}
+            rows={2}
+            maxRows={6}
+            variant="outlined"
+          />
         </div>
 
         <DialogActions
@@ -374,37 +390,30 @@ const JobDialog = (props) => {
           }}
         >
           <div>
-            <Tooltip title="Save">
-              <Button
-                style={{
-                  backgroundColor: 'green',
-                  color: 'white',
-                  fontSize: '1rem',
-                  marginRight: '10px',
-                }}
-                autofocus
-                onClick={() => handleAdd()}
-                size="large"
-              >
-                Save
-              </Button>
-            </Tooltip>
+            <Button
+              color="primary"
+              variant="contained"
+              startIcon={<SaveIcon />}
+              autofocus
+              onClick={() => handleAdd()}
+              size="large"
+            >
+              Save
+            </Button>
           </div>
 
-          <div className={classes.dialogBox} style={{ display: 'flex', flex: '20%', marginRight: '20px' }}>
-            <Tooltip title="Cancel">
-              <Button
-                style={{
-                  backgroundColor: 'red',
-                  color: 'white',
-                  fontSize: '1rem',
-                }}
-                onClick={() => props.callback('Cancel')}
-                size="large"
-              >
-                Cancel
-              </Button>
-            </Tooltip>
+          <div
+            className={classes.dialogBox}
+            style={{ display: 'flex', flex: '20%', marginRight: '20px' }}
+          >
+            <Button
+              color="secondary"
+              variant="outlined"
+              onClick={() => props.callback('Cancel')}
+              size="large"
+            >
+              Cancel
+            </Button>
           </div>
         </DialogActions>
       </Dialog>
@@ -413,8 +422,3 @@ const JobDialog = (props) => {
 };
 
 export default JobDialog;
-
-//onClose = {(event, reason) => {
-//    if (reason && reason == "backdropClick") return;
-//    props.callback("Cancel")
-//}}

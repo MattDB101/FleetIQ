@@ -36,15 +36,13 @@ export default function Drivers() {
         sortable: true,
       },
       {
-        name: '', // comment button
+        name: '',
         button: true,
         cell: (row) =>
           row.comment ? (
-            <Tooltip title="View Comment">
+            <Tooltip title="View Notes">
               <IconButton
                 style={{
-                  color: 'white',
-                  backgroundColor: '#bf5532',
                   borderRadius: '5px',
                   padding: '5px',
                 }}
@@ -66,17 +64,14 @@ export default function Drivers() {
         width: '10%',
       },
       {
-        name: '', // attached file button
-        selector: (row) => row.fileUrl,
+        name: '',
         button: true,
         cell: (row) =>
           row.fileUrl ? (
             <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
-              <Tooltip title="Open document">
+              <Tooltip title="Open Document">
                 <IconButton
                   style={{
-                    color: 'white',
-                    backgroundColor: '#d4af0b',
                     borderRadius: '5px',
                     padding: '5px',
                   }}

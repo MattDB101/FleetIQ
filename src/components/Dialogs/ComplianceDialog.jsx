@@ -23,7 +23,12 @@ import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
 import { defaultComplianceState } from '../../utils/defaultConfig';
 import { useInspectionScheduler } from '../../utils/InspectionsScheduler';
-import { setDate } from 'date-fns';
+import SaveIcon from '@mui/icons-material/Save';
+import SaveAsIcon from '@mui/icons-material/SaveAs';
+import { Stack, Input } from '@mui/material';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { handleFileUpload } from '../../utils/fileHandler';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({}));
 
@@ -34,11 +39,17 @@ const AddService = (props) => {
   const classes = useStyles();
   const [tableRegistrations, setTableRegistrations] = useState([]);
 
-  // States for form fields
   const [registrationInvalid, setRegistrationInvalid] = useState(false);
-  const [registration, setRegistration] = useState(defaultComplianceState.registration);
-  const [expiryDate, setExpiryDate] = useState(defaultComplianceState.expiryDate);
+  const [registration, setRegistration] = useState(
+    defaultComplianceState.registration
+  );
+  const [expiryDate, setExpiryDate] = useState(
+    defaultComplianceState.expiryDate
+  );
   const [comment, setComment] = useState(defaultComplianceState.comment);
+
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (props.tableRows && props.tableRows.length > 0) {
@@ -95,6 +106,8 @@ const AddService = (props) => {
         registration: registration,
         expiryDate: expiryDate,
         comment: comment,
+        fileName: file ? file.name : '',
+        fileUrl: file ? file.url : '',
       };
 
       if (props.edit) {
@@ -110,7 +123,21 @@ const AddService = (props) => {
 
       setExpiryDate(new Date());
       setRegistration('');
+      setFile(null);
       props.callback('OK');
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setLoading(true);
+      const uploadedFile = await handleFileUpload(selectedFile);
+      setFile({
+        name: uploadedFile.name,
+        url: uploadedFile.url,
+      });
+      setLoading(false);
     }
   };
 
@@ -133,92 +160,134 @@ const AddService = (props) => {
     <Dialog open={props.show} onClose={() => props.callback('Cancel')}>
       <DialogTitle>{props.title}</DialogTitle>
 
-      <div style={{ margin: '0px 50px' }}>
-        <FormControl fullWidth>
-          <InputLabel id="vehicleSelectLabel">Vehicle</InputLabel>
-          <Select
-            labelId="vehicleSelectLabel"
-            id="vehicleSelect"
-            error={registrationInvalid}
-            value={registration}
-            label="Vehicle"
-            onChange={handleVehicleChange}
+      <div style={{ margin: '25px 50px' }}>
+        <Stack direction="column" useFlexGap spacing={3}>
+          <Stack
+            direction="row"
+            style={{ minWidth: '500px' }}
+            useFlexGap
+            spacing={2}
           >
-            {documents &&
-              (() => {
-                const filteredVehicles = documents
-                  .sort((a, b) => a.registration.localeCompare(b.registration)) // Sort by registration
-                  .filter((vehicle) => {
-                    // If in edit mode include the current registration
-                    if (props.edit && vehicle.registration === registration) {
-                      return true;
-                    }
-                    // filter out vehicles already on this table
-                    return !tableRegistrations.includes(vehicle.registration);
-                  });
+            <FormControl fullWidth>
+              <InputLabel id="vehicleSelectLabel">Vehicle</InputLabel>
+              <Select
+                labelId="vehicleSelectLabel"
+                id="vehicleSelect"
+                error={registrationInvalid}
+                value={registration}
+                label="Vehicle"
+                onChange={handleVehicleChange}
+              >
+                {documents &&
+                  (() => {
+                    const filteredVehicles = documents
+                      .sort((a, b) =>
+                        a.registration.localeCompare(b.registration)
+                      ) // Sort by registration
+                      .filter((vehicle) => {
+                        // If in edit mode include the current registration
+                        if (
+                          props.edit &&
+                          vehicle.registration === registration
+                        ) {
+                          return true;
+                        }
+                        // filter out vehicles already on this table
+                        return !tableRegistrations.includes(
+                          vehicle.registration
+                        );
+                      });
 
-                return filteredVehicles.length > 0 ? (
-                  // Map over the filtered and sorted vehicles to render the options
-                  filteredVehicles.map((vehicle, index) => (
-                    <MenuItem key={index} value={vehicle.registration}>
-                      {vehicle.registration}
-                    </MenuItem>
-                  ))
-                ) : (
-                  <MenuItem disabled>All registrations in use</MenuItem>
-                );
-              })()}
-          </Select>
-        </FormControl>
+                    return filteredVehicles.length > 0 ? (
+                      // Map over the filtered and sorted vehicles to render the options
+                      filteredVehicles.map((vehicle, index) => (
+                        <MenuItem key={index} value={vehicle.registration}>
+                          {vehicle.registration}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem disabled>All registrations in use</MenuItem>
+                    );
+                  })()}
+              </Select>
+            </FormControl>
 
-        <br />
-        <br />
-
-        <LocalizationProvider dateAdapter={AdapterDateFns} locale={enGB}>
-          <DesktopDatePicker
-            label={
-              props.collection === 'fireextinguishers' || props.collection === 'tachocalibrations'
-                ? 'Service Date'
-                : 'Expiration Date'
-            }
-            format="dd/MM/yyyy"
-            value={expiryDate}
-            onChange={handleChangeDate}
-            renderInput={(params) => <TextField {...params} />}
+            <LocalizationProvider dateAdapter={AdapterDateFns} locale={enGB}>
+              <DesktopDatePicker
+                label={
+                  props.collection === 'fireextinguishers' ||
+                  props.collection === 'tachocalibrations'
+                    ? 'Service Date'
+                    : 'Expiration Date'
+                }
+                format="dd/MM/yyyy"
+                value={expiryDate}
+                onChange={handleChangeDate}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Stack>
+          <TextField
+            id="comments"
+            label="Record Note"
+            multiline
+            margin="none"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            rows={2}
+            maxRows={6}
+            variant="outlined"
           />
-        </LocalizationProvider>
-
-        <br />
-        <br />
-
-        <TextField
-          id="comments"
-          label="Comments"
-          multiline
-          margin="none"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          rows={2}
-          maxRows={6}
-          variant="outlined"
-        />
+        </Stack>
       </div>
 
-      <DialogActions style={{ margin: '20px 45px' }}>
-        <Tooltip title={props.edit ? 'Update' : 'Save'}>
-          <Button id="submitDialog" style={{ backgroundColor: 'green', color: 'white' }} onClick={handleSave}>
-            {props.edit ? 'Update' : 'Save'}
-          </Button>
-        </Tooltip>
-        <Tooltip title="Cancel">
+      <div style={{ margin: '5px 0 0 50px' }}>
+        <Input
+          type="file"
+          inputProps={{ accept: '.pdf,.jpg,.jpeg,.png' }}
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+          id="file-upload-input"
+        />
+
+        <label htmlFor="file-upload-input">
           <Button
-            id="cancelDialog"
-            style={{ backgroundColor: 'red', color: 'white' }}
-            onClick={() => props.callback('Cancel')}
+            color="primary"
+            startIcon={<AttachFileIcon />}
+            variant="outlined"
+            component="span"
+            disabled={loading}
           >
-            Cancel
+            {loading ? 'Uploading...' : 'DOCUMENT'}
           </Button>
-        </Tooltip>
+        </label>
+
+        {file && (
+          <Typography variant="body2" style={{ marginTop: 10 }}>
+            {file.name}
+          </Typography>
+        )}
+      </div>
+      <DialogActions style={{ margin: '20px 45px' }}>
+        <Button
+          id="submitDialog"
+          color="primary"
+          variant="contained"
+          startIcon={props.edit ? <SaveAsIcon /> : <SaveIcon />}
+          disabled={loading}
+          onClick={handleSave}
+        >
+          {props.edit ? 'Update' : 'Save'}
+        </Button>
+
+        <Button
+          id="cancelDialog"
+          color="secondary"
+          variant="outlined"
+          onClick={() => props.callback('Cancel')}
+        >
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

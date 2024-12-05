@@ -57,6 +57,7 @@ export const useFirestore = (collection) => {
 
   const addDocument = async (doc) => {
     dispatch({ type: 'IS_PENDING' });
+    console.log(doc);
     try {
       const lastModified = timestamp.fromDate(new Date());
       const modifiedBy = user.displayName;

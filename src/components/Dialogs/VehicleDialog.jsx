@@ -12,9 +12,10 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
 import { useCollection } from '../../hooks/useCollection';
 import { defaultVehicleState } from '../../utils/defaultConfig';
-import { Stack, Checkbox, Input } from '@mui/material';
+import { Stack, Input } from '@mui/material';
 import Typography from '@material-ui/core/Typography';
 import SaveIcon from '@mui/icons-material/Save';
+import SaveAsIcon from '@mui/icons-material/SaveAs';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { handleFileUpload } from '../../utils/fileHandler';
 
@@ -47,7 +48,7 @@ const AddVehicleService = (props) => {
   const [vin, setVIN] = useState(defaultVehicleState.vin);
   const [comment, setComment] = useState(defaultVehicleState.comment);
   const [file, setFile] = useState(null);
-  const [loading, setLoading] = useState(false); // New state to track upload
+  const [loading, setLoading] = useState(false);
 
   // Check if in edit mode and populate form
   useEffect(() => {
@@ -108,13 +109,13 @@ const AddVehicleService = (props) => {
   const handleFileChange = async (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      setLoading(true); // Set loading to true during file upload
+      setLoading(true);
       const uploadedFile = await handleFileUpload(selectedFile);
       setFile({
         name: uploadedFile.name,
         url: uploadedFile.url,
       });
-      setLoading(false); // Set loading back to false after upload completes
+      setLoading(false);
     }
   };
 
@@ -155,8 +156,8 @@ const AddVehicleService = (props) => {
             value={capacity}
             onChange={(e) => setCapacity(e.target.value)}
             margin="normal"
-            id="capacity"
-            label="Max Capacity"
+            id="seats"
+            label="Seating Capacity"
             fullWidth
             variant="outlined"
           />
@@ -196,7 +197,7 @@ const AddVehicleService = (props) => {
         <TextField
           style={{ marginTop: '15px' }}
           id="comments"
-          label="Comments"
+          label="Record Note"
           multiline
           margin="none"
           value={comment}
@@ -217,8 +218,9 @@ const AddVehicleService = (props) => {
 
         <label htmlFor="file-upload-input">
           <Button
+            color="primary"
             startIcon={<AttachFileIcon />}
-            variant="contained"
+            variant="outlined"
             component="span"
             disabled={loading}
           >
@@ -233,26 +235,23 @@ const AddVehicleService = (props) => {
         )}
       </div>
       <DialogActions style={{ margin: '20px 45px' }}>
-        <Tooltip title={props.edit ? 'Update' : 'Save'}>
-          <Button
-            color="primary"
-            variant="contained"
-            startIcon={<SaveIcon />}
-            disabled={loading}
-            onClick={handleSave}
-          >
-            {props.edit ? 'Update' : 'Save'}
-          </Button>
-        </Tooltip>
-        <Tooltip title="Cancel">
-          <Button
-            color="secondary"
-            variant="outlined"
-            onClick={() => props.callback('Cancel')}
-          >
-            Cancel
-          </Button>
-        </Tooltip>
+        <Button
+          color="primary"
+          variant="contained"
+          startIcon={props.edit ? <SaveAsIcon /> : <SaveIcon />}
+          disabled={loading}
+          onClick={handleSave}
+        >
+          {props.edit ? 'Update' : 'Save'}
+        </Button>
+
+        <Button
+          color="secondary"
+          variant="outlined"
+          onClick={() => props.callback('Cancel')}
+        >
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );
