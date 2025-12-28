@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     display: 'flex',
+    paddingBottom: '30px',
     flexDirection: 'column',
   },
 
@@ -81,6 +82,7 @@ export default function InspectionsTable(props) {
       <Card>
         <Paper>
           <DataTable
+            title={props.title}
             columns={props.columns}
             defaultSortFieldId={props.sortField}
             defaultSortAsc={props.sortAsc}

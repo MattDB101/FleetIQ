@@ -1,0 +1,169 @@
+import React from 'react';
+import GenericTable from '../../components/Tables/GenericTable';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useCollection } from '../../hooks/useCollection';
+import { Button, IconButton, Tooltip } from '@material-ui/core';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import { useReducer, useEffect, useState } from 'react';
+import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
+import OKDialog from '../../components/Dialogs/OKDialog';
+import { defaultDialogState } from '../../utils/defaultConfig';
+
+export default function Faults() {
+  const collection = 'faults'; // THIS IS WHERE THE TABLE NAME GOES
+  const { user } = useAuthContext();
+  const { documents, error } = useCollection(collection);
+  const currentDate = new Date();
+  const [dialogState, setDialogState] = useState(defaultDialogState);
+
+  let props = {
+    collection: collection,
+    documents: documents,
+    error: error,
+    title: 'Faults',
+    sortField: 1,
+    sortAsc: false,
+    // disable add/edit for faults
+    disableAdd: true,
+    disableEdit: true,
+
+    keyColumn: [
+      {
+        key: 'registration',
+        name: 'Registration',
+      },
+    ],
+
+    columns: [
+      {
+        name: 'Inspection Date',
+        // return a numeric timestamp for correct sorting
+        selector: (row) => {
+          if (!row || !row.inspectionDate) return 0;
+          try {
+            if (row.inspectionDate.seconds !== undefined) return row.inspectionDate.seconds * 1000;
+            if (row.inspectionDate.toDate) return row.inspectionDate.toDate().getTime();
+            const d = new Date(row.inspectionDate);
+            return d.getTime() || 0;
+          } catch (err) {
+            return 0;
+          }
+        },
+        // display formatted date
+        cell: (row) => {
+          if (!row || !row.inspectionDate) return '';
+          try {
+            let d;
+            if (row.inspectionDate.seconds !== undefined) d = new Date(row.inspectionDate.seconds * 1000);
+            else if (row.inspectionDate.toDate) d = row.inspectionDate.toDate();
+            else d = new Date(row.inspectionDate);
+            if (!d || Number.isNaN(d.getTime())) return '';
+            return d.toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: '2-digit',
+              timeZone: 'UTC',
+            });
+          } catch (err) {
+            return '';
+          }
+        },
+        sortable: true,
+      },
+      {
+        name: 'Registration',
+        selector: (row) => row.vehicle,
+        sortable: true,
+      },
+      {
+        name: 'Category',
+        selector: (row) => row.item,
+        sortable: false,
+      },
+      {
+        name: 'Description',
+        selector: (row) => row.description,
+        sortable: false,
+      },
+      {
+        name: 'Status',
+        selector: (row) => row.status,
+        sortable: false,
+      },
+
+      {
+        name: 'Inspector',
+        selector: (row) => row.inspector,
+        sortable: false,
+      },
+
+      // {
+      //   name: '',
+      //   button: true,
+      //   cell: (row) =>
+      //     row.fileUrl ? (
+      //       <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
+      //         <Tooltip title="Open Document">
+      //           <IconButton
+      //             style={{
+      //               borderRadius: '5px',
+      //               padding: '5px',
+      //             }}
+      //           >
+      //             <FilePresentIcon />
+      //           </IconButton>
+      //         </Tooltip>
+      //       </a>
+      //     ) : (
+      //       ''
+      //     ),
+      //   sortable: false,
+      //   width: '10%',
+      // },
+      // {
+      //   name: '',
+      //   button: true,
+      //   cell: (row) =>
+      //     row.comment ? (
+      //       <Tooltip title="View Notes">
+      //         <IconButton
+      //           color="secondary"
+      //           style={{
+      //             borderRadius: '5px',
+      //             padding: '5px',
+      //           }}
+      //           onClick={() =>
+      //             setDialogState({
+      //               shown: true,
+      //               message: row.comment,
+      //               title: row.registration,
+      //             })
+      //           }
+      //         >
+      //           <NoteAltOutlinedIcon />
+      //         </IconButton>
+      //       </Tooltip>
+      //     ) : (
+      //       ''
+      //     ),
+      //   sortable: false,
+      //   width: '10%',
+      // },
+    ],
+  };
+  return (
+    <div>
+      {' '}
+      <OKDialog
+        show={dialogState.shown}
+        message={dialogState.message}
+        title={dialogState.title}
+        callback={(res) => {
+          setDialogState({ shown: false });
+        }}
+      ></OKDialog>
+      {documents && <GenericTable {...props} />}
+    </div>
+  );
+}

@@ -7,8 +7,10 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Box, Button, Tooltip, TextField } from '@material-ui/core';
+import { useNavigate } from 'react-router-dom';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import InspectionDialog from '../../components/Dialogs/InspectionDialog';
 
 export default function Inspections() {
   const months = [
@@ -27,6 +29,8 @@ export default function Inspections() {
   ];
 
   const { user } = useAuthContext();
+  const navigate = useNavigate();
+  const reportButtonStyle = { textTransform: 'none' };
   const [datePickerValue, setDatePickerValue] = useState(new Date());
   const [year, setYear] = useState(new Date().getFullYear());
   const collection = 'inspections/' + datePickerValue.getFullYear() + '/' + months[datePickerValue.getMonth()];
@@ -39,18 +43,32 @@ export default function Inspections() {
     updateDocument(row.id, updatedRow);
   };
 
+  const [showInspectionDialog, setShowInspectionDialog] = useState(false);
+  const [inspectionEditData, setInspectionEditData] = useState(null);
+
+  const openInspectionDialog = (row) => {
+    setInspectionEditData(row);
+    setShowInspectionDialog(true);
+  };
+
+  const handleInspectionDialogClose = (result) => {
+    setShowInspectionDialog(false);
+    setInspectionEditData(null);
+  };
+
   const props = {
     collection: collection,
     documents: documents,
     year: year,
-    sortField: 2,
+    sortField: '2',
+    sortAsc: true,
     error: error,
     title: 'Inspections | ' + months[datePickerValue.getMonth()] + ' ' + datePickerValue.getFullYear(),
 
     keyColumn: [
       {
-        key: 'inspection',
-        name: 'Inspection',
+        key: 'complete',
+        name: 'Complete',
       },
     ],
 
@@ -58,7 +76,8 @@ export default function Inspections() {
       {
         name: 'Registration',
         selector: (row) => row.registration,
-        sortable: false,
+        sortable: true,
+        // width: '200px',
       },
       {
         name: 'Inspection',
@@ -66,20 +85,52 @@ export default function Inspections() {
         sortable: true,
       },
       {
-        name: 'Complete',
-        cell: (row) => (
-          <Tooltip title={row.complete ? 'Mark as Incomplete' : 'Mark as Complete'}>
-            {row.complete ? (
-              <CheckBoxOutlinedIcon onClick={() => toggleComplete(row)} style={{ cursor: 'pointer' }} />
-            ) : (
-              <CheckBoxOutlineBlankIcon onClick={() => toggleComplete(row)} style={{ cursor: 'pointer' }} />
-            )}
-          </Tooltip>
-        ),
+        name: '',
+        cell: (row) =>
+          row.complete ? (
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              style={reportButtonStyle}
+              onClick={() =>
+                navigate(
+                  `/inspections/report?id=${row.id}&y=${year}&m=${
+                    months[datePickerValue.getMonth()]
+                  }&u=true&reg=${encodeURIComponent(row.registration || '')}`
+                )
+              }
+            >
+              View Report
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              style={reportButtonStyle}
+              onClick={() =>
+                navigate(
+                  `/inspections/report?id=${row.id}&y=${year}&m=${
+                    months[datePickerValue.getMonth()]
+                  }&u=false&reg=${encodeURIComponent(row.registration || '')}`
+                )
+              }
+            >
+              Record Inspection
+            </Button>
+          ),
         sortable: false,
+        width: '150px',
+        ignoreRowClick: true,
+        allowOverflow: true,
+        button: true,
       },
     ],
   };
+
+  const completedDocs = documents ? documents.filter((d) => d.complete) : [];
+  const incompleteDocs = documents ? documents.filter((d) => !d.complete) : [];
 
   return (
     <div>
@@ -91,6 +142,8 @@ export default function Inspections() {
               marginBottom: '30px',
               marginTop: '30px',
               marginLeft: '10px',
+              paddingLeft: '50px',
+              paddingRight: '50px',
             }}
           >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -110,7 +163,23 @@ export default function Inspections() {
             </LocalizationProvider>
           </div>
 
-          <InspectionsTable {...props} />
+          <div style={{ marginBottom: '1.5rem' }}>
+            <InspectionsTable {...props} documents={incompleteDocs} title={'Incomplete Inspections'} />
+          </div>
+
+          <div style={{ marginBottom: '1.5rem' }}>
+            <InspectionsTable {...props} documents={completedDocs} title={'Completed Inspections'} />
+          </div>
+
+          <InspectionDialog
+            show={showInspectionDialog}
+            edit={true}
+            editData={inspectionEditData}
+            collection={collection}
+            tableRows={documents}
+            callback={handleInspectionDialogClose}
+            title="Inspection"
+          />
         </>
       )}
     </div>

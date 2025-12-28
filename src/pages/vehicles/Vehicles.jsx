@@ -35,21 +35,25 @@ export default function Vehicles() {
       {
         name: 'Registration',
         selector: (row) => row.registration,
+        maxWidth: '180px',
         sortable: true,
       },
       {
         name: 'Make',
         selector: (row) => row.make || '-',
+        maxWidth: '180px',
         sortable: true,
       },
       {
         name: 'Model',
         selector: (row) => row.model || '-',
+        maxWidth: '180px',
         sortable: true,
       },
       {
         name: 'Seats',
         selector: (row) => row.capacity || '-',
+        maxWidth: '80px',
         sortable: true,
       },
       {
@@ -61,9 +65,34 @@ export default function Vehicles() {
         name: '',
         button: true,
         cell: (row) =>
+          row.fileUrl ? (
+            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
+              <Tooltip title="Open Document">
+                <IconButton
+                  style={{
+                    color: '#4b49ccce',
+                    borderRadius: '5px',
+                    padding: '5px',
+                  }}
+                >
+                  <FilePresentIcon />
+                </IconButton>
+              </Tooltip>
+            </a>
+          ) : (
+            ''
+          ),
+        sortable: false,
+        width: '10%',
+      },
+      {
+        name: '',
+        button: true,
+        cell: (row) =>
           row.comment ? (
             <Tooltip title="View Notes">
               <IconButton
+                color="secondary"
                 style={{
                   borderRadius: '5px',
                   padding: '5px',
@@ -79,29 +108,6 @@ export default function Vehicles() {
                 <NoteAltOutlinedIcon />
               </IconButton>
             </Tooltip>
-          ) : (
-            ''
-          ),
-        sortable: false,
-        width: '10%',
-      },
-      {
-        name: '',
-        button: true,
-        cell: (row) =>
-          row.fileUrl ? (
-            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
-              <Tooltip title="Open Document">
-                <IconButton
-                  style={{
-                    borderRadius: '5px',
-                    padding: '5px',
-                  }}
-                >
-                  <FilePresentIcon />
-                </IconButton>
-              </Tooltip>
-            </a>
           ) : (
             ''
           ),

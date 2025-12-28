@@ -1,0 +1,45 @@
+import { useEffect, useState } from 'react';
+import { projectFirestore } from '../firebase/config';
+
+export const useVehicleFaults = (registration, linkedIds = []) => {
+  const [faults, setFaults] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!registration) {
+      setFaults([]);
+      return;
+    }
+
+    // Reference to the faults collection
+    let ref = projectFirestore.collection('faults').where('vehicle', '==', registration);
+
+    // We fetch all non-resolved faults for this vehicle
+    const unsubscribe = ref.onSnapshot(
+      (snapshot) => {
+        const results = [];
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+
+          // Logical filter:
+          // 1. If it's not resolved, include it.
+          // 2. If it IS resolved BUT it's one of the ones we are currently editing, include it.
+          if (data.status !== 'resolved' || linkedIds.includes(doc.id)) {
+            results.push({ ...data, id: doc.id });
+          }
+        });
+
+        setFaults(results);
+        setError(null);
+      },
+      (err) => {
+        console.error(err);
+        setError('Could not fetch faults');
+      }
+    );
+
+    return () => unsubscribe();
+  }, [registration, linkedIds]);
+
+  return { faults, error };
+};

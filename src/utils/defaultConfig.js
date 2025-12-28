@@ -12,6 +12,8 @@ export const defaultComplianceState = {
   comment: '',
 };
 
+export const defaultInspectionState = {};
+
 export const defaultVehicleState = {
   registration: '',
   make: '',
@@ -51,6 +53,11 @@ export const defaultDialogMapping = {
     title: 'CVRT Expiration',
     dialogType: 'generic',
     collection: 'cvrts',
+  },
+  maintenance: {
+    title: 'Maintenance',
+    dialogType: 'maintenance',
+    collection: 'maintenance',
   },
   vehicles: {
     title: 'Vehicle',

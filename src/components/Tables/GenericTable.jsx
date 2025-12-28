@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import DataTable from 'react-data-table-component';
 import Card from '@material-ui/core/Card';
 import SortIcon from '@material-ui/icons/ArrowDownward';
-import { Typography } from '@material-ui/core';
+import { Typography, Switch, FormControlLabel } from '@material-ui/core';
 import { Box, Button, Tooltip, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { makeStyles } from '@material-ui/core/styles';
@@ -16,10 +16,12 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import { useFirestore } from '../../hooks/useFirestore';
 import VehicleDialog from '../Dialogs/VehicleDialog';
 import GenericAdd from '../Dialogs/ComplianceDialog';
+import MaintenanceDialog from '../Dialogs/MaintenanceDialog';
 import { defaultDialogState } from '../../utils/defaultConfig';
 import TableHeader from './TableHeader';
 import { renderExpiryDateCell } from '../../utils/DateCellRendering';
 import { defaultDialogMapping } from '../../utils/defaultConfig';
+import { useCollection } from '../../hooks/useCollection';
 
 const useStyles = makeStyles((theme) => ({
   style: {
@@ -118,6 +120,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function GenericTable(props) {
   const classes = useStyles();
+  const { documents: vehiclesCollection } = useCollection('vehicles');
+  const [showInactive, setShowInactive] = useState(true);
   const [controlsDisabled, setControlsDisabled] = useState(false);
   const [clearRows, setClearRows] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -240,22 +244,28 @@ export default function GenericTable(props) {
   });
 
   const filterRows = () => {
-    let res = props.documents.filter((row) => {
+    return props.documents.filter((row) => {
+      // Check if there's a matching vehicle document
+      const matchingVehicle = vehiclesCollection?.find(
+        (v) => v.registration === row.registration
+      );
+
+      // If showInactive is false, filter out documents with matching vehicle marked inactive
+      if (!showInactive && matchingVehicle?.inactive) {
+        return false;
+      }
+
+      // Match search term against key column
       const rowAlphanumeric = `${row[props.keyColumn[0].key]}`
         .toLowerCase()
         .replace(/[^a-zA-Z0-9]/g, '');
 
-      const searchAlphanumeric = searchTerm // match regardless of case or special characters
+      const searchAlphanumeric = searchTerm
         .toLowerCase()
         .replace(/[^a-zA-Z0-9]/g, '');
 
-      if (!rowAlphanumeric.includes(searchAlphanumeric)) {
-        return false;
-      }
-
-      return true;
+      return rowAlphanumeric.includes(searchAlphanumeric);
     });
-    return res;
   };
 
   return (
@@ -273,8 +283,21 @@ export default function GenericTable(props) {
             handleEdit={handleEdit}
             handleFilter={handleFilter}
             controlsDisabled={controlsDisabled}
+            disableAdd={props.disableAdd}
+            disableEdit={props.disableEdit}
             selectedRows={selectedRows}
             classes={classes}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={showInactive}
+                onChange={(e) => setShowInactive(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Show Inactive Vehicles"
+            style={{ marginLeft: '20px', marginBottom: '10px' }}
           />
           <DataTable
             columns={updatedColumns}
@@ -295,7 +318,6 @@ export default function GenericTable(props) {
             striped
           />
 
-          {/* Conditionally render dialogs based on dialogType */}
           {dialogState.dialogType === 'vehicle' && (
             <VehicleDialog
               show={dialogState.shown}
@@ -321,6 +343,7 @@ export default function GenericTable(props) {
               tableRows={props.documents} // passing all documents just to remove registrations that are already on the table from the drop down? not ideal :/
               title={dialogState.title}
               edit={dialogState.edit}
+              vehicles={vehiclesCollection} // Pass the vehicles collection to the dialog
               editData={dialogState.edit ? selectedRows[0] : null}
               message={dialogState.message}
               flavour={dialogState.flavour}
@@ -328,6 +351,16 @@ export default function GenericTable(props) {
                 if (res === 'OK') {
                   clearSelectedRows();
                 }
+                closeDialog();
+              }}
+            />
+          )}
+
+          {dialogState.dialogType === 'maintenance' && (
+            <MaintenanceDialog
+              show={dialogState.shown}
+              vehicles={vehiclesCollection}
+              onClose={() => {
                 closeDialog();
               }}
             />

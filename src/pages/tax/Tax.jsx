@@ -47,9 +47,33 @@ export default function Tax() {
         name: '',
         button: true,
         cell: (row) =>
+          row.fileUrl ? (
+            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
+              <Tooltip title="Open Document">
+                <IconButton
+                  style={{
+                    borderRadius: '5px',
+                    padding: '5px',
+                  }}
+                >
+                  <FilePresentIcon />
+                </IconButton>
+              </Tooltip>
+            </a>
+          ) : (
+            ''
+          ),
+        sortable: false,
+        width: '10%',
+      },
+      {
+        name: '',
+        button: true,
+        cell: (row) =>
           row.comment ? (
             <Tooltip title="View Notes">
               <IconButton
+                color="secondary"
                 style={{
                   borderRadius: '5px',
                   padding: '5px',
@@ -65,29 +89,6 @@ export default function Tax() {
                 <NoteAltOutlinedIcon />
               </IconButton>
             </Tooltip>
-          ) : (
-            ''
-          ),
-        sortable: false,
-        width: '10%',
-      },
-      {
-        name: '',
-        button: true,
-        cell: (row) =>
-          row.fileUrl ? (
-            <a target="_blank" href={row.fileUrl} rel="noopener noreferrer">
-              <Tooltip title="Open Document">
-                <IconButton
-                  style={{
-                    borderRadius: '5px',
-                    padding: '5px',
-                  }}
-                >
-                  <FilePresentIcon />
-                </IconButton>
-              </Tooltip>
-            </a>
           ) : (
             ''
           ),

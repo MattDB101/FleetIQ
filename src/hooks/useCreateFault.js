@@ -1,0 +1,85 @@
+import { useReducer, useState, useEffect } from 'react';
+import { projectFirestore, timestamp } from '../firebase/config';
+import { useAuthContext } from '../hooks/useAuthContext';
+
+const initialState = {
+  isPending: false,
+  error: null,
+  success: null,
+};
+
+const faultReducer = (state, action) => {
+  switch (action.type) {
+    case 'IS_PENDING':
+      return { isPending: true, error: null, success: false };
+    case 'ADDED':
+      return { isPending: false, error: null, success: true };
+    case 'ERROR':
+      return { isPending: false, error: action.payload, success: false };
+    default:
+      return state;
+  }
+};
+
+/**
+ * Hook to create a fault record under /faults/
+ * Usage: const { createFault, response } = useCreateFault();
+ * createFault({ inspectionPath, item, description, inspector, vehicle, odometer, inspectionDate })
+ */
+export const useCreateFault = () => {
+  const [response, dispatch] = useReducer(faultReducer, initialState);
+  const [isCancelled, setIsCancelled] = useState(false);
+  const { user } = useAuthContext();
+
+  const dispatchIfActive = (action) => {
+    if (!isCancelled) dispatch(action);
+  };
+
+  const createFault = async ({
+    inspectionPath,
+    item,
+    description,
+    inspector,
+    vehicle,
+    odometer,
+    inspectionDate,
+    priority = 'normal',
+  }) => {
+    dispatch({ type: 'IS_PENDING' });
+    try {
+      const createdAt = timestamp.fromDate(new Date());
+      const createdBy = user ? user.displayName : 'unknown';
+
+      const fault = {
+        inspectionPath: inspectionPath || null,
+        item: item || null,
+        description: description || '',
+        inspector: inspector || null,
+        vehicle: vehicle || null,
+        odometer: odometer !== undefined ? odometer : null,
+        inspectionDate: inspectionDate || null,
+        priority,
+        status: 'open',
+        createdAt,
+        createdBy,
+      };
+
+      const faultsRef = projectFirestore.collection('faults');
+      const added = await faultsRef.add(fault);
+      dispatchIfActive({ type: 'ADDED' });
+      return { success: true, id: added.id };
+    } catch (err) {
+      console.error('Failed to create fault', err);
+      dispatchIfActive({ type: 'ERROR', payload: err.message });
+      return { success: false, error: err.message };
+    }
+  };
+
+  useEffect(() => {
+    return () => setIsCancelled(true);
+  }, []);
+
+  return { createFault, response };
+};
+
+export default useCreateFault;

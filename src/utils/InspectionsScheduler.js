@@ -1,6 +1,6 @@
-import { addDoc } from 'firebase/firestore';
 import { useCollection } from '../hooks/useCollection';
 import { useFirestore } from '../hooks/useFirestore';
+import { projectFirestore } from '../firebase/config';
 import React, { useEffect, useState } from 'react';
 
 export const useInspectionScheduler = () => {
@@ -27,18 +27,28 @@ export const useInspectionScheduler = () => {
     const alreadyScheduled = new Set();
 
     // Helper function to add documents and update scheduled months
-    const addInspection = (date, type) => {
+    const addInspection = async (date, type) => {
       const year = date.getFullYear();
       const month = MONTHS[date.getMonth()];
       const collectionPath = `inspections/${year}/${month}`;
 
       if (!alreadyScheduled.has(collectionPath)) {
         alreadyScheduled.add(collectionPath);
-        addDocumentToCollection(collectionPath, {
-          registration: recordData.registration,
-          inspectionType: type,
-          complete: false,
-        });
+
+        // Create a deterministic doc ID so repeated scheduling is idempotent
+        const rawId = `${recordData.registration}_${type}_${year}_${month}`;
+        const docId = rawId.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+        const docRef = projectFirestore.collection(collectionPath).doc(docId);
+        // Use set with merge to avoid overwriting unrelated fields if the doc exists
+        await docRef.set(
+          {
+            registration: recordData.registration,
+            inspectionType: type,
+            complete: false,
+          },
+          { merge: true }
+        );
       }
     };
 
@@ -60,9 +70,9 @@ export const useInspectionScheduler = () => {
     let inspectionInterval = new Date(expiryDate);
     inspectionInterval.setDate(expiryDate.getDate() - 84);
 
-    // don't schedule any 12 week inspections inside 12 week window after recording a CVRT.
+    // don't schedule any 12 week inspections before the day the CVRT was recorded
     const cutoffDate = new Date(currentDate);
-    cutoffDate.setDate(currentDate.getDate() + 84);
+    cutoffDate.setDate(currentDate.getDate());
 
     // Schedule inspections as long as inspectionInterval is greater than cutoffDate
     while (inspectionInterval > cutoffDate) {

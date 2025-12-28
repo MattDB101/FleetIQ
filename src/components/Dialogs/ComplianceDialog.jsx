@@ -20,7 +20,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useFirestore } from '../../hooks/useFirestore';
-import { useCollection } from '../../hooks/useCollection';
+
 import { defaultComplianceState } from '../../utils/defaultConfig';
 import { useInspectionScheduler } from '../../utils/InspectionsScheduler';
 import SaveIcon from '@mui/icons-material/Save';
@@ -33,7 +33,6 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles((theme) => ({}));
 
 const AddService = (props) => {
-  const { documents } = useCollection('vehicles');
   const { addDocument, updateDocument } = useFirestore(props.collection + '/');
   const { scheduleInspections } = useInspectionScheduler();
   const classes = useStyles();
@@ -178,28 +177,40 @@ const AddService = (props) => {
                 label="Vehicle"
                 onChange={handleVehicleChange}
               >
-                {documents &&
+                {props.vehicles &&
                   (() => {
-                    const filteredVehicles = documents
+                    const filteredVehicles = props.vehicles
                       .sort((a, b) =>
                         a.registration.localeCompare(b.registration)
                       ) // Sort by registration
                       .filter((vehicle) => {
-                        // If in edit mode include the current registration
+                        // If in edit mode, include the current registration
                         if (
                           props.edit &&
                           vehicle.registration === registration
                         ) {
                           return true;
                         }
-                        // filter out vehicles already on this table
-                        return !tableRegistrations.includes(
-                          vehicle.registration
-                        );
+
+                        // Apply filtering rules
+                        if (
+                          props.collection === 'taxes' ||
+                          props.collection === 'cvrts'
+                        ) {
+                          // Current rules for taxes or cvrts
+                          return !tableRegistrations.includes(
+                            vehicle.registration
+                          );
+                        } else {
+                          // Exclude non-service vehicles for other collections
+                          return (
+                            !vehicle.nonServiceVehicle &&
+                            !tableRegistrations.includes(vehicle.registration)
+                          );
+                        }
                       });
 
                     return filteredVehicles.length > 0 ? (
-                      // Map over the filtered and sorted vehicles to render the options
                       filteredVehicles.map((vehicle, index) => (
                         <MenuItem key={index} value={vehicle.registration}>
                           {vehicle.registration}

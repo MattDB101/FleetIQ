@@ -16,6 +16,8 @@ export default function TableHeader({
   handleEdit,
   handleFilter,
   controlsDisabled,
+  disableAdd,
+  disableEdit,
   selectedRows,
   classes,
 }) {
@@ -58,7 +60,7 @@ export default function TableHeader({
         <Tooltip title={'Add Record'}>
           <Button
             style={{ marginLeft: '10px' }}
-            disabled={controlsDisabled}
+            disabled={controlsDisabled || disableAdd}
             variant="contained"
             size="small"
             color="primary"
@@ -84,9 +86,15 @@ export default function TableHeader({
         </Tooltip>
 
         <Tooltip title="Edit Record">
-          <span disabled={selectedRows.length !== 1 || controlsDisabled}>
+          <span
+            disabled={
+              selectedRows.length !== 1 || controlsDisabled || disableEdit
+            }
+          >
             <Button
-              disabled={selectedRows.length !== 1 || controlsDisabled}
+              disabled={
+                selectedRows.length !== 1 || controlsDisabled || disableEdit
+              }
               style={{ marginLeft: '10px' }}
               size="small"
               className={classes.editButton}

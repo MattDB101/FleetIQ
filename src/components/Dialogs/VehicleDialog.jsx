@@ -6,6 +6,9 @@ import {
   TextField,
   Button,
   Tooltip,
+  Switch,
+  FormControlLabel,
+  Checkbox,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useAuthContext } from '../../hooks/useAuthContext';
@@ -29,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
 }));
+
 const AddVehicleService = (props) => {
   const { user } = useAuthContext();
   const { addDocument, updateDocument } = useFirestore(props.collection);
@@ -50,6 +54,10 @@ const AddVehicleService = (props) => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // New states for 'Inactive' and 'Non-Service Vehicle'
+  const [inactive, setInactive] = useState(false);
+  const [nonServiceVehicle, setNonServiceVehicle] = useState(false);
+
   // Check if in edit mode and populate form
   useEffect(() => {
     if (props.edit && props.editData) {
@@ -62,6 +70,8 @@ const AddVehicleService = (props) => {
       setFile(
         { name: props.editData.fileName, url: props.editData.fileUrl } || null
       );
+      setInactive(props.editData.inactive || false); // Populate 'Inactive' state
+      setNonServiceVehicle(props.editData.nonServiceVehicle || false); // Populate 'Non-Service Vehicle' state
     }
   }, [props.edit, props.editData]);
 
@@ -87,6 +97,8 @@ const AddVehicleService = (props) => {
         comment,
         fileName: file ? file.name : '',
         fileUrl: file ? file.url : '',
+        inactive, // Include 'Inactive' state
+        nonServiceVehicle, // Include 'Non-Service Vehicle' state
       };
 
       if (props.edit) {
@@ -102,6 +114,8 @@ const AddVehicleService = (props) => {
       setCapacity('');
       setVIN('');
       setFile(null);
+      setInactive(false);
+      setNonServiceVehicle(false);
       props.callback('OK');
     }
   };
@@ -205,6 +219,31 @@ const AddVehicleService = (props) => {
           rows={2}
           maxRows={6}
           variant="outlined"
+        />
+
+        {/* New Inputs */}
+        <FormControlLabel
+          control={
+            <Switch
+              checked={inactive}
+              onChange={(e) => setInactive(e.target.checked)}
+              color="primary"
+            />
+          }
+          label="Inactive"
+          style={{ marginTop: '25px', marginLeft: '2px' }}
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={nonServiceVehicle}
+              onChange={(e) => setNonServiceVehicle(e.target.checked)}
+              color="primary"
+            />
+          }
+          label="Non-Service Vehicle"
+          style={{ marginTop: '25px' }}
         />
       </div>
       <div style={{ margin: '25px 0 0 50px' }}>

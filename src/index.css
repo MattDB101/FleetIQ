@@ -77,17 +77,13 @@ ul {
   font-size: 16px;
   padding-top: 5px;
   padding-bottom: 0px;
-  box-shadow:
-    0px 2px 1px -1px rgba(0, 0, 0, 0.2),
-    0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
     0px 1px 3px 0px rgba(0, 0, 0, 0.12);
 }
 
 .MuiDrawer-root .MuiAccordion-root .MuiNavlink-root {
   font-size: 14px !important;
-  box-shadow:
-    0px -2px 1px -1px rgba(0, 0, 0, 0.2),
-    0px -1px 1px 0px rgba(0, 0, 0, 0.14),
+  box-shadow: 0px -2px 1px -1px rgba(0, 0, 0, 0.2), 0px -1px 1px 0px rgba(0, 0, 0, 0.14),
     0px -1px 3px 0px rgba(0, 0, 0, 0.12);
 }
 
@@ -99,4 +95,24 @@ ul {
 
 .MuiDrawer-root .MuiSvgIcon-root {
   margin-top: 2px;
+}
+
+.rdt_Table {
+  font-size: 1rem !important;
+}
+
+/* ensure all react-data-table-component parts use 1rem */
+.rdt_TableHead,
+.rdt_TableHeader {
+  font-size: 1.5rem;
+}
+
+.rdt_Table,
+.rdt_TableRow,
+.rdt_TableCell,
+.rdt_TableCol,
+.rdt_TableBody,
+.rdt_Pagination,
+.rdt_TableActions {
+  font-size: 1.2rem !important;
 }

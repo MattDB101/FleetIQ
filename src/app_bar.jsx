@@ -12,12 +12,7 @@ import { NavLink, useLocation, Link as RouterLink } from 'react-router-dom';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import navLinks from './components/NavLinks';
 import AccountButton from './components/AccountButton';
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Grid,
-} from '@material-ui/core';
+import { Accordion, AccordionSummary, AccordionDetails, Grid } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const useStyles = makeStyles((theme) => ({
@@ -25,6 +20,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     width: '100vw',
     height: '100vh',
+    fontFamily: "Inter, Roboto, 'Helvetica Neue', Arial, sans-serif",
+    fontSize: '14px',
     '&$expanded': {
       margin: 'auto',
     },
@@ -44,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
   drawerContainer: {
     marginTop: '5px',
     overflow: 'auto',
+    backgroundColor: '#ffffff',
   },
   mobileHidden: {
     [theme.breakpoints.down(750)]: {
@@ -63,33 +61,91 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   accordionSummary: {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: '#ffffff',
+    padding: '10px 12px',
+    borderBottom: '1px solid #e0e0e0',
+    '&:hover': {
+      backgroundColor: '#f5f5f5',
+    },
+    '& .MuiAccordionSummary-content': {
+      margin: 0,
+      alignItems: 'center',
+    },
+    '& .MuiTypography-root': {
+      fontSize: '15px',
+      fontFamily: "Inter, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      fontWeight: 600,
+      color: '#0f3550',
+      lineHeight: '20px',
+    },
   },
   accordionDetails: {
-    padding: 0,
+    padding: '1px 0',
+    backgroundColor: '#fbfcfd',
     '& > div': {
       width: '100%',
     },
   },
-  navLink: {
-    display: 'inline-block',
-    minWidth: '100%',
-    marginBottom: '10px',
-    color: 'black',
-    textDecoration: 'none',
-    '&.active': {
-      backgroundColor: '#ADCBE5',
-      color: 'black',
-      fontWeight: 'bold',
-      textDecoration: 'underline',
+  navItem: {
+    padding: 0,
+    borderBottom: '1px solid #e0e0e0',
+    backgroundColor: '#ffffff',
+    transition: 'background-color 150ms ease, border-color 150ms ease',
+    '&:hover': {
+      backgroundColor: '#f5f5f5',
+    },
+    '&:last-child': {
+      borderBottom: 'none',
+    },
+    '& $navLink.active': {
+      backgroundColor: '#DCEFFD',
+      fontWeight: 700,
+      color: '#0b3d66',
+      textDecoration: 'none',
+      borderLeft: '4px solid #1976d2',
+      paddingLeft: 8,
     },
   },
+  navLink: {
+    display: 'inline-block',
+    width: '100%',
+    marginBottom: 0,
+    color: 'black',
+    textDecoration: 'none',
+    padding: '10px 12px',
+    fontFamily: "Inter, Roboto, 'Helvetica Neue', Arial, sans-serif",
+    fontSize: '1rem',
+    lineHeight: '20px',
+  },
   activeAccordionSummary: {
-    textDecoration: 'underline',
+    fontWeight: 'bold',
+    backgroundColor: '#DCEFFD',
+    borderLeft: '4px solid #1976d2',
+    '& .MuiTypography-root': {
+      fontWeight: 700,
+      color: '#0b3d66',
+    },
+  },
+  accordion: {
+    boxShadow: 'none',
+
+    borderRadius: 0,
+    margin: 0,
+    overflow: 'hidden',
+    '&.Mui-expanded': {
+      borderBottom: '1px #52525277 solid',
+
+      margin: 0,
+    },
+  },
+  accordionExpandIcon: {
+    color: '#666',
   },
   breadcrumbs: {
     color: theme.palette.common.white,
     textDecoration: 'none',
+    fontSize: '1.5rem',
+    fontFamily: "Inter, Roboto, 'Helvetica Neue', Arial, sans-serif",
     '& a': {
       color: theme.palette.common.white,
       textDecoration: 'none',
@@ -132,45 +188,35 @@ export default function ClippedDrawer(props) {
 
   function renderNavLink(link) {
     return (
-      <div className="MuiNavlink-root">
+      <div className={classes.navItem}>
         <NavLink to={link.path} exact={true} className={classes.navLink}>
-          <div>
-            <Grid container direction="row" alignItems="center">
-              <Grid item>
-                <span style={{ marginLeft: '20px' }}>{link.icon}</span>
-              </Grid>
-              <Grid item>
-                <span style={{ marginLeft: '10px' }}>{link.text}</span>
-              </Grid>
-            </Grid>
-          </div>
+          <Grid container direction="row" alignItems="center" spacing={2}>
+            <Grid item>{link.icon}</Grid>
+            <Grid item>{link.text}</Grid>
+          </Grid>
         </NavLink>
       </div>
     );
   }
 
   function renderAccordion(categoryKey, category) {
-    const isActiveCategory = Object.values(category.links).some((link) =>
-      location.pathname.includes(link.path)
-    );
+    const isActiveCategory = Object.values(category.links).some((link) => location.pathname.includes(link.path));
     return (
       <Accordion
-        style={{ margin: '1px' }}
+        className={classes.accordion}
         key={categoryKey}
         expanded={expanded === categoryKey}
         onChange={handleChange(categoryKey)}
       >
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={<ExpandMoreIcon className={classes.accordionExpandIcon} />}
           aria-controls="panel1a-content"
           id="panel1a-header"
           className={`${classes.accordionSummary} ${isActiveCategory ? classes.activeAccordionSummary : ''}`}
         >
-          <Grid container direction="row" alignItems="center">
-            <Grid item style={{ marginRight: '10px' }}>
-              {category.icon}
-            </Grid>
-            <Grid style={{ fontSize: '16px' }} item>
+          <Grid container direction="row" alignItems="center" spacing={2}>
+            <Grid item>{category.icon}</Grid>
+            <Grid item style={{ fontSize: '1rem' }}>
               {category.heading}
             </Grid>
           </Grid>
@@ -178,9 +224,7 @@ export default function ClippedDrawer(props) {
         <AccordionDetails className={classes.accordionDetails}>
           <div>
             {Object.values(category.links).map((link, linkIndex) => (
-              <React.Fragment key={linkIndex}>
-                {renderNavLink(link)}
-              </React.Fragment>
+              <React.Fragment key={linkIndex}>{renderNavLink(link)}</React.Fragment>
             ))}
           </div>
         </AccordionDetails>
@@ -204,13 +248,9 @@ export default function ClippedDrawer(props) {
       const category = categories[categoryKey];
       Object.values(category.links).forEach((link) => {
         if (location.pathname.includes(link.path)) {
-          breadcrumbs.push(
-            <Typography key={category.heading}>{category.heading}</Typography>
-          );
+          breadcrumbs.push(<Typography key={category.heading}>{category.heading}</Typography>);
           if (category.heading !== link.text) {
-            breadcrumbs.push(
-              <Typography key={link.path}>{link.text}</Typography>
-            );
+            breadcrumbs.push(<Typography key={link.path}>{link.text}</Typography>);
           }
         }
       });
@@ -228,12 +268,7 @@ export default function ClippedDrawer(props) {
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar className={classes.toolBar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={() => setIsActive((current) => !current)}
-          >
+          <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => setIsActive((current) => !current)}>
             <MenuIcon />
           </IconButton>
           <Typography
@@ -272,9 +307,7 @@ export default function ClippedDrawer(props) {
           <Toolbar />
           <div className={classes.drawerContainer}>
             {Object.keys(categories).map((categoryKey, index) => (
-              <React.Fragment key={index}>
-                {renderCategory(categoryKey, categories[categoryKey])}
-              </React.Fragment>
+              <React.Fragment key={index}>{renderCategory(categoryKey, categories[categoryKey])}</React.Fragment>
             ))}
           </div>
         </Drawer>
