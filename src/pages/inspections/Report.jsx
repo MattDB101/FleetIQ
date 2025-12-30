@@ -153,6 +153,10 @@ export default function Report() {
   const [sectionA, setSectionA] = useState(initSectionState(A_ITEMS));
   const [sectionB, setSectionB] = useState(initSectionState(B_ITEMS));
   const [sectionC, setSectionC] = useState(initSectionState(C_ITEMS));
+  const [rectifiedErrors, setRectifiedErrors] = useState([]);
+  const [failErrors, setFailErrors] = useState([]);
+  const [odometerError, setOdometerError] = useState(false);
+  const [inspectorError, setInspectorError] = useState(false);
 
   const { data: existingData } = useFetchInspectionReport(year, month, id, useExisting);
 
@@ -176,10 +180,67 @@ export default function Report() {
 
   const handleChange = (sectionSetter, sectionState, key, field, value) => {
     sectionSetter({ ...sectionState, [key]: { ...sectionState[key], [field]: value } });
+    // Clear rectified error when actionTaken is provided or rectified is unchecked
+    if (field === 'actionTaken') {
+      if (value && value.toString().trim() !== '') {
+        setRectifiedErrors((s) => s.filter((l) => l !== key));
+      }
+    }
+    if (field === 'rectified' && value === false) {
+      setRectifiedErrors((s) => s.filter((l) => l !== key));
+    }
+    // Clear fail error when description is provided or the condition is changed away from requires_action
+    if (field === 'description') {
+      if (value && value.toString().trim() !== '') {
+        setFailErrors((s) => s.filter((l) => l !== key));
+      }
+    }
+    if (field === 'condition' && value !== 'requires_action') {
+      setFailErrors((s) => s.filter((l) => l !== key));
+    }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
+    // Validate required top-level fields: odometer and inspector
+    let topFieldError = false;
+    if (odometer === '' || Number.isNaN(Number(odometer))) {
+      setOdometerError(true);
+      topFieldError = true;
+    }
+    if (!inspector || inspector.toString().trim() === '') {
+      setInspectorError(true);
+      topFieldError = true;
+    }
+    if (topFieldError) return;
+    // Validation: if an item is marked rectified, require Action Taken; if item is Fail, require Description
+    const missingActions = [];
+    const missingDescriptions = [];
+    const collectMissing = (section) => {
+      Object.keys(section).forEach((label) => {
+        const item = section[label];
+        if (item) {
+          if (item.rectified && (!item.actionTaken || item.actionTaken.toString().trim() === '')) {
+            missingActions.push(label);
+          }
+          if (
+            item.condition === 'requires_action' &&
+            (!item.description || item.description.toString().trim() === '')
+          ) {
+            missingDescriptions.push(label);
+          }
+        }
+      });
+    };
+    collectMissing(sectionA);
+    collectMissing(sectionB);
+    collectMissing(sectionC);
+    if (missingActions.length > 0 || missingDescriptions.length > 0) {
+      // Use MUI field-level error labels: store missing labels and block save
+      if (missingActions.length > 0) setRectifiedErrors(missingActions);
+      if (missingDescriptions.length > 0) setFailErrors(missingDescriptions);
+      return;
+    }
     const payload = {
       id,
       registration,
@@ -344,7 +405,7 @@ export default function Report() {
                   }}
                 >
                   <TextField
-                    label="Defect Description"
+                    label="Defect Description*"
                     placeholder="Describe the fault in detail..."
                     value={item.description}
                     onChange={(e) => handleChange(setter, state, label, 'description', e.target.value)}
@@ -352,6 +413,8 @@ export default function Report() {
                     multiline
                     variant="outlined"
                     size="small"
+                    error={failErrors.includes(label)}
+                    helperText={failErrors.includes(label) ? 'Required' : ''}
                     sx={{ mb: item.rectified ? 2 : 0, bgcolor: 'background.paper' }}
                   />
 
@@ -359,12 +422,14 @@ export default function Report() {
                     <Grid container spacing={2}>
                       <Grid item xs={12} sm={6}>
                         <TextField
-                          label="Action Taken"
+                          label="Action Taken*"
                           value={item.actionTaken}
                           onChange={(e) => handleChange(setter, state, label, 'actionTaken', e.target.value)}
                           variant="outlined"
                           size="small"
                           fullWidth
+                          error={rectifiedErrors.includes(label)}
+                          helperText={rectifiedErrors.includes(label) ? 'Required' : ''}
                           sx={{ bgcolor: 'background.paper' }}
                         />
                       </Grid>
@@ -450,12 +515,17 @@ export default function Report() {
             <Grid container spacing={3} sx={{ mt: 3 }}>
               <Grid item xs={12} md={4}>
                 <TextField
-                  label="Odometer"
+                  label="Odometer*"
                   value={odometer}
-                  onChange={(e) => setOdometer(e.target.value)}
+                  onChange={(e) => {
+                    setOdometer(e.target.value);
+                    if (e.target.value && e.target.value.toString().trim() !== '') setOdometerError(false);
+                  }}
                   type="number"
                   fullWidth
                   variant="outlined"
+                  error={odometerError}
+                  helperText={odometerError ? 'Required' : ''}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -468,11 +538,16 @@ export default function Report() {
               </Grid>
               <Grid item xs={12} md={4}>
                 <TextField
-                  label="Inspector Name"
+                  label="Inspector Name*"
                   value={inspector}
-                  onChange={(e) => setInspector(e.target.value)}
+                  onChange={(e) => {
+                    setInspector(e.target.value);
+                    if (e.target.value && e.target.value.toString().trim() !== '') setInspectorError(false);
+                  }}
                   fullWidth
                   variant="outlined"
+                  error={inspectorError}
+                  helperText={inspectorError ? 'Required' : ''}
                 />
               </Grid>
             </Grid>
