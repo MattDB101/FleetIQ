@@ -86,13 +86,22 @@ export const useCreateMaintenance = () => {
 
       // Update linked faults (if any). Each fault update: { faultId, status, note }
       const maintenanceRef = `maintenance/${added.id}`;
+      // determine maintenanceDate to pass to fault updates
+      const maintenanceDateForFault = maintenance.serviceDate || createdAt;
 
       // Update linked faults from top-level faults array (legacy) and from jobs
       for (const f of faults || []) {
         if (!f || !f.faultId) continue;
         const status = f.status || 'partially_resolved';
         const note = f.note || '';
-        await updateFault({ faultId: f.faultId, status, note, maintenanceRef });
+        await updateFault({
+          faultId: f.faultId,
+          status,
+          note,
+          maintenanceRef,
+          maintenanceDate: maintenanceDateForFault,
+          maintenanceTechnician: maintenance.technician || '',
+        });
       }
 
       for (const j of jobs || []) {
@@ -101,7 +110,16 @@ export const useCreateMaintenance = () => {
           const note = j.faultNote || '';
           const actionTaken = j.workPerformed || '';
           const partsReplaced = j.partsReplaced || '';
-          await updateFault({ faultId: j.linkedFaultId, status, note, maintenanceRef, actionTaken, partsReplaced });
+          await updateFault({
+            faultId: j.linkedFaultId,
+            status,
+            note,
+            maintenanceRef,
+            maintenanceDate: maintenanceDateForFault,
+            maintenanceTechnician: maintenance.technician || '',
+            actionTaken,
+            partsReplaced,
+          });
         }
       }
 

@@ -279,21 +279,30 @@ export default function Report() {
             inspectionDate: inspectionDate || null,
           });
 
-          if (faultRes && faultRes.success && fi.rectified) {
-            const job = {
-              workPerformed: fi.actionTaken || fi.description || 'Rectification',
-              partsReplaced: fi.partsReplaced || '',
-              linkedFaultId: faultRes.id,
-              faultStatus: 'resolved',
-              faultNote: fi.notes || '',
-            };
-            await createMaintenance({
-              registration: registration || '',
-              serviceDate: inspectionDate || new Date(),
-              technician: inspector || '',
-              odometer: odometer !== '' ? Number(odometer) : null,
-              jobs: [job],
-            });
+          if (faultRes && faultRes.success) {
+            // If an existing fault was returned and already has a maintenanceRef,
+            // skip creating another maintenance record to avoid duplicates.
+            const existingMaintenanceRef = faultRes.doc && faultRes.doc.maintenanceRef;
+            if (fi.rectified) {
+              if (existingMaintenanceRef) {
+                // maintenance already linked to this fault; skip creating another
+              } else {
+                const job = {
+                  workPerformed: fi.actionTaken || fi.description || 'Rectification',
+                  partsReplaced: fi.partsReplaced || '',
+                  linkedFaultId: faultRes.id,
+                  faultStatus: 'resolved',
+                  faultNote: fi.notes || '',
+                };
+                await createMaintenance({
+                  registration: registration || '',
+                  serviceDate: inspectionDate || new Date(),
+                  technician: inspector || '',
+                  odometer: odometer !== '' ? Number(odometer) : null,
+                  jobs: [job],
+                });
+              }
+            }
           }
         } catch (err) {
           console.error('Failed to create fault/maintenance for item', fi.label, err);

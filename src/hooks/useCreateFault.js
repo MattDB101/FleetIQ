@@ -65,6 +65,27 @@ export const useCreateFault = () => {
       };
 
       const faultsRef = projectFirestore.collection('faults');
+
+      // Avoid creating duplicate faults for the same inspection item.
+      // If a fault already exists for this inspectionPath+item, return it instead of creating a new document.
+      if (inspectionPath && item) {
+        try {
+          const q = await faultsRef
+            .where('inspectionPath', '==', inspectionPath)
+            .where('item', '==', item)
+            .limit(1)
+            .get();
+          if (!q.empty) {
+            const existingDoc = q.docs[0];
+            const existingData = existingDoc.data();
+            dispatchIfActive({ type: 'ADDED' });
+            return { success: true, id: existingDoc.id, existing: true, doc: existingData };
+          }
+        } catch (err) {
+          console.warn('Error checking for existing fault', err);
+        }
+      }
+
       const added = await faultsRef.add(fault);
       dispatchIfActive({ type: 'ADDED' });
       return { success: true, id: added.id };

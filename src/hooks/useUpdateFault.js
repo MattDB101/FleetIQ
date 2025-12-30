@@ -39,6 +39,8 @@ export const useUpdateFault = () => {
     status,
     note = '',
     maintenanceRef = null,
+    maintenanceDate = null,
+    maintenanceTechnician = null,
     actionTaken = null,
     partsReplaced = null,
   }) => {
@@ -59,6 +61,8 @@ export const useUpdateFault = () => {
 
       if (note) updatePayload.resolutionNote = note;
       if (maintenanceRef) updatePayload.maintenanceRef = maintenanceRef;
+      if (maintenanceDate) updatePayload.maintenanceDate = maintenanceDate;
+      if (maintenanceTechnician) updatePayload.maintenanceTechnician = maintenanceTechnician;
 
       await faultRef.set(updatePayload, { merge: true });
 
@@ -89,6 +93,9 @@ export const useUpdateFault = () => {
                     if (actionTaken) itemObj.actionTaken = actionTaken;
                     if (partsReplaced) itemObj.partsReplaced = partsReplaced;
                     if (note) itemObj.notes = itemObj.notes || note;
+                    // also record maintenanceDate on the inspection item if provided
+                    if (maintenanceDate) itemObj.maintenanceDate = maintenanceDate;
+                    if (maintenanceTechnician) itemObj.maintenanceTechnician = maintenanceTechnician;
                     updatedSections[s] = { ...section, [itemLabel]: itemObj };
                     changed = true;
                   } else {
@@ -104,6 +111,14 @@ export const useUpdateFault = () => {
                     }
                     if (note && !itemObj.notes) {
                       itemObj.notes = note;
+                      localChanged = true;
+                    }
+                    if (maintenanceDate && itemObj.maintenanceDate !== maintenanceDate) {
+                      itemObj.maintenanceDate = maintenanceDate;
+                      localChanged = true;
+                    }
+                    if (maintenanceTechnician && itemObj.maintenanceTechnician !== maintenanceTechnician) {
+                      itemObj.maintenanceTechnician = maintenanceTechnician;
                       localChanged = true;
                     }
                     if (localChanged) {

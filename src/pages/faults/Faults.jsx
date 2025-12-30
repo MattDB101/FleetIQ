@@ -38,7 +38,7 @@ export default function Faults() {
     columns: [
       {
         name: 'Inspection Date',
-        // return a numeric timestamp for correct sorting
+        width: '200px',
         selector: (row) => {
           if (!row || !row.inspectionDate) return 0;
           try {
@@ -71,24 +71,23 @@ export default function Faults() {
         },
         sortable: true,
       },
+
       {
         name: 'Registration',
         selector: (row) => row.vehicle,
         sortable: true,
+        width: '160px',
       },
+
       {
         name: 'Category',
         selector: (row) => row.item,
         sortable: false,
+        width: '270px',
       },
       {
         name: 'Description',
         selector: (row) => row.description,
-        sortable: false,
-      },
-      {
-        name: 'Status',
-        selector: (row) => row.status,
         sortable: false,
       },
 
@@ -96,6 +95,53 @@ export default function Faults() {
         name: 'Inspector',
         selector: (row) => row.inspector,
         sortable: false,
+        width: '170px',
+      },
+      {
+        name: 'Status',
+        selector: (row) => row.status,
+        sortable: false,
+        width: '110px',
+      },
+      {
+        name: 'Maintenance Date',
+        width: '210px',
+        selector: (row) => {
+          if (!row || !row.maintenanceDate) return 0;
+          try {
+            if (row.maintenanceDate.seconds !== undefined) return row.maintenanceDate.seconds * 1000;
+            if (row.maintenanceDate.toDate) return row.maintenanceDate.toDate().getTime();
+            const d = new Date(row.maintenanceDate);
+            return d.getTime() || 0;
+          } catch (err) {
+            return 0;
+          }
+        },
+        cell: (row) => {
+          if (!row || !row.maintenanceDate) return '';
+          try {
+            let d;
+            if (row.maintenanceDate.seconds !== undefined) d = new Date(row.maintenanceDate.seconds * 1000);
+            else if (row.maintenanceDate.toDate) d = row.maintenanceDate.toDate();
+            else d = new Date(row.maintenanceDate);
+            if (!d || Number.isNaN(d.getTime())) return '';
+            return d.toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: '2-digit',
+              timeZone: 'UTC',
+            });
+          } catch (err) {
+            return '';
+          }
+        },
+        sortable: true,
+      },
+      {
+        name: 'Technician',
+        selector: (row) => row.maintenanceTechnician || '',
+        sortable: false,
+        width: '170px',
       },
 
       // {
