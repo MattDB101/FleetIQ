@@ -99,7 +99,9 @@ export const useCreateMaintenance = () => {
         if (j && j.linkedFaultId) {
           const status = j.faultStatus || 'partially_resolved';
           const note = j.faultNote || '';
-          await updateFault({ faultId: j.linkedFaultId, status, note, maintenanceRef });
+          const actionTaken = j.workPerformed || '';
+          const partsReplaced = j.partsReplaced || '';
+          await updateFault({ faultId: j.linkedFaultId, status, note, maintenanceRef, actionTaken, partsReplaced });
         }
       }
 

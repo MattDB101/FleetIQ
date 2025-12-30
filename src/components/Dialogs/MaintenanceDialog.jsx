@@ -228,6 +228,8 @@ export default function MaintenanceDialog({
               status: j.faultStatus || 'partially_resolved',
               note: j.faultNote || '',
               maintenanceRef: `maintenance/${editData.id}`,
+              actionTaken: j.workPerformed || '',
+              partsReplaced: j.partsReplaced || '',
             });
           }
         }
@@ -404,9 +406,17 @@ export default function MaintenanceDialog({
                   <Select
                     value={job.linkedFaultId || ''}
                     label="Associated Fault (Optional)"
-                    onChange={(e) =>
-                      updateJob(job.id, { linkedFaultId: e.target.value })
-                    }
+                    onChange={(e) => {
+                      const newVal = e.target.value;
+                      // default fault status to 'resolved' when a fault is linked
+                      const newStatus = newVal
+                        ? job.faultStatus || 'resolved'
+                        : '';
+                      updateJob(job.id, {
+                        linkedFaultId: newVal,
+                        faultStatus: newStatus,
+                      });
+                    }}
                   >
                     <MenuItem value="">None</MenuItem>
                     {availableFaults.map((f) => (
