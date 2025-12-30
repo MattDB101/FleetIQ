@@ -70,7 +70,6 @@ export default function Vehicles() {
               <Tooltip title="Open Document">
                 <IconButton
                   style={{
-                    color: '#4b49ccce',
                     borderRadius: '5px',
                     padding: '5px',
                   }}

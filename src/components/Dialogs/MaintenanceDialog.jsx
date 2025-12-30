@@ -17,13 +17,14 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 // Hooks
 import { useCreateMaintenance } from '../../hooks/useCreateMaintenance';
 import { useFirestore } from '../../hooks/useFirestore';
 import useUpdateFault from '../../hooks/useUpdateFault';
 import { useVehicleFaults } from '../../hooks/useVehicleFaults';
-import { timestamp } from '../../firebase/config';
+import { timestamp, projectStorage } from '../../firebase/config';
 
 const STATUS_OPTIONS = [
   { value: 'resolved', label: 'Resolved' },
@@ -91,6 +92,10 @@ export default function MaintenanceDialog({
         linkedFaultId: j.linkedFaultId || '',
         faultStatus: j.faultStatus || '',
         faultNote: j.faultNote || '',
+        // preserve existing stored file URL/filename if present
+        fileUrl: j.fileUrl || j.fileURL || '',
+        fileName: j.fileName || '',
+        file: null,
       }));
 
       setJobs(existingJobs);
@@ -122,6 +127,10 @@ export default function MaintenanceDialog({
         linkedFaultId: '',
         faultStatus: '',
         faultNote: '',
+        // transient File object when user selects a file
+        file: null,
+        // stored file URL (for existing jobs)
+        fileUrl: '',
       },
     ]);
   };
@@ -153,18 +162,47 @@ export default function MaintenanceDialog({
       return;
     }
 
-    const payload = {
-      registration,
-      serviceDate: timestamp.fromDate(new Date(serviceDate)),
-      technician,
-      odometer: Number(odometer),
-      jobs: jobs.map((j) => ({
+    // Upload any selected files for jobs and build final jobs payload
+    const jobsPayload = [];
+    for (const j of jobs) {
+      let fileUrl = j.fileUrl || null;
+      let fileName = j.fileName || null;
+      if (j.file) {
+        try {
+          const file = j.file;
+          const safeRegistration = (registration || 'unregistered').replace(
+            /[^a-zA-Z0-9-_]/g,
+            '_'
+          );
+          const path = `maintenance/${safeRegistration}/${Date.now()}_${
+            file.name
+          }`;
+          const storageRef = projectStorage.ref().child(path);
+          const uploadTask = await storageRef.put(file);
+          fileUrl = await uploadTask.ref.getDownloadURL();
+          fileName = file.name;
+        } catch (err) {
+          console.error('File upload failed for job', j.id, err);
+        }
+      }
+
+      jobsPayload.push({
         workPerformed: j.workPerformed,
         partsReplaced: j.partsReplaced,
         linkedFaultId: j.linkedFaultId || null,
         faultStatus: j.faultStatus || null,
         faultNote: j.faultNote || null,
-      })),
+        fileUrl: fileUrl || null,
+        fileName: fileName || null,
+      });
+    }
+
+    const payload = {
+      registration,
+      serviceDate: timestamp.fromDate(new Date(serviceDate)),
+      technician,
+      odometer: Number(odometer),
+      jobs: jobsPayload,
       faults: [],
     };
 
@@ -309,6 +347,57 @@ export default function MaintenanceDialog({
                 rows={2}
                 style={{ marginTop: '12px' }}
               />
+              <Box style={{ marginTop: '12px' }}>
+                <Box display="flex" alignItems="center" style={{ gap: 8 }}>
+                  <input
+                    accept="*"
+                    style={{ display: 'none' }}
+                    id={`file-input-${job.id}`}
+                    type="file"
+                    onChange={(e) => {
+                      const f =
+                        e.target.files && e.target.files[0]
+                          ? e.target.files[0]
+                          : null;
+                      updateJob(job.id, { file: f });
+                    }}
+                  />
+
+                  <label htmlFor={`file-input-${job.id}`}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      component="span"
+                      startIcon={<AttachFileIcon />}
+                    >
+                      Attach invoice
+                    </Button>
+                  </label>
+
+                  <Typography variant="caption" style={{ marginLeft: 8 }}>
+                    {job.file
+                      ? `Selected: ${job.file.name}`
+                      : job.fileUrl
+                      ? `Attached: ${job.fileName || 'file'}`
+                      : 'No file attached'}
+                  </Typography>
+
+                  {(job.file || job.fileUrl) && (
+                    <Button
+                      size="small"
+                      onClick={() =>
+                        updateJob(job.id, {
+                          file: null,
+                          fileUrl: '',
+                          fileName: '',
+                        })
+                      }
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </Box>
+              </Box>
               <Box display="flex" style={{ gap: '16px', marginTop: '16px' }}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Associated Fault (Optional)</InputLabel>

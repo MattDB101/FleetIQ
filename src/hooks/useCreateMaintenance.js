@@ -73,6 +73,9 @@ export const useCreateMaintenance = () => {
           linkedFaultId: j.linkedFaultId || null,
           faultStatus: j.faultStatus || null,
           faultNote: j.faultNote || null,
+          // preserve attachment metadata when provided by caller
+          fileUrl: j.fileUrl || null,
+          fileName: j.fileName || null,
         })),
         createdAt,
         createdBy,

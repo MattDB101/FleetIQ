@@ -12,10 +12,12 @@ import {
   TableCell,
   Card,
   Paper,
+  Tooltip,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { pink, yellow } from '@material-ui/core/colors';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
 
 const formatServiceDate = (row) => {
   if (!row || !row.serviceDate) return '';
@@ -120,6 +122,7 @@ const ExpandedComponent = ({ data }) => {
             <TableCell>Parts Replaced</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Note</TableCell>
+            <TableCell>Attachment</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -135,6 +138,19 @@ const ExpandedComponent = ({ data }) => {
               <TableCell>{j.faultStatus || '—'}</TableCell>
               <TableCell style={{ maxWidth: 420, whiteSpace: 'pre-wrap' }}>
                 {j.faultNote || '—'}
+              </TableCell>
+              <TableCell>
+                {j.fileUrl ? (
+                  <Tooltip title={j.fileName || 'Open attachment'}>
+                    <a href={j.fileUrl} target="_blank" rel="noreferrer">
+                      <IconButton style={{ padding: 6 }}>
+                        <FilePresentIcon />
+                      </IconButton>
+                    </a>
+                  </Tooltip>
+                ) : (
+                  '—'
+                )}
               </TableCell>
             </TableRow>
           ))}
@@ -215,6 +231,7 @@ export default function MaintenanceTable({
       sortable: false,
       grow: 1,
     },
+
     {
       name: '',
       button: true,
