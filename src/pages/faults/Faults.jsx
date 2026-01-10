@@ -52,13 +52,13 @@ export default function Faults() {
         },
         // display formatted date
         cell: (row) => {
-          if (!row || !row.inspectionDate) return '';
+          if (!row || !row.inspectionDate) return '—';
           try {
             let d;
             if (row.inspectionDate.seconds !== undefined) d = new Date(row.inspectionDate.seconds * 1000);
             else if (row.inspectionDate.toDate) d = row.inspectionDate.toDate();
             else d = new Date(row.inspectionDate);
-            if (!d || Number.isNaN(d.getTime())) return '';
+            if (!d || Number.isNaN(d.getTime())) return '—';
             return d.toLocaleDateString('en-GB', {
               day: '2-digit',
               month: '2-digit',
@@ -66,7 +66,7 @@ export default function Faults() {
               timeZone: 'UTC',
             });
           } catch (err) {
-            return '';
+            return '—';
           }
         },
         sortable: true,
@@ -84,11 +84,49 @@ export default function Faults() {
         selector: (row) => row.item,
         sortable: false,
         width: '270px',
+        cell: (row) =>
+          row && row.item ? (
+            <Tooltip title={row.item}>
+              <span
+                style={{
+                  display: 'inline-block',
+                  maxWidth: '100%',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  verticalAlign: 'middle',
+                }}
+              >
+                {row.item}
+              </span>
+            </Tooltip>
+          ) : (
+            '—'
+          ),
       },
       {
         name: 'Description',
         selector: (row) => row.description,
         sortable: false,
+        cell: (row) =>
+          row && row.description ? (
+            <Tooltip title={row.description}>
+              <span
+                style={{
+                  display: 'inline-block',
+                  maxWidth: '100%',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  verticalAlign: 'middle',
+                }}
+              >
+                {row.description}
+              </span>
+            </Tooltip>
+          ) : (
+            '—'
+          ),
       },
 
       {
@@ -118,13 +156,13 @@ export default function Faults() {
           }
         },
         cell: (row) => {
-          if (!row || !row.maintenanceDate) return '';
+          if (!row || !row.maintenanceDate) return '—';
           try {
             let d;
             if (row.maintenanceDate.seconds !== undefined) d = new Date(row.maintenanceDate.seconds * 1000);
             else if (row.maintenanceDate.toDate) d = row.maintenanceDate.toDate();
             else d = new Date(row.maintenanceDate);
-            if (!d || Number.isNaN(d.getTime())) return '';
+            if (!d || Number.isNaN(d.getTime())) return '—';
             return d.toLocaleDateString('en-GB', {
               day: '2-digit',
               month: '2-digit',
@@ -132,20 +170,20 @@ export default function Faults() {
               timeZone: 'UTC',
             });
           } catch (err) {
-            return '';
+            return '—';
           }
         },
         sortable: true,
       },
       {
         name: 'Technician',
-        selector: (row) => row.maintenanceTechnician || '',
+        selector: (row) => row.maintenanceTechnician || '—',
         sortable: false,
         width: '170px',
       },
 
       // {
-      //   name: '',
+      //   name: '—',
       //   button: true,
       //   cell: (row) =>
       //     row.fileUrl ? (
@@ -162,13 +200,13 @@ export default function Faults() {
       //         </Tooltip>
       //       </a>
       //     ) : (
-      //       ''
+      //       '—'
       //     ),
       //   sortable: false,
       //   width: '10%',
       // },
       // {
-      //   name: '',
+      //   name: '—',
       //   button: true,
       //   cell: (row) =>
       //     row.comment ? (
@@ -191,7 +229,7 @@ export default function Faults() {
       //         </IconButton>
       //       </Tooltip>
       //     ) : (
-      //       ''
+      //       '—'
       //     ),
       //   sortable: false,
       //   width: '10%',

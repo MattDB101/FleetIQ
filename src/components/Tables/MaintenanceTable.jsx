@@ -18,6 +18,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { pink, yellow } from '@material-ui/core/colors';
 import NoteAltOutlinedIcon from '@mui/icons-material/NoteAltOutlined';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
+import SortIcon from '@material-ui/icons/ArrowDownward';
 
 const formatServiceDate = (row) => {
   if (!row || !row.serviceDate) return '';
@@ -284,6 +285,9 @@ export default function MaintenanceTable({
             expandableRows
             expandableRowsComponent={ExpandedComponent}
             selectableRows
+            defaultSortFieldId={1}
+            defaultSortAsc={false}
+            sortIcon={<SortIcon />}
           />
         </Paper>
       </Card>
